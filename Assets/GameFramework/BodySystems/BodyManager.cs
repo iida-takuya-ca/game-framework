@@ -11,17 +11,6 @@ namespace GameFramework.BodySystems {
     /// </summary>
     public class BodyManager : ILateUpdatableTask, IDisposable {
         /// <summary>
-        /// Body構築用クラス
-        /// </summary>
-        public interface IBuilder {
-            /// <summary>
-            /// 構築処理
-            /// </summary>
-            /// <param name="body">構築対象のBody</param>
-            void Build(IBody body);
-        }
-
-        /// <summary>
         /// Body情報
         /// </summary>
         private class BodyInfo {
@@ -30,7 +19,7 @@ namespace GameFramework.BodySystems {
         }
 
         // 構築クラス
-        private IBuilder _builder;
+        private IBodyBuilder _builder;
         // 時間管理クラス
         private LayeredTime _layeredTime;
         // インスタンス管理
@@ -44,7 +33,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         /// <param name="builder">Body構築用クラス</param>
         /// <param name="layeredTime">時間管理クラス</param>
-        public BodyManager(IBuilder builder, LayeredTime layeredTime = null) {
+        public BodyManager(IBodyBuilder builder, LayeredTime layeredTime = null) {
             _builder = builder;
             _layeredTime = layeredTime;
         }
@@ -70,9 +59,14 @@ namespace GameFramework.BodySystems {
             var body = new Body(gameObject);
             
             // 構築処理
+            BuildDefault(body);
             if (_builder != null) {
                 _builder.Build(body);
             }
+            
+            // Dispatcherの生成
+            var dispatcher = gameObject.AddComponent<BodyDispatcher>();
+            dispatcher.Initialize(body);
 
             // 登録情報の初期化
             var bodyInfo = new BodyInfo {
@@ -130,6 +124,14 @@ namespace GameFramework.BodySystems {
             
             // BodyInfosのリフレッシュ
             RefreshBodyInfos();
+        }
+
+        /// <summary>
+        /// デフォルトのBody構築処理
+        /// </summary>
+        /// <param name="body">構築対象のBody</param>
+        private void BuildDefault(IBody body) {
+            body.AddController(new LocatorController());
         }
 
         /// <summary>

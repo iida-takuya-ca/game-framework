@@ -12,7 +12,7 @@ namespace GameFramework.CoroutineSystems {
         private Action _additionalFunc;
 
         // 現在の位置(未使用)
-        public object Current => _baseEnumerator.Current;
+        object IEnumerator.Current => _baseEnumerator.Current;
 
         /// <summary>
         /// コンストラクタ
@@ -27,7 +27,7 @@ namespace GameFramework.CoroutineSystems {
         /// <summary>
         /// リセット処理
         /// </summary>
-        public void Reset() {
+        void IEnumerator.Reset() {
             if (_baseEnumerator != null) {
                 _baseEnumerator.Reset();
             }
@@ -37,7 +37,7 @@ namespace GameFramework.CoroutineSystems {
         /// コルーチン進行
         /// </summary>
         /// <returns>次の処理があるか？</returns>
-        public bool MoveNext() {
+        bool IEnumerator.MoveNext() {
             if (_baseEnumerator.MoveNext()) {
                 _additionalFunc?.Invoke();
                 return true;

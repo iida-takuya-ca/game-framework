@@ -125,7 +125,7 @@ namespace GameFramework.CoroutineSystems {
                 }
 
                 try {
-                    if (!coroutine.MoveNext()) {
+                    if (!((IEnumerator)coroutine).MoveNext()) {
                         coroutineInfo.isCompleted = true;
                         // 完了通知
                         coroutineInfo.onCompleted?.Invoke();

@@ -6,28 +6,27 @@ namespace GameFramework.CoroutineSystems {
     /// 並列実行用コルーチン
     /// </summary>
     public class MergedCoroutine : IEnumerator {
-        private Coroutine[] _coroutines;
+        private IEnumerator[] _enumerators;
 
-        // 現在の位置(未使用)
-        public object Current => null;
         // 完了しているか
         public bool IsDone { get; private set; }
+        // 現在の位置(未使用)
+        object IEnumerator.Current => null;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="funcs">非同期処理リスト</param>
-        public MergedCoroutine(params IEnumerator[] funcs) {
-            _coroutines = funcs.Select(x => new Coroutine(x))
-                .ToArray();
+        /// <param name="enumerators">非同期処理リスト</param>
+        public MergedCoroutine(params IEnumerator[] enumerators) {
+            _enumerators = enumerators;
         }
 
         /// <summary>
         /// リセット処理
         /// </summary>
-        public void Reset() {
-            for (var i = 0; i < _coroutines.Length; i++) {
-                var coroutine = _coroutines[i];
+        void IEnumerator.Reset() {
+            for (var i = 0; i < _enumerators.Length; i++) {
+                var coroutine = _enumerators[i];
                 coroutine?.Reset();
             }
         }
@@ -36,18 +35,18 @@ namespace GameFramework.CoroutineSystems {
         /// コルーチン進行
         /// </summary>
         /// <returns>次の処理があるか？</returns>
-        public bool MoveNext() {
+        bool IEnumerator.MoveNext() {
             var finished = true;
 
-            for (var i = 0; i < _coroutines.Length; i++) {
-                var coroutine = _coroutines[i];
+            for (var i = 0; i < _enumerators.Length; i++) {
+                var enumerator = _enumerators[i];
 
-                if (coroutine == null) {
+                if (enumerator == null) {
                     continue;
                 }
 
-                if (!coroutine.MoveNext()) {
-                    _coroutines[i] = null;
+                if (!enumerator.MoveNext()) {
+                    _enumerators[i] = null;
                 }
                 else {
                     finished = false;

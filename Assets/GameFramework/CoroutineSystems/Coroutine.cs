@@ -11,12 +11,12 @@ namespace GameFramework.CoroutineSystems {
     public class Coroutine : IEnumerator {
         private IEnumerator _enumerator;
         private Stack<object> _stack;
-
-        // 現在の処理位置
-        public object Current { get; private set; }
-
+        private object _current;
+        
         // 完了しているか
         public bool IsDone { get; private set; }
+        // 現在の処理位置
+        object IEnumerator.Current => _current;
 
         /// <summary>
         /// コンストラクタ
@@ -25,16 +25,16 @@ namespace GameFramework.CoroutineSystems {
         public Coroutine(IEnumerator enumerator) {
             _enumerator = enumerator;
             _stack = new Stack<object>();
-            Reset();
+            ((IEnumerator)this).Reset();
         }
 
         /// <summary>
         /// リセット処理
         /// </summary>
-        public void Reset() {
+        void IEnumerator.Reset() {
             _stack.Clear();
             _stack.Push(_enumerator);
-            Current = null;
+            _current = null;
             IsDone = false;
         }
 
@@ -42,7 +42,7 @@ namespace GameFramework.CoroutineSystems {
         /// コルーチン進行
         /// </summary>
         /// <returns>次の処理があるか？</returns>
-        public bool MoveNext() {
+        bool IEnumerator.MoveNext() {
             Update();
             return !IsDone;
         }
@@ -54,7 +54,7 @@ namespace GameFramework.CoroutineSystems {
             // 完了処理
             void Done() {
                 _stack.Clear();
-                Current = null;
+                _current = null;
                 IsDone = true;
             }
 
@@ -66,7 +66,7 @@ namespace GameFramework.CoroutineSystems {
 
             // スタックを取り出して、処理を進める
             var peek = _stack.Peek();
-            Current = peek;
+            _current = peek;
 
             if (peek == null) {
                 _stack.Pop();

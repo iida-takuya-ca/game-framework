@@ -68,6 +68,70 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
+        /// Component取得
+        /// <param name="type">取得するタイプ</param>
+        /// </summary>
+        public Component GetComponent(Type type) {
+            return GameObject.GetComponent(type);
+        }
+
+        /// <summary>
+        /// Component取得
+        /// </summary>
+        public T GetComponent<T>()
+            where T : Component {
+            return GameObject.GetComponent<T>();
+        }
+
+        /// <summary>
+        /// Component取得(複数)
+        /// </summary>
+        /// <param name="type">取得するタイプ</param>
+        public Component[] GetComponents(Type type) {
+            return GameObject.GetComponents(type);
+        }
+
+        /// <summary>
+        /// Component取得(複数)
+        /// </summary>
+        public T[] GetComponents<T>()
+            where T : Component {
+            return GameObject.GetComponents<T>();
+        }
+
+        /// <summary>
+        /// Component取得
+        /// <param name="type">取得するタイプ</param>
+        /// </summary>
+        public Component GetComponentInChildren(Type type, bool includeInactive = false) {
+            return GameObject.GetComponentInChildren(type, includeInactive);
+        }
+
+        /// <summary>
+        /// Component取得
+        /// </summary>
+        public T GetComponentInChildren<T>(bool includeInactive = false)
+            where T : Component {
+            return GameObject.GetComponentInChildren<T>(includeInactive);
+        }
+
+        /// <summary>
+        /// Component取得(複数)
+        /// </summary>
+        /// <param name="type">取得するタイプ</param>
+        public Component[] GetComponentsInChildren(Type type, bool includeInactive = false) {
+            return GameObject.GetComponentsInChildren(type, includeInactive);
+        }
+
+        /// <summary>
+        /// Component取得(複数)
+        /// </summary>
+        public T[] GetComponentsInChildren<T>(bool includeInactive = false)
+            where T : Component {
+            return GameObject.GetComponentsInChildren<T>(includeInactive);
+        }
+
+        /// <summary>
         /// 初期化処理
         /// </summary>
         void IBody.Initialize() {
