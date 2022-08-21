@@ -8,7 +8,7 @@ namespace GameFramework.TaskSystems {
     /// <summary>
     /// タスク実行用のランナー
     /// </summary>
-    public class TaskRunner : ITask, IDisposable {
+    public class TaskRunner : ILateUpdatableTask, IDisposable {
         // タスクの状態
         private enum TaskStatus {
             Scheduled,
