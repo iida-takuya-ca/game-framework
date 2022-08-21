@@ -10,37 +10,37 @@ namespace GameFramework.Core {
         /// <summary>
         /// IDisposableのScope登録
         /// </summary>
-        public static T ScopeTo<T>(this T self, IScope scope)
+        public static T ScopeTo<T>(this T source, IScope scope)
             where T : IDisposable {
             scope.OnExpired += () => {
-                self.Dispose();
+                source.Dispose();
             };
-            return self;
+            return source;
         }
 
         /// <summary>
         /// GameObjectのScope登録
         /// </summary>
-        public static GameObject ScopeTo(this GameObject self, IScope scope) {
+        public static GameObject ScopeTo(this GameObject source, IScope scope) {
             scope.OnExpired += () => {
-                if (self != null) {
-                    Object.Destroy(self);
+                if (source != null) {
+                    Object.Destroy(source);
                 }
             };
-            return self;
+            return source;
         }
 
         /// <summary>
         /// ComponentのScope登録
         /// </summary>
-        public static T ScopeTo<T>(this Component self, IScope scope)
+        public static T ScopeTo<T>(this Component source, IScope scope)
             where T : Component {
             scope.OnExpired += () => {
-                if (self != null) {
-                    Object.Destroy(self);
+                if (source != null) {
+                    Object.Destroy(source);
                 }
             };
-            return self as T;
+            return source as T;
         }
     }
 }
