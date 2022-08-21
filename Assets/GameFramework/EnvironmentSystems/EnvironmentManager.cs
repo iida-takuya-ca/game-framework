@@ -25,6 +25,8 @@ namespace GameFramework.EnvironmentSystems {
         private List<EnvironmentInfo> _stack = new List<EnvironmentInfo>();
         // 環境情報
         private Dictionary<EnvironmentHandle, EnvironmentInfo> _environmentInfos = new Dictionary<EnvironmentHandle, EnvironmentInfo>();
+        // 現在の設定値を取るためのContext
+        private IEnvironmentContext _currentContext;
         // 時間制御クラス
         private LayeredTime _layeredTime;
 
@@ -34,8 +36,10 @@ namespace GameFramework.EnvironmentSystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
+        /// <param name="currentContext">現在の値を取得するための再利用可能なContext</param>
         /// <param name="layeredTime">時間管理クラス</param>
-        public EnvironmentManager(LayeredTime layeredTime = null) {
+        public EnvironmentManager(IEnvironmentContext currentContext, LayeredTime layeredTime = null) {
+            _currentContext = currentContext;
             _layeredTime = layeredTime;
         }
 
@@ -45,6 +49,7 @@ namespace GameFramework.EnvironmentSystems {
         public void Dispose() {
             _stack.Clear();
             _environmentInfos.Clear();
+            _currentContext = null;
         }
 
         /// <summary>
@@ -117,7 +122,7 @@ namespace GameFramework.EnvironmentSystems {
                 // ブレンド処理を行う
                 info.timer -= deltaTime;
                 var blendRate = info.timer > float.Epsilon ? Mathf.Clamp01(deltaTime / info.timer) : 1.0f;
-                var current = new CurrentEnvironmentContext();
+                var current = _currentContext;
                 var settings = current.Lerp(info.context, blendRate);
                 
                 // 設定反映
