@@ -12,6 +12,9 @@ namespace GameFramework.CoroutineSystems {
         private IEnumerator _enumerator;
         private Stack<object> _stack;
         private object _current;
+
+        // WaitForSeconds.m_Seconds
+        private static readonly FieldInfo WaitForSecondsAccessor = typeof(WaitForSeconds).GetField("m_Seconds", BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
         
         // 完了しているか
         public bool IsDone { get; private set; }
@@ -105,8 +108,7 @@ namespace GameFramework.CoroutineSystems {
         /// WaitForSecondsをIEnumeratorに変換
         /// </summary>
         private IEnumerator UnwrapWaitForSeconds(WaitForSeconds waitForSeconds) {
-            var accessor = typeof(WaitForSeconds).GetField("m_Seconds", BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
-            var second = (float)accessor.GetValue(waitForSeconds);
+            var second = (float)WaitForSecondsAccessor.GetValue(waitForSeconds);
             var startTime = DateTimeOffset.UtcNow;
             while (true) {
                 yield return null;
