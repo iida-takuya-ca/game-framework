@@ -12,16 +12,80 @@ namespace GameFramework.BodySystems {
         private Dictionary<Type, IBodyController> _bodyControllers = new Dictionary<Type, IBodyController>();
         // 並び順に並べられたControllerリスト
         private List<IBodyController> _orderedBodyControllers = new List<IBodyController>();
+        
+        // 基本Scale
+        private float _baseScale = 1.0f;
+        // 変形用Scale
+        private Vector3 _deformationScale = Vector3.one;
+
+        // 標準利用されるControllerのキャッシュ
+        private LocatorController _locatorController;
+        private ParentController _parentController;
 
         // 解放スコープ
         public event Action OnExpired;
         
+        // 有効なBodyか
+        public bool IsValid => GameObject != null;
+        // 有効状態
+        public bool IsActive {
+            get => IsValid && GameObject.activeSelf;
+            set => GameObject.SetActive(value);
+        }
         // 制御対象のGameObject
         public GameObject GameObject { get; private set; }
         // 制御対象のTransform
         public Transform Transform { get; private set; }
         // 時間管理クラス
         public LayeredTime LayeredTime { get; } = new LayeredTime();
+        
+        // 座標
+        public Vector3 Position {
+            get => Transform.position;
+            set => Transform.position = value;
+        }
+        // 座標(ローカル)
+        public Vector3 LocalPosition {
+            get => Transform.localPosition;
+            set => Transform.localPosition = value;
+        }
+        // 姿勢
+        public Quaternion Rotation {
+            get => Transform.rotation;
+            set => Transform.rotation = value;
+        }
+        // 姿勢(ローカル)
+        public Quaternion LocalRotation {
+            get => Transform.localRotation;
+            set => Transform.localRotation = value;
+        }
+        // 基本スケール
+        public float BaseScale {
+            get => _baseScale;
+            set {
+                _baseScale = value;
+                Transform.localScale = _baseScale * _deformationScale;
+            }
+        }
+        // 変形用スケール
+        public Vector3 DeformationScale {
+            get => _deformationScale;
+            set {
+                _deformationScale = value;
+                BaseScale = _baseScale;
+            }
+        }
+        // Transformのスケール
+        public Vector3 LocalScale {
+            get => Transform.localScale;
+            set {
+                _deformationScale = value;
+                BaseScale = 1.0f;
+            }
+        }
+        
+        // ロケーター取得
+        public LocatorController Locators => _locatorController;
         
         /// <summary>
         /// コンストラクタ
@@ -132,6 +196,26 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
+        /// 親の設定
+        /// </summary>
+        /// <param name="parentBody">親のBody</param>
+        /// <param name="targetTransform">追従Transform(nullだとparentのroot)</param>
+        /// <param name="offsetPosition">オフセット座標(Local)</param>
+        /// <param name="offsetRotation">オフセット回転(Local)</param>
+        /// <param name="scaleType">スケール反映タイプ</param>
+        public void SetParent(Body parentBody, Transform targetTransform, Vector3 offsetPosition, Quaternion offsetRotation,
+            ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
+            _parentController.SetParent(parentBody, targetTransform, offsetPosition, offsetRotation, scaleType);
+        }
+        public void SetParent(Body parentBody, Vector3 offsetPosition, Quaternion offsetRotation,
+            ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
+            SetParent(parentBody, null, offsetPosition, offsetRotation, scaleType);
+        }
+        public void SetParent(Body parentBody, ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
+            SetParent(parentBody, null, Vector3.zero, Quaternion.identity, scaleType);
+        }
+
+        /// <summary>
         /// 初期化処理
         /// </summary>
         void IBody.Initialize() {
@@ -142,6 +226,9 @@ namespace GameFramework.BodySystems {
                 var controller = _orderedBodyControllers[i];
                 controller.Initialize(this);
             }
+
+            _locatorController = GetController<LocatorController>();
+            _parentController = GetController<ParentController>();
         }
 
         /// <summary>
