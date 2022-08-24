@@ -1,5 +1,7 @@
+using System;
 using GameFramework.Core;
 using GameFramework.SituationSystems;
+using UniRx;
 using UnityEngine;
 
 /// <summary>
@@ -14,6 +16,13 @@ public class SampleBSceneSituation : SceneSituation {
     /// </summary>
     protected override void SetupInternal(TransitionHandle handle, IScope scope) {
         base.SetupInternal(handle, scope);
+
+        // 1秒おきにログ出力
+        Observable.Interval(TimeSpan.FromSeconds(1))
+            .TakeUntil(scope)
+            .Subscribe(x => {
+                Debug.Log($"Time:{x + 1} sec");
+            });
         
         Debug.Log($"Setup {nameof(SampleBSceneSituation)} Back:{handle.Back}");
         Debug.Log($"Canvas:{ServiceLocator.Get<SampleCanvas>()}");

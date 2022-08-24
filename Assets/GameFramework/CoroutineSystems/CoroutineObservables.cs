@@ -12,7 +12,7 @@ namespace GameFramework.CoroutineSystems {
         /// <summary>
         /// コルーチンの開始処理
         /// </summary>
-        public static IObservable<Unit> StartCoroutineAsync(this CoroutineController source, IEnumerator enumerator) {
+        public static IObservable<Unit> StartCoroutineAsync(this CoroutineRunner source, IEnumerator enumerator) {
             return Observable.Create<Unit>(observer => {
                 var isDone = false;
                 var coroutine = source.StartCoroutine(enumerator, () => {

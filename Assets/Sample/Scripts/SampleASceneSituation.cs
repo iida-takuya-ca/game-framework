@@ -1,5 +1,6 @@
 using GameFramework.Core;
 using GameFramework.SituationSystems;
+using UniRx;
 using UnityEngine;
 
 /// <summary>
@@ -14,6 +15,13 @@ public class SampleASceneSituation : SceneSituation {
     /// </summary>
     protected override void SetupInternal(TransitionHandle handle, IScope scope) {
         base.SetupInternal(handle, scope);
+
+        // 100フレームおきにログ出力
+        Observable.IntervalFrame(100)
+            .TakeUntil(scope)
+            .Subscribe(x => {
+                Debug.Log($"Frame:{(x + 1) * 100}");
+            });
         
         Debug.Log($"Setup {nameof(SampleASceneSituation)} Back:{handle.Back}");
         Debug.Log($"Canvas:{ServiceLocator.Get<SampleCanvas>()}");
