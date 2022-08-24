@@ -17,7 +17,7 @@ public class StateSample : MonoBehaviour {
     [SerializeField, Tooltip("横並び用オブジェクト")]
     private GameObject[] _horizontalObjects;
 
-    private EnumStateController<State> _stateController = new EnumStateController<State>();
+    private EnumStateContainer<State> _stateContainer = new EnumStateContainer<State>();
 
     /// <summary>
     /// 生成時処理
@@ -32,17 +32,17 @@ public class StateSample : MonoBehaviour {
             }
         }
         
-        _stateController.SetupFromEnum(State.Invalid);
-        _stateController.SetFunction(State.Standby,
+        _stateContainer.SetupFromEnum(State.Invalid);
+        _stateContainer.SetFunction(State.Standby,
             (prev, scope) => {
                 SetActiveObjects(_verticalObjects, false);
                 SetActiveObjects(_horizontalObjects, false);
             });
-        _stateController.SetFunction(State.Vertical,
+        _stateContainer.SetFunction(State.Vertical,
             (prev, scope) => SetActiveObjects(_verticalObjects, true),
             _ => {},
             (next) => SetActiveObjects(_verticalObjects, false));
-        _stateController.SetFunction(State.Horizontal,
+        _stateContainer.SetFunction(State.Horizontal,
             (prev, scope) => SetActiveObjects(_horizontalObjects, true),
             _ => {},
             (next) => SetActiveObjects(_horizontalObjects, false));
@@ -52,7 +52,7 @@ public class StateSample : MonoBehaviour {
     /// 開始時処理
     /// </summary>
     private void Start() {
-        _stateController.Change(State.Standby, true);
+        _stateContainer.Change(State.Standby, true);
     }
 
     /// <summary>
@@ -60,19 +60,19 @@ public class StateSample : MonoBehaviour {
     /// </summary>
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            _stateController.Change(State.Horizontal);
+            _stateContainer.Change(State.Horizontal);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            _stateController.Change(State.Vertical);
+            _stateContainer.Change(State.Vertical);
         }
         
-        _stateController.Update(Time.deltaTime);
+        _stateContainer.Update(Time.deltaTime);
     }
 
     /// <summary>
     /// 廃棄時処理
     /// </summary>
     private void OnDestroy() {
-        _stateController.Dispose();
+        _stateContainer.Dispose();
     }
 }

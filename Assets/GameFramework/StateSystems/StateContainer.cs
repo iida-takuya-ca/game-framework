@@ -6,7 +6,7 @@ namespace GameFramework.StateSystems {
     /// <summary>
     /// 状態制御クラス
     /// </summary>
-    public class StateController<TState, TKey> : IDisposable
+    public class StateContainer<TState, TKey> : IDisposable
     where TState : IState<TKey>
     where TKey : IComparable {
         // Stateリスト

@@ -7,7 +7,7 @@ namespace GameFramework.StateSystems {
     /// <summary>
     /// 列挙型ベースの状態制御クラス
     /// </summary>
-    public class EnumStateController<TKey> : StateController<EnumStateController<TKey>.EnumState, TKey>
+    public class EnumStateContainer<TKey> : StateContainer<EnumStateContainer<TKey>.EnumState, TKey>
     where TKey : Enum {
         /// <summary>
         /// Enum型をキーとしたState
