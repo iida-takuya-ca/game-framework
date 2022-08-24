@@ -12,7 +12,7 @@ namespace GameFramework.SituationSystems {
         /// 遷移処理
         /// </summary>
         /// <param name="transitionInfo">遷移情報</param>
-        IEnumerator ITransition.TransitRoutine(Situation.TransitionInfo transitionInfo) {
+        IEnumerator ITransition.TransitRoutine(SituationContainer.TransitionInfo transitionInfo) {
             var handle = new TransitionHandle(transitionInfo);
             var prev = transitionInfo.prev;
             var next = transitionInfo.next;
@@ -67,6 +67,6 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 初期化前処理
         /// </summary>
-        protected virtual IEnumerator PreInitializeRoutine(Situation.TransitionInfo transitionInfo) { yield break; }
+        protected virtual IEnumerator PreInitializeRoutine(SituationContainer.TransitionInfo transitionInfo) { yield break; }
     }
 }

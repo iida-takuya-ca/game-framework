@@ -35,7 +35,7 @@ public class SampleBSceneSituation : SceneSituation {
         base.UpdateInternal();
         
         if (Input.GetKeyDown(KeyCode.Space)) {
-            Parent.Transition(new SampleASceneSituation());
+            ParentContainer.Transition(new SampleASceneSituation());
         }
     }
 }

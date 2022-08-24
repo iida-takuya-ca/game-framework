@@ -9,6 +9,6 @@ namespace GameFramework.SituationSystems {
         /// 遷移処理
         /// </summary>
         /// <param name="transitionInfo">遷移情報</param>
-        IEnumerator TransitRoutine(Situation.TransitionInfo transitionInfo);
+        IEnumerator TransitRoutine(SituationContainer.TransitionInfo transitionInfo);
     }
 }

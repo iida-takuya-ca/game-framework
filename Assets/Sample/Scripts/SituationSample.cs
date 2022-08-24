@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class SituationSample : MonoBehaviour {
     // Rootシチュエーション
-    private SceneRootSituation _sceneRootSituation;
+    private SceneSituationContainer _sceneSituationContainer;
     // Task実行用
     private TaskRunner _taskRunner;
     
@@ -19,27 +19,22 @@ public class SituationSample : MonoBehaviour {
         DontDestroyOnLoad(this);
 
         _taskRunner = new TaskRunner();
-        _sceneRootSituation = new SceneRootSituation();
-        _taskRunner.Register(_sceneRootSituation);
+        _sceneSituationContainer = new SceneSituationContainer();
+        _taskRunner.Register(_sceneSituationContainer);
+    }
+
+    /// <summary>
+    /// 開始処理
+    /// </summary>
+    private void Start() {
+        _sceneSituationContainer.Transition(new SampleASceneSituation());
     }
 
     /// <summary>
     /// 廃棄処理
     /// </summary>
     private void OnDestroy() {
-        _sceneRootSituation.CleanupRoot();
         _taskRunner.Dispose();
-    }
-
-    /// <summary>
-    /// 開始処理
-    /// </summary>
-    private IEnumerator Start() {
-        // Rootとして初期化
-        var handle = _sceneRootSituation.SetupRoot();
-        while (!handle.IsDone) {
-            yield return null;
-        }
     }
 
     /// <summary>

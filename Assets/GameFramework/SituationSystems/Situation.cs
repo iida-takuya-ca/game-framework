@@ -19,20 +19,6 @@ namespace GameFramework.SituationSystems {
             Active, // アクティブ
         }
         
-        // 遷移情報
-        public class TransitionInfo {
-            public ISituation owner;
-            public ISituation prev;
-            public ISituation next;
-            public TransitionState state;
-            public bool back;
-            public ITransitionEffect[] effects = new ITransitionEffect[0];
-        }
-
-        // 子シチュエーションスタック
-        private List<Situation> _childStack = new List<Situation>();
-        // 遷移中情報
-        private TransitionInfo _transitionInfo;
         // コルーチン実行用
         private CoroutineRunner _coroutineRunner = new CoroutineRunner();
         
@@ -42,194 +28,17 @@ namespace GameFramework.SituationSystems {
         private DisposableScope _setupScope;
         // アニメーションスコープ
         private DisposableScope _animationScope;
-
-        // ルートシチュエーションか
-        public bool IsRoot => Parent == null && CurrentState != State.Invalid;
-        // 親シチュエーション
-        public Situation Parent { get; private set; }        
+        
+        // 親のSituation
+        public Situation Parent => ParentContainer?.Owner;
+        // 登録されているContainer
+        public SituationContainer ParentContainer { get; private set; }
+        // 自身の所持するContainer
+        public SituationContainer Container { get; private set; }
         // インスタンス管理用
         public IServiceLocator ServiceLocator { get; private set; }
         // 現在状態
         public State CurrentState { get; private set; } = State.Invalid;
-        // 現在の子シチュエーション
-        public Situation CurrentChild => _childStack.Count > 0 ? _childStack[_childStack.Count - 1] : null;
-
-        /// <summary>
-        /// ルートとしてセットアップ
-        /// </summary>
-        public TransitionHandle SetupRoot() {
-            if (Parent != null) {
-                return new TransitionHandle(new Exception("Child situation is not root."));
-            }
-
-            if (CurrentState != State.Invalid) {
-                return new TransitionHandle(new Exception($"Already setup root."));
-            }
-            
-            var self = (ISituation)this;
-            var transitionInfo = new TransitionInfo {
-                owner = this,
-                prev = null,
-                next = this,
-                back = false,
-                state = TransitionState.Standby
-            };
-            var handle = new TransitionHandle(transitionInfo);
-            
-            IEnumerator SetupRoutine() {
-                // 初期化開始
-                transitionInfo.state = TransitionState.Initializing;
-
-                // 読み込み処理
-                yield return self.LoadRoutine(handle);
-            
-                // 初期化処理
-                self.Setup(handle);
-
-                // オープン開始
-                transitionInfo.state = TransitionState.Opening;
-            
-                // 開く処理
-                yield return self.OpenRoutine(handle);
-
-                transitionInfo.state = TransitionState.Completed;
-            }
-
-            // Rootとして初期化を実行
-            self.Standby(null);
-            _coroutineRunner.StartCoroutine(SetupRoutine());
-
-            return handle;
-        }
-
-        /// <summary>
-        /// ルートの解放処理
-        /// </summary>
-        public void CleanupRoot() {
-            if (!IsRoot) {
-                return;
-            }
-
-            var self = (ISituation)this;
-            self.Release(null);
-        }
-        
-        /// <summary>
-        /// 遷移実行
-        /// </summary>
-        /// <param name="situation">遷移先のシチュエーション(nullの場合、全部閉じる)</param>
-        /// <param name="overrideTransition">上書き用の遷移処理</param>
-        /// <param name="effects">遷移演出</param>
-        public TransitionHandle Transition(Situation situation, ITransition overrideTransition = null, params ITransitionEffect[] effects) {
-            var nextName = situation != null ? situation.GetType().Name : "null";
-            
-            if (_transitionInfo != null) {
-                return new TransitionHandle(new Exception($"In transit other. Situation:{nextName}"));
-            }
-            
-            // 既に同タイプのシチュエーションが登録されている場合、そこにスタックを戻す
-            var backIndex = -1;
-            var back = false;
-
-            if (situation != null) {
-                for (var i = 0; i < _childStack.Count; i++) {
-                    // 同じインスタンスは使いまわす
-                    if (_childStack[i] == situation) {
-                        backIndex = i;
-                        back = true;
-                        break;
-                    }
-
-                    // 同じ型は置き換える
-                    if (_childStack[i].GetType() == situation.GetType()) {
-                        // 遷移の必要なければキャンセル
-                        if (i == _childStack.Count - 1) {
-                            return new TransitionHandle(new Exception($"Cancel transit. Situation:{nextName}"));
-                        }
-                    
-                        var old = _childStack[i];
-                        ((ISituation)old).Release(this);
-                        _childStack[i] = situation;
-                        backIndex = i;
-                        back = true;
-                    }
-                }
-            }
-            else {
-                back = true;
-            }
-
-            var prev = (ISituation)(_childStack.Count > 0 ? _childStack[_childStack.Count - 1] : null);
-            var next = (ISituation)situation;
-
-            // 遷移の必要がなければキャンセル扱い
-            if (prev == next) {
-                return new TransitionHandle(new Exception($"Cancel transit. Situation:{nextName}"));
-            }
-            
-            // 遷移情報の取得
-            var transition = overrideTransition ?? GetDefaultTransition();
-            
-            // 遷移可能チェック
-            if (!CheckTransition(next, transition)) {
-                return new TransitionHandle(
-                    new Exception($"Cant transition. Situation:{nextName} Transition:{transition}"));
-            }
-            
-            // 戻る場合
-            if (back) {
-                // 現在のSituationをStackから除外
-                _childStack.RemoveAt(_childStack.Count - 1);
-
-                // 戻り先までの間にあるSituationをリリースして、Stackクリア
-                for (var i = _childStack.Count - 1; i > backIndex; i--) {
-                    ((ISituation)_childStack[i]).Release(this);
-                    _childStack.RemoveAt(i);
-                }
-            }
-            // 進む場合
-            else {
-                // スタックに登録
-                _childStack.Add(situation);
-            }
-
-            // 遷移情報を生成            
-            _transitionInfo = new TransitionInfo {
-                owner = this,
-                back = back,
-                prev = prev,
-                next = next,
-                state = TransitionState.Standby,
-                effects = effects
-            };
-            
-            // コルーチンの登録
-            _coroutineRunner.StartCoroutine(transition.TransitRoutine(_transitionInfo), () => {
-                // 戻る時はここでRelease
-                if (back && prev != null) {
-                    prev.Release(this);
-                }
-                _transitionInfo = null;
-            });
-            
-            // スタンバイ状態
-            _transitionInfo.next?.Standby(this);
-            
-            // ハンドルの返却
-            return new TransitionHandle(_transitionInfo);
-        }
-
-        /// <summary>
-        /// 遷移実行
-        /// </summary>
-        public TransitionHandle Back(ITransition overrideTransition = null) {
-            if (_childStack.Count <= 0) {
-                return new TransitionHandle(new Exception("Not found stack."));
-            }
-
-            var next = _childStack.Count > 1 ? _childStack[_childStack.Count - 2] : null;
-            return Transition(next, overrideTransition);
-        }
 
         /// <summary>
         /// 更新処理
@@ -238,28 +47,18 @@ namespace GameFramework.SituationSystems {
             if (CurrentState == State.Invalid) {
                 return;
             }
-
-            if (Parent != null) {
-                return;
-            }
             
-            UpdateRecursive();
-        }
-        private void UpdateRecursive() {
             // コルーチン更新
             _coroutineRunner.Update();
-            
-            // 子の再帰更新
-            if (CurrentChild != null) {
-                CurrentChild.UpdateRecursive();
-            }
 
-            // 遷移終わったらインターフェース更新
-            if (_transitionInfo == null) {
-                var current = (ISituation)CurrentChild;
-                if (current != null) {
-                    current.Update();
-                }
+            // Active中はInterfaceのUpdateを呼ぶ
+            if (CurrentState == State.Active) {
+                ((ISituation)this).Update();
+            }
+            
+            // コンテナの更新
+            if (Container != null) {
+                Container.Update();
             }
         }
 
@@ -271,24 +70,14 @@ namespace GameFramework.SituationSystems {
                 return;
             }
 
-            if (Parent != null) {
-                return;
+            // Active中はInterfaceのLateUpdateを呼ぶ
+            if (CurrentState == State.Active) {
+                ((ISituation)this).LateUpdate();
             }
             
-            UpdateRecursive();
-        }
-        private void LateUpdateRecursive() {
-            // 子の更新
-            if (CurrentChild != null) {
-                CurrentChild.LateUpdateRecursive();
-            }
-
-            // 遷移終わったらインターフェース更新
-            if (_transitionInfo == null) {
-                var current = (ISituation)CurrentChild;
-                if (current != null) {
-                    current.LateUpdate();
-                }
+            // コンテナの更新
+            if (Container != null) {
+                Container.LateUpdate();
             }
         }
 
@@ -299,18 +88,13 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// デフォルトの遷移を取得
-        /// </summary>
-        protected virtual ITransition GetDefaultTransition() {
-            return new OutInTransition();
-        }
-
-        /// <summary>
         /// スタンバイ処理
         /// </summary>
-        void ISituation.Standby(ISituation parent) {
+        void ISituation.Standby(SituationContainer container) {
             CurrentState = State.Standby;
-            Parent = (Situation)parent;
+            ParentContainer = container;
+            // Containerの生成
+            Container = CreateContainer();
             // ServiceLocatorの生成
             ServiceLocator = new ServiceLocator(Parent?.ServiceLocator ?? ProjectServiceLocator.Instance);
             StandbyInternal(Parent);
@@ -457,14 +241,14 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 登録解除処理
         /// </summary>
-        void ISituation.Release(ISituation parent) {
-            if (parent != Parent) {
+        void ISituation.Release(SituationContainer container) {
+            if (container != ParentContainer) {
                 Debug.LogError("Invalid release parent.");
                 return;
             }
 
-            var info = new TransitionInfo {
-                owner = parent,
+            var info = new SituationContainer.TransitionInfo {
+                container = container,
                 prev = this,
                 next = null,
                 back = false,
@@ -480,9 +264,10 @@ namespace GameFramework.SituationSystems {
                 situation.Unload(handle);
             }
             
-            ReleaseInternal((Situation)parent);
+            ReleaseInternal(container);
             
-            Parent = null;
+            ParentContainer = null;
+            Container.Dispose();
             ServiceLocator.Dispose();
             CurrentState = State.Invalid;
         }
@@ -490,8 +275,8 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 登録解除処理
         /// </summary>
-        /// <param name="parent">親シチュエーション</param>
-        protected virtual void ReleaseInternal(Situation parent) {
+        /// <param name="parent">登録されていたContainer</param>
+        protected virtual void ReleaseInternal(SituationContainer parent) {
         }
 
         /// <summary>
@@ -518,6 +303,13 @@ namespace GameFramework.SituationSystems {
         /// <returns>遷移可能か</returns>
         protected virtual bool CheckTransitionInternal(Situation childSituation, ITransition transition) {
             return true;
+        }
+
+        /// <summary>
+        /// 自身が所持するコンテナの生成
+        /// </summary>
+        protected virtual SituationContainer CreateContainer() {
+            return new SituationContainer();
         }
     }
 }

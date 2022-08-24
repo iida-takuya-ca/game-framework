@@ -23,8 +23,8 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 待機処理
         /// </summary>
-        /// <param name="parent">親Situation</param>
-        void Standby(ISituation parent);
+        /// <param name="container">登録されたContainer</param>
+        void Standby(SituationContainer container);
         
         /// <summary>
         /// 読み込み処理
@@ -75,7 +75,7 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 登録解除処理
         /// </summary>
-        /// <param name="parent">親Situation</param>
-        void Release(ISituation parent);
+        /// <param name="container">登録されていたContainer</param>
+        void Release(SituationContainer container);
     }
 }

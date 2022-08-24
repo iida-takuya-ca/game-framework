@@ -21,7 +21,7 @@ namespace GameFramework.SituationSystems {
     /// </summary>
     public struct TransitionHandle {
         // 制御用インスタンス
-        private Situation.TransitionInfo _transitionInfo;
+        private SituationContainer.TransitionInfo _transitionInfo;
 
         // 有効なハンドルか
         public bool IsValid => _transitionInfo != null;
@@ -41,7 +41,7 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public TransitionHandle(Situation.TransitionInfo info) {
+        public TransitionHandle(SituationContainer.TransitionInfo info) {
             _transitionInfo = info;
             Exception = null;
         }

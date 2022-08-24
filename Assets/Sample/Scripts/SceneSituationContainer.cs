@@ -5,9 +5,9 @@ using GameFramework.TaskSystems;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// シーンのRootとなるシチュエーション
+/// シーン遷移を行えるシチュエーションコンテナ
 /// </summary>
-public class SceneRootSituation : Situation, ILateUpdatableTask {
+public class SceneSituationContainer : SituationContainer, ILateUpdatableTask {
     // アクティブか
     bool ITask.IsActive => true;
     
@@ -43,13 +43,6 @@ public class SceneRootSituation : Situation, ILateUpdatableTask {
     void ILateUpdatableTask.LateUpdate() {
         // Rootシーン更新
         LateUpdate();
-    }
-
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    protected override void SetupInternal(TransitionHandle handle, IScope scope) {
-        Transition(new SampleASceneSituation());
     }
 
     /// <summary>
