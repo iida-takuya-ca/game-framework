@@ -6,27 +6,28 @@ namespace GameFramework.CoroutineSystems {
     /// 並列実行用コルーチン
     /// </summary>
     public class MergedCoroutine : IEnumerator {
-        private IEnumerator[] _enumerators;
+        private Coroutine[] _coroutines;
 
+        // 現在の位置(未使用)
+        public object Current => null;
         // 完了しているか
         public bool IsDone { get; private set; }
-        // 現在の位置(未使用)
-        object IEnumerator.Current => null;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="enumerators">非同期処理リスト</param>
-        public MergedCoroutine(params IEnumerator[] enumerators) {
-            _enumerators = enumerators;
+        /// <param name="funcs">非同期処理リスト</param>
+        public MergedCoroutine(params IEnumerator[] funcs) {
+            _coroutines = funcs.Select(x => new Coroutine(x))
+                .ToArray();
         }
 
         /// <summary>
         /// リセット処理
         /// </summary>
-        void IEnumerator.Reset() {
-            for (var i = 0; i < _enumerators.Length; i++) {
-                var coroutine = _enumerators[i];
+        public void Reset() {
+            for (var i = 0; i < _coroutines.Length; i++) {
+                var coroutine = (IEnumerator)_coroutines[i];
                 coroutine?.Reset();
             }
         }
@@ -35,18 +36,18 @@ namespace GameFramework.CoroutineSystems {
         /// コルーチン進行
         /// </summary>
         /// <returns>次の処理があるか？</returns>
-        bool IEnumerator.MoveNext() {
+        public bool MoveNext() {
             var finished = true;
 
-            for (var i = 0; i < _enumerators.Length; i++) {
-                var enumerator = _enumerators[i];
+            for (var i = 0; i < _coroutines.Length; i++) {
+                var coroutine = _coroutines[i];
 
-                if (enumerator == null) {
+                if (coroutine == null) {
                     continue;
                 }
 
-                if (!enumerator.MoveNext()) {
-                    _enumerators[i] = null;
+                if (!((IEnumerator)coroutine).MoveNext()) {
+                    _coroutines[i] = null;
                 }
                 else {
                     finished = false;
