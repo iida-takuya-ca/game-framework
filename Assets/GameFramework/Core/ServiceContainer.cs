@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace GameFramework.Core {
     /// <summary>
-    /// インスタンス提供用のロケーター
+    /// インスタンス提供用のコンテナ
     /// </summary>
-    public class ServiceLocator : IServiceLocator {
+    public class ServiceContainer : IServiceContainer {
         // 管理用サービス
         private Dictionary<Type, object> _services = new Dictionary<Type, object>();
         private Dictionary<Type, List<object>> _serviceLists = new Dictionary<Type, List<object>>();
@@ -17,22 +17,22 @@ namespace GameFramework.Core {
         // 自動Disposeフラグ
         private bool _autoDispose;
 
-        // 親のLocator
-        private IServiceLocator _parent;
-        // 子のLocator
-        private List<IServiceLocator> _children = new List<IServiceLocator>();
+        // 親のContainer
+        private IServiceContainer _parent;
+        // 子のContainer
+        private List<IServiceContainer> _children = new List<IServiceContainer>();
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="parent">親ServiceLocator</param>
+        /// <param name="parent">親ServiceContainer</param>
         /// <param name="autoDispose">登録したServiceを自動Disposeするか</param>
-        public ServiceLocator(IServiceLocator parent, bool autoDispose = true) {
+        public ServiceContainer(IServiceContainer parent, bool autoDispose = true) {
             _autoDispose = autoDispose;
             _parent = parent;
             
-            if (_parent is ServiceLocator locator) {
-                locator._children.Add(this);
+            if (_parent is ServiceContainer Container) {
+                Container._children.Add(this);
             }
         }
 

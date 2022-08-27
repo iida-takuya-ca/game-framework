@@ -4,17 +4,17 @@ using UnityEditor;
 
 namespace GameFramework.Core {
     /// <summary>
-    /// インスタンス提供用のロケーター
+    /// インスタンス提供用のコンテナ
     /// </summary>
-    public sealed class ProjectServiceLocator : ServiceLocator {
+    public sealed class ProjectServiceContainer : ServiceContainer {
         // シングルトン用インスタンス
-        private static IServiceLocator s_instance;
+        private static IServiceContainer s_instance;
         
         // シングルトン用インスタンス取得
-        public static IServiceLocator Instance {
+        public static IServiceContainer Instance {
             get {
                 if (s_instance == null) {
-                    s_instance = new ProjectServiceLocator();
+                    s_instance = new ProjectServiceContainer();
                 }
 
                 return s_instance;
@@ -24,7 +24,7 @@ namespace GameFramework.Core {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private ProjectServiceLocator()
+        private ProjectServiceContainer()
             : base(null) {
         }
         

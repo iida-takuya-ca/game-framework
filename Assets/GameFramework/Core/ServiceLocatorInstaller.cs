@@ -12,9 +12,9 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// インストール処理
         /// </summary>
-        public void Install(IServiceLocator locator) {
+        public void Install(IServiceContainer container) {
             foreach (var component in _installServices){
-                locator.Set(component);
+                container.Set(component);
             }
         }
     }

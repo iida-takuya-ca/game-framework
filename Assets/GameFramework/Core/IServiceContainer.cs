@@ -1,11 +1,10 @@
 using System;
-using UnityEngine;
 
 namespace GameFramework.Core {
     /// <summary>
     /// インスタンス提供用のロケーター
     /// </summary>
-    public interface IServiceLocator : IDisposable {
+    public interface IServiceContainer : IDisposable {
         /// <summary>
         /// サービスの設定
         /// </summary>

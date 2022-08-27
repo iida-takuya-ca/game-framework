@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
 using UnityEngine;
@@ -36,7 +34,7 @@ namespace GameFramework.SituationSystems {
         // 自身の所持するContainer
         public SituationContainer Container { get; private set; }
         // インスタンス管理用
-        public IServiceLocator ServiceLocator { get; private set; }
+        public IServiceContainer ServiceContainer { get; private set; }
         // 現在状態
         public State CurrentState { get; private set; } = State.Invalid;
 
@@ -96,7 +94,7 @@ namespace GameFramework.SituationSystems {
             // Containerの生成
             Container = CreateContainer();
             // ServiceLocatorの生成
-            ServiceLocator = new ServiceLocator(Parent?.ServiceLocator ?? ProjectServiceLocator.Instance);
+            ServiceContainer = new ServiceContainer(Parent?.ServiceContainer ?? ProjectServiceContainer.Instance);
             StandbyInternal(Parent);
         }
 
@@ -268,7 +266,7 @@ namespace GameFramework.SituationSystems {
             
             ParentContainer = null;
             Container.Dispose();
-            ServiceLocator.Dispose();
+            ServiceContainer.Dispose();
             CurrentState = State.Invalid;
         }
 

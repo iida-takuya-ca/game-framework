@@ -24,7 +24,7 @@ public abstract class SceneSituation : Situation {
             .SelectMany(x => x.GetComponentsInChildren<ServiceLocatorInstaller>(true))
             .ToArray();
         foreach (var installer in installers) {
-            installer.Install(ServiceLocator);
+            installer.Install(ServiceContainer);
         }
     }
 }
