@@ -29,6 +29,14 @@ public class SampleASceneSituation : SceneSituation {
         Debug.Log($"[{Time.frameCount}]Setup:{GetType().Name} Back > {handle.Back}");
     }
 
+    protected override void ActiveInternal(TransitionHandle handle, IScope scope) {
+        base.ActiveInternal(handle, scope);
+        Observable.IntervalFrame(30)
+            .Take(10)
+            .TakeUntil(scope)
+            .Subscribe(x => Debug.Log(x));
+    }
+
     /// <summary>
     /// 開く処理
     /// </summary>

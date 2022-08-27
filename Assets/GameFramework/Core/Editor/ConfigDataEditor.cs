@@ -31,6 +31,9 @@ namespace GameFramework.Core.Editor {
         /// </summary>
         public void Apply(ConfigData configData) {
             ApplyDefineSymbol("USE_UNI_RX", configData.useUniRx);
+            
+            // Scriptのリロード
+            EditorUtility.RequestScriptReload();
         }
 
         /// <summary>
