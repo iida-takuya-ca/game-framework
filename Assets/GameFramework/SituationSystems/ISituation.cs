@@ -8,7 +8,9 @@ namespace GameFramework.SituationSystems {
     ///   LoadRoutine
     ///     Setup
     ///       OpenRoutine
-    ///         Update/LateUpdate
+    ///         Activate
+    ///           Update/LateUpdate
+    ///         Deactivate
     ///       CloseRoutine
     ///     Cleanup
     ///   Unload
@@ -38,6 +40,12 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         IEnumerator OpenRoutine(TransitionHandle handle);
+
+        /// <summary>
+        /// アクティブ化された時の処理
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        void Activate(TransitionHandle handle);
         
         /// <summary>
         /// 更新
@@ -48,6 +56,12 @@ namespace GameFramework.SituationSystems {
         /// 後更新
         /// </summary>
         void LateUpdate();
+
+        /// <summary>
+        /// ディアクティブ化された時の処理
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        void Deactivate(TransitionHandle handle);
         
         /// <summary>
         /// 閉じる処理

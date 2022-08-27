@@ -24,13 +24,6 @@ namespace GameFramework.SituationSystems {
         private TransitionInfo _transitionInfo;
         // コルーチン実行用
         private CoroutineRunner _coroutineRunner = new CoroutineRunner();
-        
-        // 読み込みスコープ
-        private DisposableScope _loadScope;
-        // 初期化スコープ
-        private DisposableScope _setupScope;
-        // アニメーションスコープ
-        private DisposableScope _animationScope;
 
         // 持ち主のSituation
         public Situation Owner { get; private set; }
@@ -215,6 +208,7 @@ namespace GameFramework.SituationSystems {
             if (Current != null) {
                 ((ISituation)Current).Release(this);
             }
+            _coroutineRunner.Dispose();
             _transitionInfo = null;
         }
 

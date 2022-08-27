@@ -41,11 +41,19 @@ namespace GameFramework.SituationSystems {
             yield return new MergedCoroutine(functions.ToArray());
 
             if (prev != null) {
+                // 非アクティブ化
+                prev.Deactivate(handle);
+                
                 // 終了処理
                 prev.Cleanup(handle);
                 
                 // 解放処理
                 prev.Unload(handle);
+            }
+
+            if (next != null) {
+                // アクティブ化
+                next.Activate(handle);
             }
             
             // 完了

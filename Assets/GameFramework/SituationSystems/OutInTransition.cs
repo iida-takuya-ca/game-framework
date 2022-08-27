@@ -26,6 +26,9 @@ namespace GameFramework.SituationSystems {
                 functions.AddRange(transitionInfo.effects.Select(x => x.EnterRoutine()));
                 yield return new MergedCoroutine(functions.ToArray());
                 
+                // 非アクティブ化
+                prev.Deactivate(handle);
+                
                 // 終了処理
                 prev.Cleanup(handle);
                 
@@ -58,6 +61,9 @@ namespace GameFramework.SituationSystems {
                 functions.Add(next.OpenRoutine(handle));
                 functions.AddRange(transitionInfo.effects.Select(x => x.ExitRoutine()));
                 yield return new MergedCoroutine(functions.ToArray());
+            
+                // アクティブ化
+                next.Activate(handle);
             }
             
             // 完了

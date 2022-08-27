@@ -14,11 +14,8 @@ namespace GameFramework.SituationSystems {
             Standby, // 待機状態
             Loaded, // 読み込み済
             SetupFinished, // 初期化済
-            Active, // アクティブ
+            Active, // アクティブ中
         }
-        
-        // コルーチン実行用
-        private CoroutineRunner _coroutineRunner = new CoroutineRunner();
         
         // 読み込みスコープ
         private DisposableScope _loadScope;
@@ -26,6 +23,8 @@ namespace GameFramework.SituationSystems {
         private DisposableScope _setupScope;
         // アニメーションスコープ
         private DisposableScope _animationScope;
+        // アクティブスコープ
+        private DisposableScope _activeScope;
         
         // 親のSituation
         public Situation Parent => ParentContainer?.Owner;
@@ -45,9 +44,6 @@ namespace GameFramework.SituationSystems {
             if (CurrentState == State.Invalid) {
                 return;
             }
-            
-            // コルーチン更新
-            _coroutineRunner.Update();
 
             // Active中はInterfaceのUpdateを呼ぶ
             if (CurrentState == State.Active) {
@@ -99,28 +95,12 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// スタンバイ処理
-        /// </summary>
-        /// <param name="parent">親シチュエーション</param>
-        protected virtual void StandbyInternal(Situation parent) {
-        }
-
-        /// <summary>
         /// 読み込み処理
         /// </summary>
         IEnumerator ISituation.LoadRoutine(TransitionHandle handle) {
             _loadScope = new DisposableScope();
             yield return LoadRoutineInternal(handle, _loadScope);
             CurrentState = State.Loaded;
-        }
-
-        /// <summary>
-        /// 読み込み処理(内部用)
-        /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        /// <param name="scope">読み込み用スコープ(LoadRoutine～Unloadまで)</param>
-        protected virtual IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
-            yield break;
         }
 
         /// <summary>
@@ -133,30 +113,21 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// 初期化処理(内部用)
-        /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        /// <param name="scope">読み込み用スコープ(Setup～Cleanupまで)</param>
-        protected virtual void SetupInternal(TransitionHandle handle, IScope scope) {
-        }
-
-        /// <summary>
         /// 開く処理
         /// </summary>
         IEnumerator ISituation.OpenRoutine(TransitionHandle handle) {
             _animationScope = new DisposableScope();
             yield return OpenRoutineInternal(handle, _animationScope);
-            CurrentState = State.Active;
             _animationScope.Dispose();
         }
 
         /// <summary>
-        /// 開く処理(内部用)
+        /// アクティブ時処理
         /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        /// <param name="animationScope">アニメーションキャンセル用スコープ(OpenRoutine中)</param>
-        protected virtual IEnumerator OpenRoutineInternal(TransitionHandle handle, IScope animationScope) {
-            yield break;
+        void ISituation.Activate(TransitionHandle handle) {
+            _activeScope = new DisposableScope();
+            ActiveInternal(handle, _activeScope);
+            CurrentState = State.Active;
         }
 
         /// <summary>
@@ -167,12 +138,6 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// 更新処理(内部用)
-        /// </summary>
-        protected virtual void UpdateInternal() {
-        }
-
-        /// <summary>
         /// 後更新処理
         /// </summary>
         void ISituation.LateUpdate() {
@@ -180,9 +145,12 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// 後更新処理(内部用)
+        /// 非アクティブ時処理
         /// </summary>
-        protected virtual void LateUpdateInternal() {
+        void ISituation.Deactivate(TransitionHandle handle) {
+            CurrentState = State.SetupFinished;
+            DeactiveInternal(handle);
+            _activeScope.Dispose();
         }
 
         /// <summary>
@@ -190,18 +158,8 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         IEnumerator ISituation.CloseRoutine(TransitionHandle handle) {
             _animationScope = new DisposableScope();
-            CurrentState = State.SetupFinished;
             yield return CloseRoutineInternal(handle, _animationScope);
             _animationScope.Dispose();
-        }
-
-        /// <summary>
-        /// 閉じる処理(内部用)
-        /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        /// <param name="animationScope">アニメーションキャンセル用スコープ(OpenRoutine中)</param>
-        protected virtual IEnumerator CloseRoutineInternal(TransitionHandle handle, IScope animationScope) {
-            yield break;
         }
 
         /// <summary>
@@ -214,26 +172,12 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// 初期化処理(内部用)
-        /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        protected virtual void CleanupInternal(TransitionHandle handle) {
-        }
-
-        /// <summary>
         /// 解放処理
         /// </summary>
         void ISituation.Unload(TransitionHandle handle) {
             CurrentState = State.Standby;
             UnloadInternal(handle);
             _loadScope.Dispose();
-        }
-
-        /// <summary>
-        /// 解放処理(内部用)
-        /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        protected virtual void UnloadInternal(TransitionHandle handle) {
         }
 
         /// <summary>
@@ -255,7 +199,10 @@ namespace GameFramework.SituationSystems {
             var handle = new TransitionHandle(info);
 
             var situation = (ISituation)this;
-            if (CurrentState == State.Active || CurrentState == State.SetupFinished) {
+            if (CurrentState == State.Active) {
+                situation.Deactivate(handle);
+            }
+            if (CurrentState == State.SetupFinished) {
                 situation.Cleanup(handle);
             }
             if (CurrentState == State.Loaded) {
@@ -271,26 +218,93 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
+        /// スタンバイ処理
+        /// </summary>
+        /// <param name="parent">親シチュエーション</param>
+        protected virtual void StandbyInternal(Situation parent) {
+        }
+
+        /// <summary>
+        /// 読み込み処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        /// <param name="scope">スコープ(LoadRoutine～Unloadまで)</param>
+        protected virtual IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
+            yield break;
+        }
+
+        /// <summary>
+        /// 初期化処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        /// <param name="scope">スコープ(Setup～Cleanupまで)</param>
+        protected virtual void SetupInternal(TransitionHandle handle, IScope scope) {
+        }
+
+        /// <summary>
+        /// 開く処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        /// <param name="animationScope">アニメーションキャンセル用スコープ(OpenRoutine中)</param>
+        protected virtual IEnumerator OpenRoutineInternal(TransitionHandle handle, IScope animationScope) {
+            yield break;
+        }
+
+        /// <summary>
+        /// アクティブ処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        /// <param name="scope">スコープ(Active～Deactiveまで)</param>
+        protected virtual void ActiveInternal(TransitionHandle handle, IScope scope) {
+        }
+
+        /// <summary>
+        /// 更新処理(内部用)
+        /// </summary>
+        protected virtual void UpdateInternal() {
+        }
+
+        /// <summary>
+        /// 後更新処理(内部用)
+        /// </summary>
+        protected virtual void LateUpdateInternal() {
+        }
+
+        /// <summary>
+        /// 非アクティブ処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        protected virtual void DeactiveInternal(TransitionHandle handle) {
+        }
+
+        /// <summary>
+        /// 閉じる処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        /// <param name="animationScope">アニメーションキャンセル用スコープ(OpenRoutine中)</param>
+        protected virtual IEnumerator CloseRoutineInternal(TransitionHandle handle, IScope animationScope) {
+            yield break;
+        }
+
+        /// <summary>
+        /// 初期化処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        protected virtual void CleanupInternal(TransitionHandle handle) {
+        }
+
+        /// <summary>
+        /// 解放処理(内部用)
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        protected virtual void UnloadInternal(TransitionHandle handle) {
+        }
+
+        /// <summary>
         /// 登録解除処理
         /// </summary>
         /// <param name="parent">登録されていたContainer</param>
         protected virtual void ReleaseInternal(SituationContainer parent) {
-        }
-
-        /// <summary>
-        /// 遷移チェック
-        /// </summary>
-        private bool CheckTransition(ISituation childSituation, ITransition transition) {
-            if (transition == null) {
-                return false;
-            }
-
-            // null遷移は常に許可
-            if (childSituation == null) {
-                return true;
-            }
-
-            return CheckTransitionInternal((Situation)childSituation, transition);
         }
 
         /// <summary>
@@ -308,6 +322,22 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         protected virtual SituationContainer CreateContainer() {
             return new SituationContainer();
+        }
+
+        /// <summary>
+        /// 遷移チェック
+        /// </summary>
+        private bool CheckTransition(ISituation childSituation, ITransition transition) {
+            if (transition == null) {
+                return false;
+            }
+
+            // null遷移は常に許可
+            if (childSituation == null) {
+                return true;
+            }
+
+            return CheckTransitionInternal((Situation)childSituation, transition);
         }
     }
 }
