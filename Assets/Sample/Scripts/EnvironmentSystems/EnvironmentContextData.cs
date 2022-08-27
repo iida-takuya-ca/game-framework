@@ -21,18 +21,4 @@ public class EnvironmentContextData : ScriptableObject, IEnvironmentContext {
     public Color AmbientGroundColor => _ambientGroundColor;
     public Color AmbientLight => _ambientLight;
     public SphericalHarmonicsL2 AmbientProbe => RenderSettings.ambientProbe;
-
-    /// <summary>
-    /// 値の反映
-    /// </summary>
-    void GameFramework.EnvironmentSystems.IEnvironmentContext.Apply() {
-        this.Apply();
-    }
-
-    /// <summary>
-    /// 値の線形補間
-    /// </summary>
-    GameFramework.EnvironmentSystems.IEnvironmentContext GameFramework.EnvironmentSystems.IEnvironmentContext.Lerp(GameFramework.EnvironmentSystems.IEnvironmentContext target, float rate) {
-        return this.Lerp((IEnvironmentContext)target, rate);
-    }
 }

@@ -25,8 +25,8 @@ namespace GameFramework.EnvironmentSystems {
         private List<EnvironmentInfo> _stack = new List<EnvironmentInfo>();
         // 環境情報
         private Dictionary<EnvironmentHandle, EnvironmentInfo> _environmentInfos = new Dictionary<EnvironmentHandle, EnvironmentInfo>();
-        // 現在の設定値を取るためのContext
-        private IEnvironmentContext _currentContext;
+        // 制御用Resolver
+        private IEnvironmentResolver _resolver;
         // 時間制御クラス
         private LayeredTime _layeredTime;
 
@@ -36,10 +36,10 @@ namespace GameFramework.EnvironmentSystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="currentContext">現在の値を取得するための再利用可能なContext</param>
+        /// <param name="resolver">環境設定反映用のResolver</param>
         /// <param name="layeredTime">時間管理クラス</param>
-        public EnvironmentManager(IEnvironmentContext currentContext, LayeredTime layeredTime = null) {
-            _currentContext = currentContext;
+        public EnvironmentManager(IEnvironmentResolver resolver, LayeredTime layeredTime = null) {
+            _resolver = resolver;
             _layeredTime = layeredTime;
         }
 
@@ -49,7 +49,7 @@ namespace GameFramework.EnvironmentSystems {
         public void Dispose() {
             _stack.Clear();
             _environmentInfos.Clear();
-            _currentContext = null;
+            _resolver = null;
         }
 
         /// <summary>
@@ -117,16 +117,17 @@ namespace GameFramework.EnvironmentSystems {
                 // カレントではなければ、時間を0にする
                 if (i != _stack.Count - 1) {
                     info.timer = 0.0f;
+                    continue;
                 }
                 
                 // ブレンド処理を行う
                 info.timer -= deltaTime;
                 var blendRate = info.timer > float.Epsilon ? Mathf.Clamp01(deltaTime / info.timer) : 1.0f;
-                var current = _currentContext;
-                var settings = current.Lerp(info.context, blendRate);
+                var current = _resolver.GetCurrent();
+                var context = _resolver.Lerp(current, info.context, blendRate);
                 
                 // 設定反映
-                settings.Apply();
+                _resolver.Apply(context);
             }
         }
 
