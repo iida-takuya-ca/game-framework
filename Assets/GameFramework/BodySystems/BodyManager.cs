@@ -132,6 +132,7 @@ namespace GameFramework.BodySystems {
         /// <param name="body">構築対象のBody</param>
         private void BuildDefault(IBody body) {
             body.AddController(new LocatorController());
+            body.AddController(new ParentController());
         }
 
         /// <summary>
