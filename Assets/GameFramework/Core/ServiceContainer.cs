@@ -112,11 +112,14 @@ namespace GameFramework.Core {
         /// <param name="type">登録したインスタンスのタイプ</param>
         /// </summary>
         public object Get(Type type) {
-            if (!_services.TryGetValue(type, out var service)) {
-                // 親を再帰的に検索
-                if (_parent != null) {
-                    return _parent.Get(type);
+            for (var i = _children.Count - 1; i >= 0; i--) {
+                var result = _children[i].Get(type);
+                if (result != default) {
+                    return result;
                 }
+            }
+            
+            if (!_services.TryGetValue(type, out var service)) {
                 return default;
             }
 
@@ -136,11 +139,14 @@ namespace GameFramework.Core {
         /// <param name="type">登録したインスタンスのタイプ</param>
         /// <param name="index">インデックス</param>
         public object Get(Type type, int index) {
-            if (!_serviceLists.TryGetValue(type, out var list)) {
-                // 親を再帰的に検索
-                if (_parent != null) {
-                    return _parent.Get(type, index);
+            for (var i = _children.Count - 1; i >= 0; i--) {
+                var result = _children[i].Get(type, index);
+                if (result != default) {
+                    return result;
                 }
+            }
+            
+            if (!_serviceLists.TryGetValue(type, out var list)) {
                 return default;
             }
 
