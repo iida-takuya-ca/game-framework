@@ -1,4 +1,3 @@
-
 using System;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -13,7 +12,7 @@ namespace GameFramework.Core {
         private static IServiceContainer s_instance;
         
         // シングルトン用インスタンス取得
-        public static IServiceContainer Instance {
+        internal static IServiceContainer Instance {
             get {
                 if (s_instance == null) {
                     s_instance = new Services();
@@ -53,13 +52,6 @@ namespace GameFramework.Core {
         /// <param name="index">インデックス</param>
         public new static T Get<T>(int index) {
             return Instance.Get<T>(index);
-        }
-        
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        private Services()
-            : base(null) {
         }
         
 #if UNITY_EDITOR

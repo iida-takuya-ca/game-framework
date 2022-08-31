@@ -35,6 +35,7 @@ public class SituationSample : MonoBehaviour {
     /// </summary>
     private void OnDestroy() {
         _taskRunner.Dispose();
+        _sceneSituationContainer.Dispose();
     }
 
     /// <summary>

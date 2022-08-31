@@ -27,12 +27,16 @@ namespace GameFramework.Core {
         /// </summary>
         /// <param name="parent">親ServiceContainer</param>
         /// <param name="autoDispose">登録したServiceを自動Disposeするか</param>
-        public ServiceContainer(IServiceContainer parent, bool autoDispose = true) {
+        public ServiceContainer(IServiceContainer parent = null, bool autoDispose = true) {
+            if (parent == null && GetType() != typeof(Services)) {
+                parent = Services.Instance;
+            } 
+            
             _autoDispose = autoDispose;
             _parent = parent;
             
-            if (_parent is ServiceContainer Container) {
-                Container._children.Add(this);
+            if (_parent is ServiceContainer container) {
+                container._children.Add(this);
             }
         }
 
