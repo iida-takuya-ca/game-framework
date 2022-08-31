@@ -17,6 +17,9 @@ namespace GameFramework.SituationSystems {
     /// Release
     /// </summary>
     public interface ISituation {
+        // プリロードされているか
+        bool PreLoaded { get; }
+        
         /// <summary>
         /// 待機処理
         /// </summary>
@@ -86,5 +89,15 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         /// <param name="container">登録されていたContainer</param>
         void Release(SituationContainer container);
+
+        /// <summary>
+        /// プリロード処理
+        /// </summary>
+        IEnumerator PreLoadRoutine();
+
+        /// <summary>
+        /// プリロード解除処理
+        /// </summary>
+        void UnPreLoad();
     }
 }

@@ -12,9 +12,6 @@ namespace GameFramework.CoroutineSystems {
         private IEnumerator _enumerator;
         private Stack<object> _stack;
         private object _current;
-
-        // WaitForSeconds.m_Seconds
-        private static readonly FieldInfo WaitForSecondsAccessor = typeof(WaitForSeconds).GetField("m_Seconds", BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
         
         // 完了しているか
         public bool IsDone { get; private set; }
@@ -96,27 +93,11 @@ namespace GameFramework.CoroutineSystems {
             }
             else if (peek is WaitForSeconds waitForSeconds) {
                 _stack.Pop();
-                _stack.Push(UnwrapWaitForSeconds(waitForSeconds));
+                _stack.Push(waitForSeconds.GetEnumerator());
                 Update();
             }
             else {
                 throw new NotSupportedException($"{peek.GetType()} is not supported.");
-            }
-        }
-
-        /// <summary>
-        /// WaitForSecondsをIEnumeratorに変換
-        /// </summary>
-        private IEnumerator UnwrapWaitForSeconds(WaitForSeconds waitForSeconds) {
-            var second = (float)WaitForSecondsAccessor.GetValue(waitForSeconds);
-            var startTime = DateTimeOffset.UtcNow;
-            while (true) {
-                yield return null;
-
-                var elapsed = (DateTimeOffset.UtcNow - startTime).TotalSeconds;
-                if (elapsed >= second) {
-                    break;
-                }
             }
         }
     }

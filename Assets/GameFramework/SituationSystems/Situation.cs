@@ -36,6 +36,8 @@ namespace GameFramework.SituationSystems {
         public IServiceContainer ServiceContainer { get; private set; }
         // 現在状態
         public State CurrentState { get; private set; } = State.Invalid;
+        // プリロードされているか
+        public bool PreLoaded { get; private set; } = false;
 
         /// <summary>
         /// 更新処理
@@ -85,6 +87,15 @@ namespace GameFramework.SituationSystems {
         /// スタンバイ処理
         /// </summary>
         void ISituation.Standby(SituationContainer container) {
+            if (ParentContainer != null && container != ParentContainer) {
+                Debug.LogError("Already exists container.");
+                return;
+            }
+
+            if (CurrentState >= State.Standby) {
+                return;
+            }
+            
             CurrentState = State.Standby;
             ParentContainer = container;
             // Containerの生成
@@ -98,6 +109,18 @@ namespace GameFramework.SituationSystems {
         /// 読み込み処理
         /// </summary>
         IEnumerator ISituation.LoadRoutine(TransitionHandle handle) {
+            if (CurrentState >= State.Loaded) {
+                yield break;
+            }
+
+            // PreLoadしている場合、Loadedになるのを待つ
+            if (PreLoaded) {
+                while (CurrentState < State.Loaded) {
+                    yield return null;
+                }
+                yield break;
+            }
+            
             _loadScope = new DisposableScope();
             yield return LoadRoutineInternal(handle, _loadScope);
             CurrentState = State.Loaded;
@@ -107,6 +130,10 @@ namespace GameFramework.SituationSystems {
         /// 初期化処理
         /// </summary>
         void ISituation.Setup(TransitionHandle handle) {
+            if (CurrentState >= State.SetupFinished) {
+                return;
+            }
+            
             _setupScope = new DisposableScope();
             SetupInternal(handle, _setupScope);
             CurrentState = State.SetupFinished;
@@ -119,12 +146,17 @@ namespace GameFramework.SituationSystems {
             _animationScope = new DisposableScope();
             yield return OpenRoutineInternal(handle, _animationScope);
             _animationScope.Dispose();
+            _animationScope = null;
         }
 
         /// <summary>
         /// アクティブ時処理
         /// </summary>
         void ISituation.Activate(TransitionHandle handle) {
+            if (CurrentState >= State.Active) {
+                return;
+            }
+            
             _activeScope = new DisposableScope();
             ActiveInternal(handle, _activeScope);
             CurrentState = State.Active;
@@ -148,9 +180,14 @@ namespace GameFramework.SituationSystems {
         /// 非アクティブ時処理
         /// </summary>
         void ISituation.Deactivate(TransitionHandle handle) {
+            if (CurrentState <= State.SetupFinished) {
+                return;
+            }
+            
             CurrentState = State.SetupFinished;
             DeactiveInternal(handle);
             _activeScope.Dispose();
+            _activeScope = null;
         }
 
         /// <summary>
@@ -160,32 +197,47 @@ namespace GameFramework.SituationSystems {
             _animationScope = new DisposableScope();
             yield return CloseRoutineInternal(handle, _animationScope);
             _animationScope.Dispose();
+            _animationScope = null;
         }
 
         /// <summary>
         /// 終了処理
         /// </summary>
         void ISituation.Cleanup(TransitionHandle handle) {
+            if (CurrentState <= State.Loaded) {
+                return;
+            }
+            
             CurrentState = State.Loaded;
             CleanupInternal(handle);
             _setupScope.Dispose();
+            _setupScope = null;
         }
 
         /// <summary>
         /// 解放処理
         /// </summary>
         void ISituation.Unload(TransitionHandle handle) {
+            if (CurrentState <= State.Standby) {
+                return;
+            }
+            
             CurrentState = State.Standby;
             UnloadInternal(handle);
             _loadScope.Dispose();
+            _loadScope = null;
         }
 
         /// <summary>
         /// 登録解除処理
         /// </summary>
         void ISituation.Release(SituationContainer container) {
-            if (container != ParentContainer) {
+            if (ParentContainer != null && container != ParentContainer) {
                 Debug.LogError("Invalid release parent.");
+                return;
+            }
+
+            if (CurrentState <= State.Invalid) {
                 return;
             }
 
@@ -205,6 +257,12 @@ namespace GameFramework.SituationSystems {
             if (CurrentState == State.SetupFinished) {
                 situation.Cleanup(handle);
             }
+
+            // PreLoadはここで終わり
+            if (PreLoaded) {
+                return;
+            }
+            
             if (CurrentState == State.Loaded) {
                 situation.Unload(handle);
             }
@@ -215,6 +273,39 @@ namespace GameFramework.SituationSystems {
             Container.Dispose();
             ServiceContainer.Dispose();
             CurrentState = State.Invalid;
+        }
+
+        /// <summary>
+        /// プリロード処理
+        /// </summary>
+        IEnumerator ISituation.PreLoadRoutine() {
+            if (PreLoaded) {
+                yield break;
+            }
+            
+            var situation = (ISituation)this;
+            PreLoaded = true;
+            
+            yield return situation.LoadRoutine(new TransitionHandle());
+        }
+
+        /// <summary>
+        /// プリロード解除処理
+        /// </summary>
+        void ISituation.UnPreLoad() {
+            if (!PreLoaded) {
+                return;
+            }
+            
+            var situation = (ISituation)this;
+            PreLoaded = false;
+
+            // 稼働中ならUnloadは呼ばない
+            if (CurrentState >= State.SetupFinished) {
+                return;
+            }
+            
+            situation.Unload(new TransitionHandle());
         }
 
         /// <summary>

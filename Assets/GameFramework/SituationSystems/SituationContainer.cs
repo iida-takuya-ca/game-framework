@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
@@ -148,6 +149,34 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
+        /// シチュエーションのプリロード
+        /// </summary>
+        /// <param name="situation">プリロード対象のSituation</param>
+        public void PreLoad(Situation situation) {
+            var target = (ISituation)situation;
+            if (!target.PreLoaded) {
+                target.Standby(this);
+                _coroutineRunner.StartCoroutine(target.PreLoadRoutine());
+            }
+        }
+
+        /// <summary>
+        /// シチュエーションのプリロード解除
+        /// </summary>
+        /// <param name="situation">プリロード解除対象のSituation</param>
+        public void UnPreLoad(Situation situation) {
+            var target = (ISituation)situation;
+            if (target.PreLoaded) {
+                target.UnPreLoad();
+                
+                // StackになければReleaseする
+                if (!_stack.Contains(situation)) {
+                    target.Release(this);
+                }
+            }
+        }
+
+        /// <summary>
         /// 更新処理
         /// </summary>
         public void Update() {
@@ -205,9 +234,18 @@ namespace GameFramework.SituationSystems {
         /// 廃棄時処理
         /// </summary>
         public void Dispose() {
-            if (Current != null) {
-                ((ISituation)Current).Release(this);
+            // PreLoad毎解放する
+            void ForceRelease(ISituation situation) {
+                situation.UnPreLoad();
+                situation.Release(this);
             }
+
+            // Stackの中身を全部クリア
+            while (_stack.Count > 0) {
+                ForceRelease(_stack[_stack.Count - 1]);
+                _stack.RemoveAt(_stack.Count - 1);
+            }
+            
             _coroutineRunner.Dispose();
             _transitionInfo = null;
         }
