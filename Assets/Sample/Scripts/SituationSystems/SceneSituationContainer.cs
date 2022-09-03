@@ -12,24 +12,6 @@ public class SceneSituationContainer : SituationContainer, ILateUpdatableTask {
     bool ITask.IsActive => true;
     
     /// <summary>
-    /// シーン遷移用クラス
-    /// </summary>
-    private class SceneTransition : OutInTransition {
-        /// <summary>
-        /// 初期化前処理
-        /// </summary>
-        protected override IEnumerator PreInitializeRoutine(TransitionInfo transitionInfo) {
-            var next = transitionInfo.next;
-            if (next == null) {
-                yield break;
-            }
-            
-            // シーンの切り替え
-            yield return SceneManager.LoadSceneAsync(((SceneSituation)next).SceneAssetPath, LoadSceneMode.Single);
-        }
-    }
-
-    /// <summary>
     /// タスク更新
     /// </summary>
     void ITask.Update() {
@@ -49,13 +31,26 @@ public class SceneSituationContainer : SituationContainer, ILateUpdatableTask {
     /// 遷移用のTransition取得
     /// </summary>
     protected override ITransition GetDefaultTransition() {
-        return new SceneTransition();
+        return new OutInTransition();
     }
 
     /// <summary>
     /// 遷移を行えるか
     /// </summary>
     protected override bool CheckTransitionInternal(Situation next, ITransition transition) {
-        return next is SceneSituation && transition is SceneTransition;
+        return next is SceneSituation && transition is OutInTransition;
+    }
+
+    /// <summary>
+    /// 読み込みの直前コルーチン
+    /// </summary>
+    /// <param name="handle">遷移ハンドル</param>
+    protected override IEnumerator PreLoadNextRoutine(TransitionHandle handle) {
+        var next = handle.Next as SceneSituation;
+        if (next == null) {
+            yield break;
+        }
+        // シーンの切り替え
+        yield return SceneManager.LoadSceneAsync(next.SceneAssetPath, LoadSceneMode.Single);
     }
 }

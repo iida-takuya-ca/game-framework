@@ -1,12 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GameFramework.CoroutineSystems;
 
 namespace GameFramework.SituationSystems {
     /// <summary>
     /// シチュエーション管理用クラス
     /// </summary>
-    public class SituationContainer : IDisposable {
+    public class SituationContainer : IDisposable, ITransitionResolver {
         // 遷移情報
         public class TransitionInfo {
             public SituationContainer container;
@@ -15,6 +17,7 @@ namespace GameFramework.SituationSystems {
             public TransitionState state;
             public bool back;
             public ITransitionEffect[] effects = new ITransitionEffect[0];
+            public bool effectActive;
         }
 
         // 子シチュエーションスタック
@@ -119,7 +122,7 @@ namespace GameFramework.SituationSystems {
             };
             
             // コルーチンの登録
-            _coroutineRunner.StartCoroutine(transition.TransitRoutine(_transitionInfo), () => {
+            _coroutineRunner.StartCoroutine(transition.TransitRoutine(this), () => {
                 // 戻る時はここでRelease
                 if (back && prev != null) {
                     prev.Release(this);
@@ -181,13 +184,19 @@ namespace GameFramework.SituationSystems {
             // コルーチン更新
             _coroutineRunner.Update();
             
-            // 遷移中のシチュエーション更新
             if (_transitionInfo != null) {
+                // 遷移中のシチュエーション更新
                 if (_transitionInfo.prev is Situation prev) {
                     prev.Update();
                 }
                 if (_transitionInfo.next is Situation next) {
                     next.Update();
+                }
+                // エフェクト更新
+                if (_transitionInfo.effectActive) {
+                    for (var i = 0; i < _transitionInfo.effects.Length; i++) {
+                        _transitionInfo.effects[i].Update();
+                    }
                 }
             }
             // カレントシチュエーションの更新
@@ -279,6 +288,112 @@ namespace GameFramework.SituationSystems {
         /// <returns>遷移可能か</returns>
         protected virtual bool CheckTransitionInternal(Situation childSituation, ITransition transition) {
             return true;
+        }
+
+        /// <summary>
+        /// 遷移開始
+        /// </summary>
+        void ITransitionResolver.Start() {
+            _transitionInfo.state = TransitionState.Standby;
+        }
+
+        /// <summary>
+        /// エフェクト開始コルーチン
+        /// </summary>
+        IEnumerator ITransitionResolver.EnterEffectRoutine() {
+            yield return new MergedCoroutine(_transitionInfo.effects.Select(x => x.EnterRoutine()).ToArray());
+            _transitionInfo.effectActive = true;
+        }
+
+        /// <summary>
+        /// エフェクト終了コルーチン
+        /// </summary>
+        IEnumerator ITransitionResolver.ExitEffectRoutine() {
+            _transitionInfo.effectActive = false;
+            yield return new MergedCoroutine(_transitionInfo.effects.Select(x => x.ExitRoutine()).ToArray());
+        }
+
+        /// <summary>
+        /// ディアクティベート
+        /// </summary>
+        void ITransitionResolver.DeactivatePrev() {
+            if (_transitionInfo.prev == null) {
+                return;
+            }
+            _transitionInfo.prev.Deactivate(new TransitionHandle(_transitionInfo));
+        }
+
+        /// <summary>
+        /// 閉じるコルーチン
+        /// </summary>
+        IEnumerator ITransitionResolver.ClosePrevRoutine() {
+            if (_transitionInfo.prev == null) {
+                yield break;
+            }
+            yield return _transitionInfo.prev.CloseRoutine(new TransitionHandle(_transitionInfo));
+        }
+
+        /// <summary>
+        /// 解放コルーチン
+        /// </summary>
+        IEnumerator ITransitionResolver.UnloadPrevRoutine() {
+            if (_transitionInfo.prev == null) {
+                yield break;
+            }
+            var handle = new TransitionHandle(_transitionInfo);
+            _transitionInfo.prev.Cleanup(handle);
+            _transitionInfo.prev.Unload(handle);
+            yield return null;
+        }
+
+        /// <summary>
+        /// 読み込みコルーチン
+        /// </summary>
+        IEnumerator ITransitionResolver.LoadNextRoutine() {
+            _transitionInfo.state = TransitionState.Initializing;
+            if (_transitionInfo.next == null) {
+                yield break;
+            }
+            var handle = new TransitionHandle(_transitionInfo);
+            yield return PreLoadNextRoutine(handle);
+            yield return _transitionInfo.next.LoadRoutine(handle);
+            _transitionInfo.next.Setup(handle);
+        }
+
+        /// <summary>
+        /// 開くコルーチン
+        /// </summary>
+        IEnumerator ITransitionResolver.OpenNextRoutine() {
+            _transitionInfo.state = TransitionState.Opening;
+            if (_transitionInfo.next == null) {
+                yield break;
+            }
+            yield return _transitionInfo.next.OpenRoutine(new TransitionHandle(_transitionInfo));
+        }
+
+        /// <summary>
+        /// アクティベート
+        /// </summary>
+        void ITransitionResolver.ActivateNext() {
+            if (_transitionInfo.next == null) {
+                return;
+            }
+            _transitionInfo.next.Activate(new TransitionHandle(_transitionInfo));
+        }
+
+        /// <summary>
+        /// 遷移完了
+        /// </summary>
+        void ITransitionResolver.Finish() {
+            _transitionInfo.state = TransitionState.Completed;
+        }
+
+        /// <summary>
+        /// 読み込みの直前コルーチン
+        /// </summary>
+        /// <param name="handle">遷移ハンドル</param>
+        protected virtual IEnumerator PreLoadNextRoutine(TransitionHandle handle) {
+            yield break;
         }
     }
 }

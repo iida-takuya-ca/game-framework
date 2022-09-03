@@ -10,54 +10,26 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 遷移処理
         /// </summary>
-        /// <param name="transitionInfo">遷移情報</param>
-        IEnumerator ITransition.TransitRoutine(SituationContainer.TransitionInfo transitionInfo) {
-            var handle = new TransitionHandle(transitionInfo);
-            var prev = transitionInfo.prev;
-            var next = transitionInfo.next;
+        /// <param name="resolver">遷移処理解決者</param>
+        IEnumerator ITransition.TransitRoutine(ITransitionResolver resolver) {
+            resolver.Start();
 
-            transitionInfo.state = TransitionState.Standby;
-
-            if (next != null) {
-                // 初期化開始
-                transitionInfo.state = TransitionState.Initializing;
-
-                // 読み込み処理
-                yield return next.LoadRoutine(handle);
+            // エフェクト開始＆読み込み
+            yield return new MergedCoroutine(resolver.EnterEffectRoutine(), resolver.LoadNextRoutine());
             
-                // 初期化処理
-                next.Setup(handle);
-            }
-
-            // オープン開始
-            transitionInfo.state = TransitionState.Opening;
-            var functions = new List<IEnumerator>();
-            if (prev != null) {
-                functions.Add(prev.CloseRoutine(handle));
-            }
-            if (next != null) {
-                functions.Add(next.OpenRoutine(handle));
-            }
-            yield return new MergedCoroutine(functions.ToArray());
-
-            if (prev != null) {
-                // 非アクティブ化
-                prev.Deactivate(handle);
-                
-                // 終了処理
-                prev.Cleanup(handle);
-                
-                // 解放処理
-                prev.Unload(handle);
-            }
-
-            if (next != null) {
-                // アクティブ化
-                next.Activate(handle);
-            }
+            // 非アクティブ化
+            resolver.DeactivatePrev();
             
-            // 完了
-            transitionInfo.state = TransitionState.Completed;
+            // 閉じる＆開く＆エフェクト終了
+            yield return new MergedCoroutine(resolver.ClosePrevRoutine(), resolver.OpenNextRoutine(), resolver.ExitEffectRoutine());
+            
+            // アクティブ化
+            resolver.ActivateNext();
+
+            // 解放
+            yield return resolver.UnloadPrevRoutine();
+            
+            resolver.Finish();
         }
     }
 }
