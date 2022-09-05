@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using GameFramework.Core;
 using GameFramework.TaskSystems;
@@ -9,7 +8,7 @@ namespace GameFramework.BodySystems {
     /// <summary>
     /// Body管理クラス
     /// </summary>
-    public class BodyManager : ILateUpdatableTask, IDisposable {
+    public class BodyManager : DisposableLateUpdatableTask {
         /// <summary>
         /// Body情報
         /// </summary>
@@ -24,9 +23,6 @@ namespace GameFramework.BodySystems {
         private LayeredTime _layeredTime;
         // インスタンス管理
         private List<BodyInfo> _bodyInfos = new List<BodyInfo>();
-        
-        // アクティブ状態
-        public bool IsActive { get; set; } = true;
 
         /// <summary>
         /// コンストラクタ
@@ -41,7 +37,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        public void Dispose() {
+        protected override void DisposeInternal() {
             for (var i = 0; i < _bodyInfos.Count; i++) {
                 var bodyInfo = _bodyInfos[i];
                 if (bodyInfo.disposed) {
@@ -96,7 +92,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// タスク更新処理
         /// </summary>
-        void ITask.Update() {
+        protected override void UpdateInternal() {
             var deltaTime = _layeredTime != null ? _layeredTime.DeltaTime : Time.deltaTime;
             
             for (var i = 0; i < _bodyInfos.Count; i++) {
@@ -111,7 +107,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// タスク後更新処理
         /// </summary>
-        void ILateUpdatableTask.LateUpdate() {
+        protected override void LateUpdateInternal() {
             var deltaTime = _layeredTime != null ? _layeredTime.DeltaTime : Time.deltaTime;
             
             for (var i = 0; i < _bodyInfos.Count; i++) {

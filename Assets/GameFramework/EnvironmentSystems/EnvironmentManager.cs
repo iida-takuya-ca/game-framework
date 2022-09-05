@@ -8,7 +8,7 @@ namespace GameFramework.EnvironmentSystems {
     /// <summary>
     /// 環境管理クラス
     /// </summary>
-    public class EnvironmentManager : ILateUpdatableTask, IDisposable {
+    public class EnvironmentManager : DisposableLateUpdatableTask {
         /// <summary>
         /// 環境設定情報
         /// </summary>
@@ -30,9 +30,6 @@ namespace GameFramework.EnvironmentSystems {
         // 時間制御クラス
         private LayeredTime _layeredTime;
 
-        // タスクが有効か
-        bool ITask.IsActive => true;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -46,7 +43,7 @@ namespace GameFramework.EnvironmentSystems {
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        public void Dispose() {
+        protected override void DisposeInternal() {
             _stack.Clear();
             _environmentInfos.Clear();
             _resolver = null;
@@ -96,15 +93,9 @@ namespace GameFramework.EnvironmentSystems {
         }
 
         /// <summary>
-        /// タスク更新処理
-        /// </summary>
-        void ITask.Update() {
-        }
-
-        /// <summary>
         /// タスク後更新処理
         /// </summary>
-        void ILateUpdatableTask.LateUpdate() {
+        protected override void LateUpdateInternal() {
             var deltaTime = _layeredTime?.DeltaTime ?? Time.deltaTime;
 
             // スタックの状態を調べる
