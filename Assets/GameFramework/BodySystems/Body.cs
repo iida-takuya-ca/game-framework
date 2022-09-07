@@ -90,7 +90,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Body(GameObject gameObject) {
+        internal Body(GameObject gameObject) {
             GameObject = gameObject;
             Transform = gameObject != null ? gameObject.transform : null;
         }
