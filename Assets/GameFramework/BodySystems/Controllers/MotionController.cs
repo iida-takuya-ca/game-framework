@@ -1,50 +1,67 @@
-using System;
+using GameFramework.MotionSystems;
 using UnityEngine;
 using UnityEngine.Animations;
-using UnityEngine.Playables;
 
 namespace GameFramework.BodySystems {
     /// <summary>
     /// モーション制御用クラス
     /// </summary>
     public class MotionController : BodyController {
-        private Animator _animator;
+        // モーション再生用クラス
+        private MotionPlayer _player;
 
-        public void SetMotion(int layerIndex, IMotionResolver motionResolver) {
-            
+        /// <summary>
+        /// モーションの設定
+        /// </summary>
+        public void SetMotion(IMotionPlayableHandler handler, float blendDuration)
+        {
+            _player.SetMotion(handler, blendDuration);
+        }
+
+        /// <summary>
+        /// モーションの設定
+        /// </summary>
+        public void SetMotion(AnimationClip clip, float blendDuration)
+        {
+            _player.SetMotion(clip, blendDuration);
+        }
+        
+        /// <summary>
+        /// Jobの追加
+        /// </summary>
+        public MotionPlayer.AnimationJobHandle AddJob<T>(IAnimationJobHandler<T> handler)
+        where T : struct, IAnimationJob {
+            return _player.AddJob(handler);
+        }
+
+        /// <summary>
+        /// Jobの削除
+        /// </summary>
+        public void RemoveJob(MotionPlayer.AnimationJobHandle handle)
+        {
+            _player.RemoveJob(handle);
         }
         
         /// <summary>
         /// 初期化処理
         /// </summary>
         protected override void InitializeInternal() {
-            _animator = Body.GetComponent<Animator>();
+            var animator = Body.GetComponent<Animator>();
+            _player = new MotionPlayer(animator);
         }
-    }
-
-    /// <summary>
-    /// モーション再生に使用するPlayableを定義するためのインターフェース
-    /// </summary>
-    public interface IMotionResolver : IDisposable {
-        // 再生に使用するPlayable
-        IPlayable Playable { get; }
-        // 再生時間
-        float Duration { get; }
-        // ループするか
-        bool IsLoop { get; }
-        // ループ開始オフセット
-        float LoopOffset { get; }
 
         /// <summary>
-        /// 初期化処理
+        /// 更新処理
         /// </summary>
-        /// <param name="playableGraph">初期化に使用するPlayableGraph</param>
-        void Setup(ref PlayableGraph playableGraph);
-        
+        protected override void UpdateInternal(float deltaTime) {
+            _player.Update(deltaTime);
+        }
+
         /// <summary>
-        /// 再生時間の設定
+        /// 廃棄時処理
         /// </summary>
-        /// <param name="time">時間</param>
-        void SetTime(float time);
+        protected override void DisposeInternal() {
+            _player.Dispose();
+        }
     }
 }
