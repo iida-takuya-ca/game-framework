@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 
 namespace GameFramework.ModelSystems {
     /// <summary>
     /// 自動割り当てId管理によるモデル
     /// </summary>
-    public class AutoIdModel<TModel> : IModel
+    public abstract class AutoIdModel<TModel> : IModel
     where TModel : AutoIdModel<TModel>, new() {
         /// <summary>
         /// モデル格納用ストレージ
@@ -86,6 +87,8 @@ namespace GameFramework.ModelSystems {
 
         // 識別ID
         public int Id { get; private set; }
+        // スコープ通知用
+        public event Action OnExpired;
 
         /// <summary>
         /// 取得処理
@@ -118,6 +121,13 @@ namespace GameFramework.ModelSystems {
         }
 
         /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        public void Dispose() {
+            Delete(Id);
+        }
+
+        /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
         protected virtual void OnCreatedInternal() {
@@ -143,6 +153,8 @@ namespace GameFramework.ModelSystems {
         private void OnDeleted() {
             OnDeletedInternal();
             Id = default;
+            OnExpired?.Invoke();
+            OnExpired = null;
         }
     }
 }

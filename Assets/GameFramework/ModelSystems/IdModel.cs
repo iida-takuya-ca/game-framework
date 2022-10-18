@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,7 +7,7 @@ namespace GameFramework.ModelSystems {
     /// <summary>
     /// Id管理によるモデル
     /// </summary>
-    public class IdModel<TKey, TModel> : IModel
+    public abstract class IdModel<TKey, TModel> : IModel
     where TModel : IdModel<TKey, TModel>, new() {
         /// <summary>
         /// モデル格納用ストレージ
@@ -78,6 +79,8 @@ namespace GameFramework.ModelSystems {
 
         // 識別ID
         public TKey Id { get; private set; }
+        // スコープ通知用
+        public event Action OnExpired;
 
         /// <summary>
         /// 取得 or 生成処理
@@ -124,6 +127,13 @@ namespace GameFramework.ModelSystems {
         }
 
         /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        public void Dispose() {
+            Delete(Id);
+        }
+
+        /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
         protected virtual void OnCreatedInternal() {
@@ -149,6 +159,8 @@ namespace GameFramework.ModelSystems {
         private void OnDeleted() {
             OnDeletedInternal();
             Id = default;
+            OnExpired?.Invoke();
+            OnExpired = null;
         }
     }
 }

@@ -8,6 +8,8 @@ namespace GameFramework.BodySystems {
     /// Body(見た目制御クラス)
     /// </summary>
     public class Body : IBody {
+        // 解放済みフラグ
+        private bool _disposed;
         // BodyControllerリスト
         private Dictionary<Type, IBodyController> _bodyControllers = new Dictionary<Type, IBodyController>();
         // 並び順に並べられたControllerリスト
@@ -99,6 +101,11 @@ namespace GameFramework.BodySystems {
         /// 廃棄時処理
         /// </summary>
         public void Dispose() {
+            if (_disposed) {
+                return;
+            }
+            _disposed = true;
+            
             OnExpired?.Invoke();
             OnExpired = null;
             

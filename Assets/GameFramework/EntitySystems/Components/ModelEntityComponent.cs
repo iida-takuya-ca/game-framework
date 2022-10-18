@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameFramework.ModelSystems;
+using UnityEngine;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
@@ -23,19 +24,32 @@ namespace GameFramework.EntitySystems {
         }
 
         /// <summary>
-        /// モデルの設定
+        /// モデルの追加(Remove時に自動削除)
         /// </summary>
-        public void SetModel(IModel model) {
-            var type = model.GetType();
+        public TModel AddModel<TModel>(TModel model)
+            where TModel : class, IModel {
+            var type = typeof(TModel);
+            if (_models.ContainsKey(type)) {
+                Debug.LogError($"Already exists model. type:{type.Name}");
+                return null;
+            }
+            
             _models[type] = model;
+            return model;
         }
         
         /// <summary>
-        /// モデルのクリア
+        /// モデルの削除
         /// </summary>
         public void RemoveModel<TModel>()
         where TModel : IModel {
+            var type = typeof(TModel);
+            if (!_models.TryGetValue(type, out var model)) {
+                return;
+            }
+            
             _models.Remove(typeof(TModel));
+            model.Dispose();
         }
 
         /// <summary>

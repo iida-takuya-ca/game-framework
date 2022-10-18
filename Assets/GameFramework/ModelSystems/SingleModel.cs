@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 
 namespace GameFramework.ModelSystems {
     /// <summary>
     /// 自動割り当てId管理によるモデル
     /// </summary>
-    public class SingleModel<TModel> : IModel
+    public abstract class SingleModel<TModel> : IModel
     where TModel : SingleModel<TModel>, new() {
         /// <summary>
         /// モデル格納用ストレージ
@@ -64,6 +65,9 @@ namespace GameFramework.ModelSystems {
         
         // インスタンス管理用クラス
         private static Storage s_storage = new Storage();
+        
+        // スコープ通知用
+        public event Action OnExpired;
 
         /// <summary>
         /// 取得 or 生成処理
@@ -106,6 +110,13 @@ namespace GameFramework.ModelSystems {
         }
 
         /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        public void Dispose() {
+            Delete();
+        }
+
+        /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
         protected virtual void OnCreatedInternal() {
@@ -129,6 +140,8 @@ namespace GameFramework.ModelSystems {
         /// </summary>
         private void OnDeleted() {
             OnDeletedInternal();
+            OnExpired?.Invoke();
+            OnExpired = null;
         }
     }
 }

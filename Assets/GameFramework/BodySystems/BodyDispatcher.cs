@@ -17,5 +17,15 @@ namespace GameFramework.BodySystems {
         public void Initialize(Body body) {
             Body = body;
         }
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        private void OnDestroy() {
+            if (Body != null) {
+                Body.Dispose();
+                Body = null;
+            }
+        }
     }
 }
