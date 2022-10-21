@@ -24,9 +24,9 @@ namespace GameFramework.EntitySystems {
         }
 
         /// <summary>
-        /// モデルの追加(Remove時に自動削除)
+        /// モデルの設定
         /// </summary>
-        public TModel AddModel<TModel>(TModel model)
+        public TModel SetModel<TModel>(TModel model)
             where TModel : class, IModel {
             var type = typeof(TModel);
             if (_models.ContainsKey(type)) {
@@ -39,9 +39,9 @@ namespace GameFramework.EntitySystems {
         }
         
         /// <summary>
-        /// モデルの削除
+        /// モデルの設定クリア（削除はされない）
         /// </summary>
-        public void RemoveModel<TModel>()
+        public void ClearModel<TModel>()
         where TModel : IModel {
             var type = typeof(TModel);
             if (!_models.TryGetValue(type, out var model)) {
@@ -49,7 +49,6 @@ namespace GameFramework.EntitySystems {
             }
             
             _models.Remove(typeof(TModel));
-            model.Dispose();
         }
 
         /// <summary>

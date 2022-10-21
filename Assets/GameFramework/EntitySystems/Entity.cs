@@ -6,9 +6,23 @@ namespace GameFramework.EntitySystems {
     /// <summary>
     /// インスタンス管理用クラスのコア
     /// </summary>
-    public class Entity : IDisposable {
+    public class Entity : IDisposable
+    {
+        // 次の生成するEntityのID
+        private static int _nextId = 1;
+        
         // Entity拡張用Component
         private Dictionary<Type, IEntityComponent> _components = new Dictionary<Type, IEntityComponent>();
+        // EntityのID
+        public int Id { get; private set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Entity()
+        {
+            Id = _nextId++;
+        }
 
         /// <summary>
         /// Componentの取得
