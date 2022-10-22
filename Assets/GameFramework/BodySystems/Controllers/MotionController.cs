@@ -1,12 +1,17 @@
 using GameFramework.MotionSystems;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 namespace GameFramework.BodySystems {
     /// <summary>
     /// モーション制御用クラス
     /// </summary>
-    public class MotionController : BodyController {
+    [RequireComponent(typeof(Animator))]
+    public class MotionController : SerializedBodyController {
+        [SerializeField, Tooltip("モーション更新モード")]
+        private DirectorUpdateMode _updateMode = DirectorUpdateMode.GameTime;
+        
         // モーション再生用クラス
         private MotionPlayer _player;
 
@@ -24,6 +29,22 @@ namespace GameFramework.BodySystems {
         public void SetMotion(AnimationClip clip, float blendDuration)
         {
             _player.SetMotion(clip, blendDuration);
+        }
+
+        /// <summary>
+        /// モーションの設定
+        /// </summary>
+        public void SetMotion(RuntimeAnimatorController controller, float blendDuration)
+        {
+            _player.SetMotion(controller, blendDuration);
+        }
+
+        /// <summary>
+        /// モーションのリセット
+        /// </summary>
+        public void ResetMotion(float blendDuration)
+        {
+            _player.ResetMotion(blendDuration);
         }
         
         /// <summary>
@@ -47,7 +68,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected override void InitializeInternal() {
             var animator = Body.GetComponent<Animator>();
-            _player = new MotionPlayer(animator);
+            _player = new MotionPlayer(animator, _updateMode);
         }
 
         /// <summary>

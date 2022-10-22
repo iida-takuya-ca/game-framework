@@ -20,7 +20,7 @@ namespace GameFramework.Core {
         public float LocalTimeScale {
             get => _localTimeScale;
             set {
-                _localTimeScale = value;
+                _localTimeScale = Mathf.Max(0.0f, value);
                 var timeScale = TimeScale;
                 OnChangedTimeScaleInternal?.Invoke(timeScale);
                 OnChangedTimeScale?.Invoke(timeScale);

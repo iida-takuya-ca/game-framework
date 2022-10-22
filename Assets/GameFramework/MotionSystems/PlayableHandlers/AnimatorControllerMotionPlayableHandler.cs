@@ -6,21 +6,21 @@ using UnityEngine.Playables;
 namespace GameFramework.MotionSystems
 {
     /// <summary>
-    /// 1つのClipを再生するPlayable用のHandler
+    /// AnimatorControllerを再生するPlayable用のHandler
     /// </summary>
-    public class SingleMotionPlayableHandler : IMotionPlayableHandler
+    public class AnimatorControllerMotionPlayableHandler : IMotionPlayableHandler
     {
-        private AnimationClipPlayable _playable;
-        private AnimationClip _clip;
+        private AnimatorControllerPlayable _playable;
+        private RuntimeAnimatorController _controller;
 
         Playable IMotionPlayableHandler.Playable => _playable;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public SingleMotionPlayableHandler(AnimationClip clip)
+        public AnimatorControllerMotionPlayableHandler(RuntimeAnimatorController controller)
         {
-            _clip = clip;
+            _controller = controller;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace GameFramework.MotionSystems
         /// </summary>
         void IDisposable.Dispose()
         {
-            _clip = null;
+            _controller = null;
             _playable.Destroy();
         }
 
@@ -37,7 +37,7 @@ namespace GameFramework.MotionSystems
         /// </summary>
         void IMotionPlayableHandler.Initialize(PlayableGraph graph)
         {
-            _playable = AnimationClipPlayable.Create(graph, _clip);
+            _playable = AnimatorControllerPlayable.Create(graph, _controller);
         }
 
         /// <summary>

@@ -123,11 +123,17 @@ namespace GameFramework.Core {
                 }
             }
             
-            if (!_services.TryGetValue(type, out var service)) {
-                return default;
+            if (_services.TryGetValue(type, out var service)) {
+                return service;
             }
 
-            return service;
+            foreach (var pair in _services) {
+                if (type.IsInstanceOfType(pair.Key)) {
+                    return pair.Value;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -149,17 +155,26 @@ namespace GameFramework.Core {
                     return result;
                 }
             }
-            
-            if (!_serviceLists.TryGetValue(type, out var list)) {
-                return default;
+
+            var list = default(List<object>);
+            _serviceLists.TryGetValue(type, out list);
+
+            if (list == null) {
+                foreach (var pair in _serviceLists) {
+                    if (type.IsAssignableFrom(pair.Key)) {
+                        list = pair.Value;
+                    }
+                }
             }
 
-            if (index >= list.Count) {
+            if (list != null) {
+                if (index < list.Count) {
+                    return list[index];
+                }
                 Debug.LogError($"Invalid service index. Type:{type} Index:{index}");
-                return default;
             }
 
-            return list[index];
+            return null;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using UnityEngine.Playables;
 namespace GameFramework.MotionSystems
 {
     /// <summary>
-    /// 複数のClipをブレンド再生するPlayable用のProvider
+    /// 複数のClipをブレンド再生するPlayable用のHandler
     /// </summary>
     public class BlendTreeMotionPlayableHandler : IMotionPlayableHandler
     {

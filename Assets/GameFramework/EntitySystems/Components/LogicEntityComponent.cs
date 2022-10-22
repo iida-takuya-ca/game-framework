@@ -16,8 +16,15 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public TLogic GetLogic<TLogic>()
             where TLogic : EntityLogic {
-            if (_logics.TryGetValue(typeof(TLogic), out var model)) {
-                return (TLogic)model;
+            var type = typeof(TLogic);
+            if (_logics.TryGetValue(type, out var logic)) {
+                return (TLogic)logic;
+            }
+
+            foreach (var pair in _logics) {
+                if (type.IsAssignableFrom(pair.Key)) {
+                    return (TLogic)pair.Value;
+                }
             }
 
             return default;

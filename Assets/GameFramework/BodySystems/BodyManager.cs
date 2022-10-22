@@ -29,7 +29,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         /// <param name="builder">Body構築用クラス</param>
         /// <param name="layeredTime">時間管理クラス</param>
-        public BodyManager(IBodyBuilder builder, LayeredTime layeredTime = null) {
+        public BodyManager(IBodyBuilder builder = null, LayeredTime layeredTime = null) {
             _builder = builder;
             _layeredTime = layeredTime;
         }
@@ -55,9 +55,9 @@ namespace GameFramework.BodySystems {
             var body = new Body(gameObject);
             
             // 構築処理
-            BuildDefault(body);
+            BuildDefault(body, gameObject);
             if (_builder != null) {
-                _builder.Build(body);
+                _builder.Build(body, gameObject);
             }
             
             // Dispatcherの生成
@@ -126,9 +126,16 @@ namespace GameFramework.BodySystems {
         /// デフォルトのBody構築処理
         /// </summary>
         /// <param name="body">構築対象のBody</param>
-        private void BuildDefault(IBody body) {
+        /// <param name="gameObject">制御対象のGameObject</param>
+        private void BuildDefault(IBody body, GameObject gameObject) {
             body.AddController(new LocatorController());
             body.AddController(new ParentController());
+            
+            // Componentとして入っている物を抽出
+            var controllers = gameObject.GetComponentsInChildren<SerializedBodyController>(true);
+            foreach (var controller in controllers) {
+                body.AddController(controller);
+            }
         }
 
         /// <summary>

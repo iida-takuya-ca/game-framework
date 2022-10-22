@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: 4b0eeda79f8a2b04f9b339906828e56b, type: 3}
       propertyPath: m_Name
-      value: skin_pl001 (1)
+      value: prfb_pl001
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4b0eeda79f8a2b04f9b339906828e56b, type: 3}
       propertyPath: m_RootOrder
@@ -57,3 +57,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b0eeda79f8a2b04f9b339906828e56b, type: 3}
+--- !u!1 &3446560305985819590 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 4b0eeda79f8a2b04f9b339906828e56b, type: 3}
+  m_PrefabInstance: {fileID: 3446560305985787238}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5089847768520589744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446560305985819590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b7a0bca2faa5646ac4edc894b51270, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateMode: 1
