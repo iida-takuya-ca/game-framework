@@ -45,13 +45,13 @@ namespace GameFramework.MotionSystems {
             public bool dispose;
         }
 
-        private Animator _animator;
         private PlayableGraph _graph;
         private AnimationPlayableOutput _output;
         private AnimationMixerPlayable _mixer;
         private List<AnimationJobInfo> _animationJobInfos = new List<AnimationJobInfo>();
         private IMotionPlayableHandler _prevMotionPlayableHandler;
         private IMotionPlayableHandler _currentMotionPlayableHandler;
+        private RootScaleAnimationJobHandler _rootScaleAnimationJobHandler;
 
         private float _blendDuration;
         private float _blendTime;
@@ -60,15 +60,24 @@ namespace GameFramework.MotionSystems {
 
         // アニメーションの更新をSkipするフレーム数(0以上)
         public int SkipFrame { get; set; } = 0;
-
         // アニメーションの更新をSkipするかのフレーム数に対するOffset
         public int SkipFrameOffset { get; set; } = 0;
+        
+        // ルートスケール（座標）
+        public Vector3 RootPositionScale {
+            get => _rootScaleAnimationJobHandler.PositionScale;
+            set => _rootScaleAnimationJobHandler.PositionScale = value;
+        }
+        // ルートスケール（回転）
+        public Vector3 RootAngleScale {
+            get => _rootScaleAnimationJobHandler.AngleScale;
+            set => _rootScaleAnimationJobHandler.AngleScale = value;
+        }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public MotionPlayer(Animator animator, DirectorUpdateMode updateMode = DirectorUpdateMode.GameTime) {
-            _animator = animator;
             _graph = PlayableGraph.Create($"{animator.name}:MotionGraph");
             _output = AnimationPlayableOutput.Create(_graph, "Output", animator);
             _mixer = AnimationMixerPlayable.Create(_graph, 2, true);
@@ -76,6 +85,10 @@ namespace GameFramework.MotionSystems {
             _graph.SetTimeUpdateMode(updateMode);
             _output.SetSourcePlayable(_mixer);
             _graph.Play();
+            
+            // RootScaleJobの初期化
+            _rootScaleAnimationJobHandler = new RootScaleAnimationJobHandler();
+            AddJob(_rootScaleAnimationJobHandler);
         }
 
         /// <summary>
@@ -167,7 +180,7 @@ namespace GameFramework.MotionSystems {
                     return;
                 }
 
-                handler.SetTime(time);
+                handler.Playable.SetTime(time);
                 handler.Playable.SetSpeed(playableSpeed);
             }
 
@@ -177,8 +190,15 @@ namespace GameFramework.MotionSystems {
             
             // Manualモードの場合、ここで骨の更新を行う
             if (updateMode == DirectorUpdateMode.Manual) {
-                _graph.Evaluate();
+                _graph.Evaluate(deltaTime);
             }
+        }
+
+        /// <summary>
+        /// 更新モードの変更
+        /// </summary>
+        public void SetUpdateMode(DirectorUpdateMode updateMode) {
+            _graph.SetTimeUpdateMode(updateMode);
         }
 
         /// <summary>

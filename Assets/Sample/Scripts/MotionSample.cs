@@ -25,6 +25,10 @@ public class MotionSample : MonoBehaviour {
     private GameObject _bodyTarget;
     [SerializeField, Tooltip("モーション速度")]
     private float _timeScale = 1.0f;
+    [SerializeField, Tooltip("ルート座標スケール")]
+    private Vector3 _rootPositionScale = Vector3.one;
+    [SerializeField, Tooltip("歩く速度")]
+    private float _walkSpeed = 1.0f;
 
     private ServiceContainer _serviceContainer;
     private TaskRunner _taskRunner;
@@ -57,22 +61,27 @@ public class MotionSample : MonoBehaviour {
     /// 更新処理
     /// </summary>
     private void Update() {
+        var motionController = _body.GetController<MotionController>();
+        
         // モーション切り替え
         if (Input.GetKeyDown(KeyCode.Space)) {
             _motionState = (MotionState)((int)(_motionState + 1) % Enum.GetValues(typeof(MotionState)).Length);
-            var motionController = _body.GetController<MotionController>();
             switch (_motionState) {
                 case MotionState.None:
-                    motionController.ResetMotion(_blendTime);
+                    motionController.Player.ResetMotion(_blendTime);
                     break;
                 case MotionState.AnimationClip:
-                    motionController.SetMotion(_clip, _blendTime);
+                    motionController.Player.SetMotion(_clip, _blendTime);
                     break;
                 case MotionState.AnimatorController:
-                    motionController.SetMotion(_controller, _blendTime);
+                    motionController.Player.SetMotion(_controller, _blendTime);
                     break;
             }
         }
+        
+        // ルート座標スケール更新
+        motionController.Player.RootPositionScale = _rootPositionScale;
+        _body.GetComponent<Animator>().SetFloat("WalkSpeed", _walkSpeed);
 
         // 更新速度変更
         _body.LayeredTime.LocalTimeScale = _timeScale;

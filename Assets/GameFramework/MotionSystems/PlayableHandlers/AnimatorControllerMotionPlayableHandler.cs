@@ -39,13 +39,5 @@ namespace GameFramework.MotionSystems
         {
             _playable = AnimatorControllerPlayable.Create(graph, _controller);
         }
-
-        /// <summary>
-        /// 時間の設定
-        /// </summary>
-        void IMotionPlayableHandler.SetTime(float time)
-        {
-            _playable.SetTime(time);
-        }
     }
 }

@@ -15,10 +15,5 @@ namespace GameFramework.MotionSystems
         /// 初期化処理
         /// </summary>
         void Initialize(PlayableGraph graph);
-
-        /// <summary>
-        /// 時間の設定
-        /// </summary>
-        void SetTime(float time);
     }
 }

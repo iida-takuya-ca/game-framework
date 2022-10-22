@@ -55,7 +55,7 @@ namespace GameFramework.MotionSystems
         }
 
         // ルート回転のスケール
-        public Vector3 RotationScale
+        public Vector3 AngleScale
         {
             get => _vectorProperties.IsCreated ? (Vector3) _vectorProperties[1] : Vector3.zero;
             set

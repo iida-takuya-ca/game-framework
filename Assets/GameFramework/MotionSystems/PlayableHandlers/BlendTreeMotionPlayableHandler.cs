@@ -99,17 +99,6 @@ namespace GameFramework.MotionSystems
         }
 
         /// <summary>
-        /// 時間の設定
-        /// </summary>
-        void IMotionPlayableHandler.SetTime(float time)
-        {
-            for (var i = 0; i < _clipPlayables.Length; i++)
-            {
-                _clipPlayables[i].SetTime(time);
-            }
-        }
-
-        /// <summary>
         /// ブレンド率をPlayableに反映
         /// </summary>
         private void RefreshInputWeights()

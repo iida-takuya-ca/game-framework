@@ -172,6 +172,7 @@ MonoBehaviour:
   _blendTime: 0.3
   _bodyTarget: {fileID: 510016197}
   _timeScale: 1
+  _rootPositionScale: {x: 1, y: 1, z: 1}
 --- !u!1 &323947969
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,7 +234,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -5089847768520589744, guid: e6b290ad6e6418748ae192fdd9ac1649, type: 3}
       propertyPath: _updateMode
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3446560305985392614, guid: e6b290ad6e6418748ae192fdd9ac1649, type: 3}
       propertyPath: m_RootOrder
