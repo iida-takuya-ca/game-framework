@@ -90,7 +90,7 @@ namespace GameFramework.MotionSystems
         void IMotionPlayableProvider.Initialize(PlayableGraph graph)
         {
             _clipPlayables = _clipInfos.Select(x => AnimationClipPlayable.Create(graph, x.clip)).ToArray();
-            _mixerPlayable = AnimationMixerPlayable.Create(graph, _clipInfos.Length, true);
+            _mixerPlayable = AnimationMixerPlayable.Create(graph, _clipInfos.Length);
             for (var i = 0; i < _clipPlayables.Length; i++)
             {
                 _mixerPlayable.ConnectInput(i, _clipPlayables[i],0);

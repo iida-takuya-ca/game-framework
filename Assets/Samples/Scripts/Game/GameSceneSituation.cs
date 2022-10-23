@@ -1,5 +1,7 @@
+using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.SituationSystems;
+using GameFramework.TaskSystems;
 using UnityEngine;
 
 namespace SampleGame {
@@ -16,7 +18,13 @@ namespace SampleGame {
         /// 初期化処理
         /// </summary>
         protected override void SetupInternal(TransitionHandle handle, IScope scope) {
+            var taskRunner = Services.Get<TaskRunner>();
+            
             // Gameモデルの生成
+            
+            // BodyManagerの生成
+            var bodyManager = new BodyManager();
+            taskRunner.Register(bodyManager, TaskOrder.Body);
             
             // PlayerEntityの生成
             

@@ -26,14 +26,14 @@ namespace GameFramework.Core {
         /// サービスの取得
         /// <param name="type">登録したインスタンスのタイプ</param>
         /// </summary>
-        public new static object Get(Type type) {
+        public static object Get(Type type) {
             return Instance.Get(type);
         }
 
         /// <summary>
         /// サービスの取得
         /// </summary>
-        public new static T Get<T>() {
+        public static T Get<T>() {
             return Instance.Get<T>();
         }
 
@@ -42,7 +42,7 @@ namespace GameFramework.Core {
         /// </summary>
         /// <param name="type">登録したインスタンスのタイプ</param>
         /// <param name="index">インデックス</param>
-        public new static object Get(Type type, int index) {
+        public static object Get(Type type, int index) {
             return Instance.Get(type, index);
         }
 
@@ -50,7 +50,7 @@ namespace GameFramework.Core {
         /// サービスの取得(複数登録するバージョン）
         /// </summary>
         /// <param name="index">インデックス</param>
-        public new static T Get<T>(int index) {
+        public static T Get<T>(int index) {
             return Instance.Get<T>(index);
         }
         

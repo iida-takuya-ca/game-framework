@@ -115,7 +115,7 @@ namespace GameFramework.Core {
         /// サービスの取得
         /// <param name="type">登録したインスタンスのタイプ</param>
         /// </summary>
-        public object Get(Type type) {
+        object IServiceContainer.Get(Type type) {
             for (var i = _children.Count - 1; i >= 0; i--) {
                 var result = _children[i].Get(type);
                 if (result != default) {
@@ -128,7 +128,7 @@ namespace GameFramework.Core {
             }
 
             foreach (var pair in _services) {
-                if (type.IsInstanceOfType(pair.Key)) {
+                if (type.IsAssignableFrom(pair.Key)) {
                     return pair.Value;
                 }
             }
@@ -139,8 +139,8 @@ namespace GameFramework.Core {
         /// <summary>
         /// サービスの取得
         /// </summary>
-        public T Get<T>() {
-            return (T)Get(typeof(T));
+        T IServiceContainer.Get<T>() {
+            return (T)((IServiceContainer)this).Get(typeof(T));
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace GameFramework.Core {
         /// </summary>
         /// <param name="type">登録したインスタンスのタイプ</param>
         /// <param name="index">インデックス</param>
-        public object Get(Type type, int index) {
+        object IServiceContainer.Get(Type type, int index) {
             for (var i = _children.Count - 1; i >= 0; i--) {
                 var result = _children[i].Get(type, index);
                 if (result != default) {
@@ -156,8 +156,7 @@ namespace GameFramework.Core {
                 }
             }
 
-            var list = default(List<object>);
-            _serviceLists.TryGetValue(type, out list);
+            _serviceLists.TryGetValue(type, out var list);
 
             if (list == null) {
                 foreach (var pair in _serviceLists) {
@@ -181,8 +180,8 @@ namespace GameFramework.Core {
         /// サービスの取得(複数登録するバージョン）
         /// </summary>
         /// <param name="index">インデックス</param>
-        public T Get<T>(int index) {
-            return (T)Get(typeof(T), index);
+        T IServiceContainer.Get<T>(int index) {
+            return (T)((IServiceContainer)this).Get(typeof(T), index);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace GameFramework.SituationSystems {
         // 自身の所持するContainer
         public SituationContainer Container { get; private set; }
         // インスタンス管理用
-        public IServiceContainer ServiceContainer { get; private set; }
+        public ServiceContainer ServiceContainer { get; private set; }
         // 現在状態
         public State CurrentState { get; private set; } = State.Invalid;
         // プリロードされているか
@@ -399,36 +399,10 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
-        /// 遷移チェック
-        /// </summary>
-        /// <param name="childSituation">遷移するの子シチュエーション</param>
-        /// <param name="transition">遷移処理</param>
-        /// <returns>遷移可能か</returns>
-        protected virtual bool CheckTransitionInternal(Situation childSituation, ITransition transition) {
-            return true;
-        }
-
-        /// <summary>
         /// 自身が所持するコンテナの生成
         /// </summary>
         protected virtual SituationContainer CreateContainer() {
             return new SituationContainer();
-        }
-
-        /// <summary>
-        /// 遷移チェック
-        /// </summary>
-        private bool CheckTransition(ISituation childSituation, ITransition transition) {
-            if (transition == null) {
-                return false;
-            }
-
-            // null遷移は常に許可
-            if (childSituation == null) {
-                return true;
-            }
-
-            return CheckTransitionInternal((Situation)childSituation, transition);
         }
     }
 }

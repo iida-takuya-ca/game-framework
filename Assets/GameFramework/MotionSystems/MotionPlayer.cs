@@ -80,7 +80,7 @@ namespace GameFramework.MotionSystems {
         public MotionPlayer(Animator animator, DirectorUpdateMode updateMode = DirectorUpdateMode.GameTime) {
             _graph = PlayableGraph.Create($"{animator.name}:MotionGraph");
             _output = AnimationPlayableOutput.Create(_graph, "Output", animator);
-            _mixer = AnimationMixerPlayable.Create(_graph, 2, true);
+            _mixer = AnimationMixerPlayable.Create(_graph, 2);
 
             _graph.SetTimeUpdateMode(updateMode);
             _output.SetSourcePlayable(_mixer);
