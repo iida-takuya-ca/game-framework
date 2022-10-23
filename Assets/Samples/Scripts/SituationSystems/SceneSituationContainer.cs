@@ -1,8 +1,5 @@
-using System.Collections;
-using GameFramework.Core;
 using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// シーン遷移を行えるシチュエーションコンテナ
@@ -39,18 +36,5 @@ public class SceneSituationContainer : SituationContainer, ILateUpdatableTask {
     /// </summary>
     protected override bool CheckTransitionInternal(Situation next, ITransition transition) {
         return next is SceneSituation && transition is OutInTransition;
-    }
-
-    /// <summary>
-    /// 読み込みの直前コルーチン
-    /// </summary>
-    /// <param name="handle">遷移ハンドル</param>
-    protected override IEnumerator PreLoadNextRoutine(TransitionHandle handle) {
-        var next = handle.Next as SceneSituation;
-        if (next == null) {
-            yield break;
-        }
-        // シーンの切り替え
-        yield return SceneManager.LoadSceneAsync(next.SceneAssetPath, LoadSceneMode.Single);
     }
 }

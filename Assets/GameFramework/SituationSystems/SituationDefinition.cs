@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 namespace GameFramework.SituationSystems {
     // 遷移ステータス
@@ -14,7 +15,7 @@ namespace GameFramework.SituationSystems {
     /// <summary>
     /// シチュエーション遷移確認用ハンドル
     /// </summary>
-    public struct TransitionHandle {
+    public struct TransitionHandle : IEnumerator {
         // 制御用インスタンス
         private SituationContainer.TransitionInfo _transitionInfo;
 
@@ -47,6 +48,16 @@ namespace GameFramework.SituationSystems {
         public TransitionHandle(Exception exception) {
             _transitionInfo = null;
             Exception = exception;
+        }
+
+        /// <summary>
+        /// コルーチン対応用
+        /// </summary>
+        object IEnumerator.Current => null;
+        bool IEnumerator.MoveNext() {
+            return !IsDone;
+        }
+        void IEnumerator.Reset() {
         }
     }
 }

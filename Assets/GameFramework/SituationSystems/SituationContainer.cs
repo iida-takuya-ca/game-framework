@@ -355,7 +355,6 @@ namespace GameFramework.SituationSystems {
                 yield break;
             }
             var handle = new TransitionHandle(_transitionInfo);
-            yield return PreLoadNextRoutine(handle);
             yield return _transitionInfo.next.LoadRoutine(handle);
             _transitionInfo.next.Setup(handle);
         }
@@ -386,14 +385,6 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         void ITransitionResolver.Finish() {
             _transitionInfo.state = TransitionState.Completed;
-        }
-
-        /// <summary>
-        /// 読み込みの直前コルーチン
-        /// </summary>
-        /// <param name="handle">遷移ハンドル</param>
-        protected virtual IEnumerator PreLoadNextRoutine(TransitionHandle handle) {
-            yield break;
         }
     }
 }
