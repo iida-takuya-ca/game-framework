@@ -16,7 +16,7 @@ namespace SampleGame {
     /// <summary>
     /// ゲーム用の定義処理
     /// </summary>
-    public static class GameDefinitions {
+    public static class Definitions {
     
     }
 }
