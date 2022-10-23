@@ -8,17 +8,17 @@ namespace GameFramework.MotionSystems
     /// <summary>
     /// 1つのClipを再生するPlayable用のHandler
     /// </summary>
-    public class SingleMotionPlayableHandler : IMotionPlayableHandler
+    public class SingleMotionPlayableProvider : IMotionPlayableProvider
     {
         private AnimationClipPlayable _playable;
         private AnimationClip _clip;
 
-        Playable IMotionPlayableHandler.Playable => _playable;
+        Playable IMotionPlayableProvider.Playable => _playable;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public SingleMotionPlayableHandler(AnimationClip clip)
+        public SingleMotionPlayableProvider(AnimationClip clip)
         {
             _clip = clip;
         }
@@ -35,7 +35,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void IMotionPlayableHandler.Initialize(PlayableGraph graph)
+        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
         {
             _playable = AnimationClipPlayable.Create(graph, _clip);
         }

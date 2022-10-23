@@ -13,7 +13,7 @@ namespace GameFramework.MotionSystems
     /// <summary>
     /// AnimationJob提供用インターフェース
     /// </summary>
-    public interface IAnimationJobHandler<T> : IDisposable
+    public interface IAnimationJobProvider<T> : IDisposable
     where T : struct, IAnimationJob
     {
         /// <summary>

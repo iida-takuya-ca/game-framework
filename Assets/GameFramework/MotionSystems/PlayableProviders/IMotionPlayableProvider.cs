@@ -6,7 +6,7 @@ namespace GameFramework.MotionSystems
     /// <summary>
     /// モーション再生用のPlayable提供インターフェース
     /// </summary>
-    public interface IMotionPlayableHandler : IDisposable
+    public interface IMotionPlayableProvider : IDisposable
     {
         // 再生に使用するPlayable
         Playable Playable { get; }

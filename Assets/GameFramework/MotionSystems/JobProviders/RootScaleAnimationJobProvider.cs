@@ -10,7 +10,7 @@ namespace GameFramework.MotionSystems
     /// <summary>
     /// Rootモーションのスケールコントロール用JobProvider
     /// </summary>
-    public class RootScaleAnimationJobHandler : IAnimationJobHandler<RootScaleAnimationJobHandler.RootScaleAnimationJob>
+    public class RootScaleAnimationJobProvider : IAnimationJobProvider<RootScaleAnimationJobProvider.RootScaleAnimationJob>
     {
         /// <summary>
         /// Job本体
@@ -70,7 +70,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 初期化処理
         /// </summary>
-        RootScaleAnimationJob IAnimationJobHandler<RootScaleAnimationJob>.Initialize(MotionPlayer player)
+        RootScaleAnimationJob IAnimationJobProvider<RootScaleAnimationJob>.Initialize(MotionPlayer player)
         {
             _vectorProperties = new NativeArray<float3>(2, Allocator.Persistent);
             _vectorProperties[0] = Vector3.one;

@@ -8,17 +8,17 @@ namespace GameFramework.MotionSystems
     /// <summary>
     /// AnimatorControllerを再生するPlayable用のHandler
     /// </summary>
-    public class AnimatorControllerMotionPlayableHandler : IMotionPlayableHandler
+    public class AnimatorControllerMotionPlayableProvider : IMotionPlayableProvider
     {
         private AnimatorControllerPlayable _playable;
         private RuntimeAnimatorController _controller;
 
-        Playable IMotionPlayableHandler.Playable => _playable;
+        Playable IMotionPlayableProvider.Playable => _playable;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public AnimatorControllerMotionPlayableHandler(RuntimeAnimatorController controller)
+        public AnimatorControllerMotionPlayableProvider(RuntimeAnimatorController controller)
         {
             _controller = controller;
         }
@@ -35,7 +35,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void IMotionPlayableHandler.Initialize(PlayableGraph graph)
+        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
         {
             _playable = AnimatorControllerPlayable.Create(graph, _controller);
         }

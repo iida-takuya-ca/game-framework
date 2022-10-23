@@ -49,9 +49,9 @@ namespace GameFramework.MotionSystems {
         private AnimationPlayableOutput _output;
         private AnimationMixerPlayable _mixer;
         private List<AnimationJobInfo> _animationJobInfos = new List<AnimationJobInfo>();
-        private IMotionPlayableHandler _prevMotionPlayableHandler;
-        private IMotionPlayableHandler _currentMotionPlayableHandler;
-        private RootScaleAnimationJobHandler _rootScaleAnimationJobHandler;
+        private IMotionPlayableProvider _prevMotionPlayableProvider;
+        private IMotionPlayableProvider _currentMotionPlayableProvider;
+        private RootScaleAnimationJobProvider _rootScaleAnimationJobProvider;
 
         private float _blendDuration;
         private float _blendTime;
@@ -65,13 +65,13 @@ namespace GameFramework.MotionSystems {
         
         // ルートスケール（座標）
         public Vector3 RootPositionScale {
-            get => _rootScaleAnimationJobHandler.PositionScale;
-            set => _rootScaleAnimationJobHandler.PositionScale = value;
+            get => _rootScaleAnimationJobProvider.PositionScale;
+            set => _rootScaleAnimationJobProvider.PositionScale = value;
         }
         // ルートスケール（回転）
         public Vector3 RootAngleScale {
-            get => _rootScaleAnimationJobHandler.AngleScale;
-            set => _rootScaleAnimationJobHandler.AngleScale = value;
+            get => _rootScaleAnimationJobProvider.AngleScale;
+            set => _rootScaleAnimationJobProvider.AngleScale = value;
         }
 
         /// <summary>
@@ -87,8 +87,8 @@ namespace GameFramework.MotionSystems {
             _graph.Play();
             
             // RootScaleJobの初期化
-            _rootScaleAnimationJobHandler = new RootScaleAnimationJobHandler();
-            AddJob(_rootScaleAnimationJobHandler);
+            _rootScaleAnimationJobProvider = new RootScaleAnimationJobProvider();
+            AddJob(_rootScaleAnimationJobProvider);
         }
 
         /// <summary>
@@ -136,20 +136,20 @@ namespace GameFramework.MotionSystems {
                 // Blend中
                 var rate = _blendTime / _blendDuration;
                 _mixer.SetInputWeight(0, 1.0f - rate);
-                if (_currentMotionPlayableHandler != null) {
+                if (_currentMotionPlayableProvider != null) {
                     _mixer.SetInputWeight(1, rate);
                 }
             }
-            else if (_prevMotionPlayableHandler != null) {
+            else if (_prevMotionPlayableProvider != null) {
                 // Blend完了
-                _prevMotionPlayableHandler.Dispose();
-                _prevMotionPlayableHandler = null;
+                _prevMotionPlayableProvider.Dispose();
+                _prevMotionPlayableProvider = null;
 
                 // Mixerの接続関係修正
                 _mixer.DisconnectInput(0);
                 _mixer.DisconnectInput(1);
-                if (_currentMotionPlayableHandler != null) {
-                    _mixer.ConnectInput(0, _currentMotionPlayableHandler.Playable, 0);
+                if (_currentMotionPlayableProvider != null) {
+                    _mixer.ConnectInput(0, _currentMotionPlayableProvider.Playable, 0);
                     _mixer.SetInputWeight(0, 1.0f);
                 }
             }
@@ -175,18 +175,18 @@ namespace GameFramework.MotionSystems {
                 playableSpeed = deltaTime / baseDeltaTime;
             }
 
-            void UpdateHandler(IMotionPlayableHandler handler, float time) {
-                if (handler == null) {
+            void UpdateProvider(IMotionPlayableProvider provider, float time) {
+                if (provider == null) {
                     return;
                 }
 
-                handler.Playable.SetTime(time);
-                handler.Playable.SetSpeed(playableSpeed);
+                provider.Playable.SetTime(time);
+                provider.Playable.SetSpeed(playableSpeed);
             }
 
-            // Handlerの更新
-            UpdateHandler(_prevMotionPlayableHandler, _prevTime);
-            UpdateHandler(_currentMotionPlayableHandler, _currentTime);
+            // Providerの更新
+            UpdateProvider(_prevMotionPlayableProvider, _prevTime);
+            UpdateProvider(_currentMotionPlayableProvider, _currentTime);
             
             // Manualモードの場合、ここで骨の更新を行う
             if (updateMode == DirectorUpdateMode.Manual) {
@@ -204,37 +204,37 @@ namespace GameFramework.MotionSystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public void SetMotion(IMotionPlayableHandler handler, float blendDuration) {
+        public void SetMotion(IMotionPlayableProvider provider, float blendDuration) {
             // Providerの更新
-            _prevMotionPlayableHandler?.Dispose();
-            _prevMotionPlayableHandler = _currentMotionPlayableHandler;
+            _prevMotionPlayableProvider?.Dispose();
+            _prevMotionPlayableProvider = _currentMotionPlayableProvider;
             _prevTime = _currentTime;
 
-            if (handler != null) {
-                handler.Initialize(_graph);
+            if (provider != null) {
+                provider.Initialize(_graph);
             }
 
-            _currentMotionPlayableHandler = handler;
+            _currentMotionPlayableProvider = provider;
             _currentTime = 0.0f;
 
             // Graphの更新
             _mixer.DisconnectInput(0);
             _mixer.DisconnectInput(1);
-            if (_prevMotionPlayableHandler != null) {
-                _mixer.ConnectInput(0, _prevMotionPlayableHandler.Playable, 0);
+            if (_prevMotionPlayableProvider != null) {
+                _mixer.ConnectInput(0, _prevMotionPlayableProvider.Playable, 0);
                 _mixer.SetInputWeight(0, 1.0f);
-                if (_currentMotionPlayableHandler != null) {
-                    _mixer.ConnectInput(1, _currentMotionPlayableHandler.Playable, 0);
+                if (_currentMotionPlayableProvider != null) {
+                    _mixer.ConnectInput(1, _currentMotionPlayableProvider.Playable, 0);
                     _mixer.SetInputWeight(1, 0.0f);
                 }
             }
-            else if (_currentMotionPlayableHandler != null) {
-                _mixer.ConnectInput(0, _currentMotionPlayableHandler.Playable, 0);
+            else if (_currentMotionPlayableProvider != null) {
+                _mixer.ConnectInput(0, _currentMotionPlayableProvider.Playable, 0);
                 _mixer.SetInputWeight(0, 1.0f);
             }
 
             // ブレンド時間初期化
-            if (_prevMotionPlayableHandler != null) {
+            if (_prevMotionPlayableProvider != null) {
                 _blendDuration = blendDuration;
                 _blendTime = 0.0f;
             }
@@ -253,7 +253,7 @@ namespace GameFramework.MotionSystems {
                 return;
             }
 
-            SetMotion(new SingleMotionPlayableHandler(clip), blendDuration);
+            SetMotion(new SingleMotionPlayableProvider(clip), blendDuration);
         }
 
         /// <summary>
@@ -265,28 +265,28 @@ namespace GameFramework.MotionSystems {
                 return;
             }
 
-            SetMotion(new AnimatorControllerMotionPlayableHandler(controller), blendDuration);
+            SetMotion(new AnimatorControllerMotionPlayableProvider(controller), blendDuration);
         }
 
         /// <summary>
         /// モーションのリセット
         /// </summary>
         public void ResetMotion(float blendDuration) {
-            SetMotion(default(IMotionPlayableHandler), blendDuration);
+            SetMotion(default(IMotionPlayableProvider), blendDuration);
         }
 
         /// <summary>
         /// Jobの追加
         /// </summary>
-        public AnimationJobHandle AddJob<T>(IAnimationJobHandler<T> handler)
+        public AnimationJobHandle AddJob<T>(IAnimationJobProvider<T> provider)
             where T : struct, IAnimationJob {
             // Jobの生成＆Playable登録
-            var job = handler.Initialize(this);
+            var job = provider.Initialize(this);
             var playable = AnimationScriptPlayable.Create(_graph, job);
             playable.SetInputCount(1);
             var jobInfo = new AnimationJobInfo {
                 playable = playable,
-                disposable = handler
+                disposable = provider
             };
             _animationJobInfos.Add(jobInfo);
 

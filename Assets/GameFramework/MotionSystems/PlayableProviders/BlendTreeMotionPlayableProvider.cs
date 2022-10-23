@@ -11,7 +11,7 @@ namespace GameFramework.MotionSystems
     /// <summary>
     /// 複数のClipをブレンド再生するPlayable用のHandler
     /// </summary>
-    public class BlendTreeMotionPlayableHandler : IMotionPlayableHandler
+    public class BlendTreeMotionPlayableProvider : IMotionPlayableProvider
     {
         // ブレンド用クリップ情報
         [Serializable]
@@ -29,7 +29,7 @@ namespace GameFramework.MotionSystems
         private ClipInfo[] _clipInfos = new ClipInfo[0];
         private float _blendRate = 0.0f;
 
-        Playable IMotionPlayableHandler.Playable => _mixerPlayable;
+        Playable IMotionPlayableProvider.Playable => _mixerPlayable;
         
         // ブレンド割合(0〜1)
         public float BlendRate
@@ -45,7 +45,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BlendTreeMotionPlayableHandler(params ClipInfo[] clipInfos)
+        public BlendTreeMotionPlayableProvider(params ClipInfo[] clipInfos)
         {
             _clipInfos = clipInfos;
         }
@@ -53,7 +53,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BlendTreeMotionPlayableHandler(params AnimationClip[] clips)
+        public BlendTreeMotionPlayableProvider(params AnimationClip[] clips)
         {
             _clipInfos = new ClipInfo[clips.Length];
 
@@ -87,7 +87,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void IMotionPlayableHandler.Initialize(PlayableGraph graph)
+        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
         {
             _clipPlayables = _clipInfos.Select(x => AnimationClipPlayable.Create(graph, x.clip)).ToArray();
             _mixerPlayable = AnimationMixerPlayable.Create(graph, _clipInfos.Length, true);
