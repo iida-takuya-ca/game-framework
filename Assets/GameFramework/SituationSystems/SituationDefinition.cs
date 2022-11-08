@@ -22,7 +22,7 @@ namespace GameFramework.SituationSystems {
         // 有効なハンドルか
         public bool IsValid => _transitionInfo != null;
         // 遷移完了か
-        public bool IsDone => !IsValid && (TransitionState == TransitionState.Completed || TransitionState == TransitionState.Canceled);
+        public bool IsDone => !IsValid || TransitionState == TransitionState.Completed || TransitionState == TransitionState.Canceled;
         // 例外
         public Exception Exception { get; private set; }
         // 遷移前のシチュエーション

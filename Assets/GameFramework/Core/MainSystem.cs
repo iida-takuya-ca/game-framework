@@ -37,20 +37,22 @@ namespace GameFramework.Core {
         /// <summary>
         /// リブート処理
         /// </summary>
-        public void Reboot() {
+        /// <param name="args">リブート時に渡す引数</param>
+        public void Reboot(params object[] args) {
             if (_currentState != State.Active) {
                 Debug.LogError($"Invalid main system state. {_currentState}");
                 return;
             }
 
             // リブート状態にしてコルーチン実行
-            StartCoroutine(RebootRoutine());
+            StartCoroutine(RebootRoutine(args));
         }
 
         /// <summary>
         /// リブート処理記述用コルーチン
         /// </summary>
-        protected abstract IEnumerator RebootRoutineInternal();
+        /// <param name="args">リブート時に渡された引数</param>
+        protected abstract IEnumerator RebootRoutineInternal(object[] args);
 
         /// <summary>
         /// 開始処理記述用コルーチン
@@ -86,9 +88,10 @@ namespace GameFramework.Core {
         /// <summary>
         /// リブート処理コルーチン
         /// </summary>
-        private IEnumerator RebootRoutine() {
+        /// <param name="args">リブート時に渡された引数</param>
+        private IEnumerator RebootRoutine(object[] args) {
             _currentState = State.Rebooting;
-            yield return RebootRoutineInternal();
+            yield return RebootRoutineInternal(args);
             _currentState = State.Active;
         }
 

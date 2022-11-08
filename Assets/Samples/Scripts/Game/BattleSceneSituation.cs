@@ -40,5 +40,16 @@ namespace SampleGame {
             _situationContainer = new SituationContainer(this);
             //_situationContainer.Transition()
         }
+
+        /// <summary>
+        /// 更新処理
+        /// </summary>
+        protected override void UpdateInternal() {
+            base.UpdateInternal();
+
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                MainSystem.Instance.Reboot(new BattleSceneSituation());
+            }
+        }
     }
 }
