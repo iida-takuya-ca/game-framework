@@ -1,7 +1,5 @@
-using System;
 using GameFramework.MotionSystems;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Playables;
 
 namespace GameFramework.BodySystems {
@@ -42,7 +40,7 @@ namespace GameFramework.BodySystems {
         /// 値変化通知
         /// </summary>
         private void OnValidate() {
-            Player.SetUpdateMode(_updateMode);
+            Player?.SetUpdateMode(_updateMode);
         }
     }
 }

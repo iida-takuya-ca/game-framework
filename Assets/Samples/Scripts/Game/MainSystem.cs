@@ -3,6 +3,9 @@ using GameFramework.Core;
 using GameFramework.TaskSystems;
 
 namespace SampleGame {
+    /// <summary>
+    /// SampleGameのメインシステム（実行中常に存在するインスタンス）
+    /// </summary>
     public class MainSystem : MainSystem<MainSystem> {
         private TaskRunner _taskRunner;
         private SceneSituationContainer _sceneSituationContainer;
@@ -17,16 +20,24 @@ namespace SampleGame {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected override IEnumerator StartRoutineInternal() {
+        protected override IEnumerator StartRoutineInternal(object[] args) {
             // 各種システム初期化
             _taskRunner = new TaskRunner();
             _sceneSituationContainer = new SceneSituationContainer();
             Services.Instance.Set(_taskRunner);
             _taskRunner.Register(_sceneSituationContainer);
 
-            // ゲームシーンの読み込み
-            var handle = _sceneSituationContainer.Transition(new GameSceneSituation());
-            yield return handle;
+            // 開始用シーンの読み込み
+            var startSituation = default(SceneSituation);
+            if (args.Length > 0) {
+                startSituation = args[0] as SceneSituation;
+            }
+            if (startSituation == null) {
+                // 未指定ならLogin > Titleへ
+                startSituation = new LoginSceneSituation(new TitleSceneSituation());
+            }
+            var handle = _sceneSituationContainer.Transition(startSituation);
+            yield return handle;                
         }
 
         /// <summary>

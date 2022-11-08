@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -10,16 +11,12 @@ namespace GameFramework.Core {
         private enum State {
             // 無効値
             Invalid = -1,
-
             // 初期化中
             Starting,
-
             // 有効状態
             Active,
-
             // リブート中
             Rebooting,
-
             // 廃棄済み
             Destroyed,
         }
@@ -31,6 +28,9 @@ namespace GameFramework.Core {
         public bool IsCurrent => Current == this;
         // アクティブ状態か
         public bool IsActive => _currentState == State.Active;
+
+        // メインシステムが存在するか
+        public static bool Exists => Current != null;
         // 現在のメインシステム
         private static MainSystem Current { get; set; }
 
@@ -55,7 +55,8 @@ namespace GameFramework.Core {
         /// <summary>
         /// 開始処理記述用コルーチン
         /// </summary>
-        protected abstract IEnumerator StartRoutineInternal();
+        /// <param name="args">MainSystemStarterから渡された引数</param>
+        protected abstract IEnumerator StartRoutineInternal(object[] args);
 
         /// <summary>
         /// メイン更新処理
@@ -75,10 +76,10 @@ namespace GameFramework.Core {
         /// <summary>
         /// 初期化処理コルーチン
         /// </summary>
-        private IEnumerator StartRoutine() {
+        private IEnumerator StartRoutine(object[] args) {
             _currentState = State.Starting;
             DontDestroyOnLoad(gameObject);
-            yield return StartRoutineInternal();
+            yield return StartRoutineInternal(args);
             _currentState = State.Active;
         }
 
@@ -125,7 +126,17 @@ namespace GameFramework.Core {
                 yield break;
             }
 
-            yield return StartRoutine();
+            // Starterから引数を取得
+            var starter = MainSystemStarter.Current;
+            var arguments = starter != null ? starter.GetArguments() : Array.Empty<object>();
+            
+            // 開始処理
+            yield return StartRoutine(arguments);
+            
+            // Starterを削除
+            if (starter != null) {
+                Destroy(starter.gameObject);
+            }
         }
 
         /// <summary>

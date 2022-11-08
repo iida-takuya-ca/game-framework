@@ -17,9 +17,14 @@ namespace SampleGame {
         /// アセットの読み込み処理
         /// </summary>
         public IObservable<T> LoadAsync() {
-            return Resources.LoadAsync<T>(Path)
-                .AsAsyncOperationObservable()
-                .Select(op => (T)op.asset);
+            return Observable.Defer(() => {
+                // 取り合えずサンプルなのでUnityEditorで読み込み
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(Path);
+                return Observable.Return(asset);
+            });
+            // return Resources.LoadAsync<T>(Path)
+            //     .AsAsyncOperationObservable()
+            //     .Select(op => (T)op.asset);
         }
     }
 
@@ -36,6 +41,6 @@ namespace SampleGame {
     /// </summary>
     public class PlayerPrefabAssetRequest : BodyPrefabAssetRequest {
         public PlayerPrefabAssetRequest(string assetKey)
-            : base($"Player/{assetKey}/prfb_{assetKey}.prefab"){}
+            : base($"Player/{assetKey}/Models/prfb_{assetKey}.prefab"){}
     }
 }

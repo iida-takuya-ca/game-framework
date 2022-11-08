@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace SampleGame {
     /// <summary>
-    /// ゲームシーン用のSituation
+    /// Battle用のSituation
     /// </summary>
-    public class GameSceneSituation : SceneSituation {
-        // GameScene内シチュエーション用コンテナ
+    public class BattleSceneSituation : SceneSituation {
+        // BattleScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
         
-        public override string SceneAssetPath => "game";
+        public override string SceneAssetPath => "battle";
 
         /// <summary>
         /// 読み込み処理
