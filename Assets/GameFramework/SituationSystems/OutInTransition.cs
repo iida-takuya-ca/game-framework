@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using GameFramework.CoroutineSystems;
 
 namespace GameFramework.SituationSystems {
@@ -18,8 +16,8 @@ namespace GameFramework.SituationSystems {
             // 非アクティブ
             resolver.DeactivatePrev();
             
-            // 閉じる
-            yield return resolver.ClosePrevRoutine();
+            // エフェクト開始＆閉じる
+            yield return new MergedCoroutine(resolver.EnterEffectRoutine(), resolver.ClosePrevRoutine());
             
             // 解放
             yield return resolver.UnloadPrevRoutine();
@@ -27,8 +25,8 @@ namespace GameFramework.SituationSystems {
             // 読み込み
             yield return resolver.LoadNextRoutine();
             
-            // 開く
-            yield return resolver.OpenNextRoutine();
+            // エフェクト終了＆開く
+            yield return new MergedCoroutine(resolver.ExitEffectRoutine(), resolver.OpenNextRoutine()); 
             
             // アクティブ化
             resolver.ActivateNext();

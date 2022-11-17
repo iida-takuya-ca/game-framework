@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using GameFramework.CoroutineSystems;
 
 namespace GameFramework.SituationSystems {

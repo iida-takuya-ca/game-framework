@@ -136,17 +136,36 @@ namespace GameFramework.SituationSystems {
             // ハンドルの返却
             return new TransitionHandle(_transitionInfo);
         }
-
+        
         /// <summary>
         /// 遷移実行
         /// </summary>
-        public TransitionHandle Back(ITransition overrideTransition = null) {
+        /// <param name="situation">遷移先のシチュエーション(nullの場合、全部閉じる)</param>
+        /// <param name="effects">遷移演出</param>
+        public TransitionHandle Transition(Situation situation, params ITransitionEffect[] effects) {
+            return Transition(situation, null, effects);
+        }
+
+        /// <summary>
+        /// 戻り遷移実行
+        /// </summary>
+        /// <param name="overrideTransition">上書き用の遷移処理</param>
+        /// <param name="effects">遷移演出</param>
+        public TransitionHandle Back(ITransition overrideTransition = null, params ITransitionEffect[] effects) {
             if (_stack.Count <= 0) {
                 return new TransitionHandle(new Exception("Not found stack."));
             }
 
             var next = _stack.Count > 1 ? _stack[_stack.Count - 2] : null;
-            return Transition(next, overrideTransition);
+            return Transition(next, overrideTransition, effects);
+        }
+
+        /// <summary>
+        /// 戻り遷移実行
+        /// </summary>
+        /// <param name="effects">遷移演出</param>
+        public TransitionHandle Back(params ITransitionEffect[] effects) {
+            return Back(null, effects);
         }
 
         /// <summary>

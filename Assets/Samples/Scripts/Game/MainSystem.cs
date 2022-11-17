@@ -1,12 +1,17 @@
 using System.Collections;
 using GameFramework.Core;
+using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
+using UnityEngine;
 
 namespace SampleGame {
     /// <summary>
     /// SampleGameのメインシステム（実行中常に存在するインスタンス）
     /// </summary>
     public class MainSystem : MainSystem<MainSystem> {
+        [SerializeField]
+        private ServiceLocatorInstaller _globalObject;
+        
         private TaskRunner _taskRunner;
         private SceneSituationContainer _sceneSituationContainer;
 
@@ -39,11 +44,19 @@ namespace SampleGame {
         /// 初期化処理
         /// </summary>
         protected override IEnumerator StartRoutineInternal(object[] args) {
+            // GlobalObjectを初期化
+            DontDestroyOnLoad(_globalObject.gameObject);
+            // RootのServiceにインスタンスを登録
+            _globalObject.Install(Services.Instance);
+            
             // 各種システム初期化
             _taskRunner = new TaskRunner();
             Services.Instance.Set(_taskRunner);
             _sceneSituationContainer = new SceneSituationContainer();
             _taskRunner.Register(_sceneSituationContainer);
+            
+            // 各種GlobalObjectのタスク登録
+            _taskRunner.Register(Services.Get<FadeController>(), TaskOrder.UI);
 
             // 開始用シーンの読み込み
             var startSituation = default(SceneSituation);
@@ -55,7 +68,7 @@ namespace SampleGame {
                 startSituation = new LoginSceneSituation(new TitleSceneSituation());
             }
             var handle = _sceneSituationContainer.Transition(startSituation);
-            yield return handle;                
+            yield return handle;
         }
 
         /// <summary>

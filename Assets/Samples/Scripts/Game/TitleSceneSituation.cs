@@ -28,7 +28,7 @@ namespace SampleGame {
             base.UpdateInternal();
 
             if (Input.GetKeyDown(KeyCode.Space)) {
-                ParentContainer.Transition(new FieldSceneSituation());
+                ParentContainer.Transition(new FieldSceneSituation(), new FadeTransitionEffect(Color.black, 0.5f));
             }
         }
     }
