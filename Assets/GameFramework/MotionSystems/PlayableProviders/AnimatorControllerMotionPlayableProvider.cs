@@ -6,38 +6,39 @@ using UnityEngine.Playables;
 namespace GameFramework.MotionSystems
 {
     /// <summary>
-    /// AnimatorControllerを再生するPlayable用のHandler
+    /// AnimatorControllerを再生するPlayable用のProvider
     /// </summary>
-    public class AnimatorControllerMotionPlayableProvider : IMotionPlayableProvider
+    public class AnimatorControllerMotionPlayableProvider : MotionPlayableProvider
     {
         private AnimatorControllerPlayable _playable;
         private RuntimeAnimatorController _controller;
 
-        Playable IMotionPlayableProvider.Playable => _playable;
+        protected override Playable Playable => _playable;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public AnimatorControllerMotionPlayableProvider(RuntimeAnimatorController controller)
+        public AnimatorControllerMotionPlayableProvider(RuntimeAnimatorController controller, bool autoDispose)
+            : base(autoDispose)
         {
             _controller = controller;
         }
 
         /// <summary>
-        /// 廃棄時処理
+        /// 初期化処理
         /// </summary>
-        void IDisposable.Dispose()
+        protected override void InitializeInternal(PlayableGraph graph)
         {
-            _controller = null;
-            _playable.Destroy();
+            _playable = AnimatorControllerPlayable.Create(graph, _controller);
         }
 
         /// <summary>
-        /// 初期化処理
+        /// 廃棄時処理
         /// </summary>
-        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
+        protected override void DisposeInternal()
         {
-            _playable = AnimatorControllerPlayable.Create(graph, _controller);
+            _controller = null;
+            _playable.Destroy();
         }
     }
 }

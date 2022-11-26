@@ -9,9 +9,9 @@ using UnityEngine.Playables;
 namespace GameFramework.MotionSystems
 {
     /// <summary>
-    /// 複数のClipをブレンド再生するPlayable用のHandler
+    /// 複数のClipをブレンド再生するPlayable用のProvider
     /// </summary>
-    public class BlendTreeMotionPlayableProvider : IMotionPlayableProvider
+    public class BlendTreeMotionPlayableProvider : MotionPlayableProvider
     {
         // ブレンド用クリップ情報
         [Serializable]
@@ -29,7 +29,7 @@ namespace GameFramework.MotionSystems
         private ClipInfo[] _clipInfos = new ClipInfo[0];
         private float _blendRate = 0.0f;
 
-        Playable IMotionPlayableProvider.Playable => _mixerPlayable;
+        protected override Playable Playable => _mixerPlayable;
         
         // ブレンド割合(0〜1)
         public float BlendRate
@@ -45,7 +45,8 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BlendTreeMotionPlayableProvider(params ClipInfo[] clipInfos)
+        public BlendTreeMotionPlayableProvider(bool autoDispose, params ClipInfo[] clipInfos)
+            : base(autoDispose)
         {
             _clipInfos = clipInfos;
         }
@@ -53,7 +54,8 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BlendTreeMotionPlayableProvider(params AnimationClip[] clips)
+        public BlendTreeMotionPlayableProvider(bool autoDispose, params AnimationClip[] clips)
+            : base(autoDispose)
         {
             _clipInfos = new ClipInfo[clips.Length];
 
@@ -71,23 +73,9 @@ namespace GameFramework.MotionSystems
         }
 
         /// <summary>
-        /// 廃棄時処理
-        /// </summary>
-        void IDisposable.Dispose()
-        {
-            _mixerPlayable.Destroy();
-            for (var i = 0; i < _clipPlayables.Length; i++)
-            {
-                _clipPlayables[i].Destroy();
-            }
-            _clipPlayables = new AnimationClipPlayable[0];
-            _clipInfos = new ClipInfo[0];
-        }
-
-        /// <summary>
         /// 初期化処理
         /// </summary>
-        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
+        protected override void InitializeInternal(PlayableGraph graph)
         {
             _clipPlayables = _clipInfos.Select(x => AnimationClipPlayable.Create(graph, x.clip)).ToArray();
             _mixerPlayable = AnimationMixerPlayable.Create(graph, _clipInfos.Length);
@@ -96,6 +84,20 @@ namespace GameFramework.MotionSystems
                 _mixerPlayable.ConnectInput(i, _clipPlayables[i],0);
             }
             RefreshInputWeights();
+        }
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        protected override void DisposeInternal()
+        {
+            _mixerPlayable.Destroy();
+            for (var i = 0; i < _clipPlayables.Length; i++)
+            {
+                _clipPlayables[i].Destroy();
+            }
+            _clipPlayables = new AnimationClipPlayable[0];
+            _clipInfos = new ClipInfo[0];
         }
 
         /// <summary>

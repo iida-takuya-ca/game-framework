@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -101,6 +100,16 @@ namespace GameFramework.MotionSystems {
             }
 
             RefreshAnimationJobInfos();
+            
+            // 再生中のPlayableをクリア
+            if (_prevMotionPlayableProvider != null && _prevMotionPlayableProvider.AutoDispose) {
+                _prevMotionPlayableProvider.Dispose();
+                _prevMotionPlayableProvider = null;
+            }
+            if (_currentMotionPlayableProvider != null && _currentMotionPlayableProvider.AutoDispose) {
+                _currentMotionPlayableProvider.Dispose();
+                _currentMotionPlayableProvider = null;
+            }
 
             _graph.Destroy();
         }
@@ -142,7 +151,9 @@ namespace GameFramework.MotionSystems {
             }
             else if (_prevMotionPlayableProvider != null) {
                 // Blend完了
-                _prevMotionPlayableProvider.Dispose();
+                if (_prevMotionPlayableProvider.AutoDispose) {
+                    _prevMotionPlayableProvider.Dispose();
+                }
                 _prevMotionPlayableProvider = null;
 
                 // Mixerの接続関係修正
@@ -206,7 +217,9 @@ namespace GameFramework.MotionSystems {
         /// </summary>
         public void SetMotion(IMotionPlayableProvider provider, float blendDuration) {
             // Providerの更新
-            _prevMotionPlayableProvider?.Dispose();
+            if (_prevMotionPlayableProvider != null && _prevMotionPlayableProvider.AutoDispose) {
+                _prevMotionPlayableProvider.Dispose();
+            }
             _prevMotionPlayableProvider = _currentMotionPlayableProvider;
             _prevTime = _currentTime;
 
@@ -247,25 +260,29 @@ namespace GameFramework.MotionSystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public void SetMotion(AnimationClip clip, float blendDuration) {
+        public SingleMotionPlayableProvider SetMotion(AnimationClip clip, float blendDuration, bool autoDispose = true) {
             if (clip == null) {
                 ResetMotion(blendDuration);
-                return;
+                return null;
             }
 
-            SetMotion(new SingleMotionPlayableProvider(clip), blendDuration);
+            var provider = new SingleMotionPlayableProvider(clip, autoDispose); 
+            SetMotion(provider, blendDuration);
+            return provider;
         }
 
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public void SetMotion(RuntimeAnimatorController controller, float blendDuration) {
+        public AnimatorControllerMotionPlayableProvider SetMotion(RuntimeAnimatorController controller, float blendDuration, bool autoDispose = true) {
             if (controller == null) {
                 ResetMotion(blendDuration);
-                return;
+                return null;
             }
 
-            SetMotion(new AnimatorControllerMotionPlayableProvider(controller), blendDuration);
+            var provider = new AnimatorControllerMotionPlayableProvider(controller, autoDispose);
+            SetMotion(provider, blendDuration);
+            return provider;
         }
 
         /// <summary>

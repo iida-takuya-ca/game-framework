@@ -8,6 +8,8 @@ namespace GameFramework.MotionSystems
     /// </summary>
     public interface IMotionPlayableProvider : IDisposable
     {
+        // 自動Disposeフラグ
+        bool AutoDispose { get; }
         // 再生に使用するPlayable
         Playable Playable { get; }
 

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -6,38 +5,38 @@ using UnityEngine.Playables;
 namespace GameFramework.MotionSystems
 {
     /// <summary>
-    /// 1つのClipを再生するPlayable用のHandler
+    /// 1つのClipを再生するPlayable用のProvider
     /// </summary>
-    public class SingleMotionPlayableProvider : IMotionPlayableProvider
+    public class SingleMotionPlayableProvider : MotionPlayableProvider
     {
         private AnimationClipPlayable _playable;
         private AnimationClip _clip;
 
-        Playable IMotionPlayableProvider.Playable => _playable;
+        protected override Playable Playable => _playable;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public SingleMotionPlayableProvider(AnimationClip clip)
+        public SingleMotionPlayableProvider(AnimationClip clip, bool autoDispose)
+            : base(autoDispose)
         {
             _clip = clip;
         }
 
         /// <summary>
-        /// 廃棄時処理
+        /// 初期化処理
         /// </summary>
-        void IDisposable.Dispose()
+        protected override void InitializeInternal(PlayableGraph graph)
         {
-            _clip = null;
-            _playable.Destroy();
+            _playable = AnimationClipPlayable.Create(graph, _clip);
         }
 
         /// <summary>
-        /// 初期化処理
+        /// 廃棄時処理
         /// </summary>
-        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
-        {
-            _playable = AnimationClipPlayable.Create(graph, _clip);
+        protected override void DisposeInternal() {
+            _clip = null;
+            _playable.Destroy();
         }
     }
 }
