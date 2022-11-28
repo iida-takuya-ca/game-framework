@@ -8,3 +8,41 @@ Unityでゲーム制作する際のアーキテクチャ設計に関わるフレ
 - 非同期処理や初期化処理の解放タイミングなどを明確かつシンプルにしたい
 - レイヤーを作りすぎず、実装に対してのクラス量を抑えたい
 - 仕様の変化になるべく強くしたい
+
+## ライフサイクルについて
+game-frameworkでは、「Unityにおけるシーン管理」だけでは不足しがちな、ライフサイクルの階層的管理をサポートしています
+
+具体的には
+- MainSystem
+- Situation
+
+が該当します
+
+### MainSystem
+アプリ起動中のライフサイクルを管理するクラスで、Singleton的な動きをします
+
+アプリケーションの以下のサイクルを管理できます
+- アプリケーション起動時の初期化処理
+- アプリケーションソフトリブート時のリセット処理
+- アプリケーション起動中の更新処理
+- アプリケーション終了時の処理
+
+具体例で言うと、以下のような記述を書きます
+- 初期シーンの決定（タイトル画面など）
+- 常駐システムの生成/初期化やリセット処理
+
+
+### Situation
+Unityのシーンでは管理しづらい階層的なシーン管理（ここではシチュエーション管理）を行います
+
+例えば以下のような階層設計が可能です
+- TitleSceneSituation // title.unity
+  - TitleSetupSituation // タイトルロゴ
+  - TitleMainSituation // タイトルメニュー
+- HomeSceneSituation // home.unity
+  - HomeMainSituation // ホーム画面メイン
+  - EquipmentSituation // 装備画面
+- GameSceneSituation // game.unity
+  - GameStartSituation // ゲーム開始演出
+  - GameMainSituation // ゲームメイン
+  - GameResultSituation // ゲーム結果
