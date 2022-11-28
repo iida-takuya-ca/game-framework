@@ -32,7 +32,6 @@ game-frameworkでは、「Unityにおけるシーン管理」だけでは不足�
 - 初期シーンの決定（タイトル画面など）
 - 常駐システムの生成/初期化やリセット処理
 
-
 ### Situation
 Unityのシーンでは管理しづらい階層的なシーン管理（ここではシチュエーション管理）を行います
 
@@ -92,3 +91,36 @@ subgraph MainSystem
   TitleSceneSituation --> HomeSceneSituation <--> GameSceneSituation
 end
 ```
+
+## コアになっている機能について
+### TaskRunner
+UnityのUpdateに依存させずに更新順番の管理を行う場合に使用します
+
+- UnityのUpdateを使わない理由
+  - 各MonoBehaviour間の更新順の管理が曖昧になりやすい
+  - 更新を呼びたいだけなのに、無駄にGameObjectやMonoBehaviourを作る必要がある
+- Taskを使うポイント
+  - 基本的に実行順番が重要になる物はこの更新サイクルに乗せるのが理想
+    - UI, Camera, Transform, Effect など
+- なぜ更新順が重要なのか
+  - Action性の高いゲームの場合、Input > SetMotion > UpdateBone > ConstraintEffect/ConstarintUI のような1frameにおける処理順が重要になる
+    - 上記がうまく出来てないと、3Dキャラに追従させたHPゲージなどがずれてしまったり、エフェクトや当たり判定の位置がずれてしまうなどが起きる
+
+### CoroutineRunner
+UnityのCoroutineやC#のasync等とは違い、更新タイミングにずれを無くしたい非同期処理に対して使うためのCoroutine実行用の機能です
+
+- 専用で作る理由
+  - 実行タイミングが読みづらい（次のフレームになってしまう、他の連携すべき処理順とずれたタイミングで実行されてしまうなど）
+    - これに起因して、1フレーム待つコードなどが増えてしまう事を防止する
+  - 本来の非同期処理とは違う意図のコード（WaitForEndOfFrameなど)が使われてしまう
+
+### IScope
+C#のCancellationTokenやUniRx等のCompositeDisposableなどの非同期処理のキャンセルや購読解除のタイミングを共通化するためのInterfaceです
+
+- 専用で作る理由
+  - ライフサイクル用のシステム（Situation, Stateなど)で共通的に初期化と対となる解放処理を定義しやすくする目的
+  - 既存の物だと、拡張メソッドでは回避しづらくなるケースもあるが、IScopeは拡張メソッドでUniRxでのTakeUntil, AddToを拡張したり、CancellationTokenへの変換なども対応しやすいため
+
+### ServiceContainer
+### LayeredTime
+
