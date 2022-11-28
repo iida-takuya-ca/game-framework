@@ -103,7 +103,7 @@ UnityのUpdateに依存させずに更新順番の管理を行う場合に使用
   - 基本的に実行順番が重要になる物はこの更新サイクルに乗せるのが理想
     - UI, Camera, Transform, Effect など
 - なぜ更新順が重要なのか
-  - Action性の高いゲームの場合、Input > SetMotion > UpdateBone > ConstraintEffect/ConstarintUI のような1frameにおける処理順が重要になる
+  - Action性の高いゲームの場合、Input > SetMotion > UpdateBone > UpdateCamera > ConstraintEffect/ConstarintUI のような1frameにおける処理順が重要になる
     - 上記がうまく出来てないと、3Dキャラに追従させたHPゲージなどがずれてしまったり、エフェクトや当たり判定の位置がずれてしまうなどが起きる
 
 ### CoroutineRunner
