@@ -68,3 +68,27 @@ Situationでは大きすぎるような簡易的な状態毎の定義を記述�
   - 必要に応じて使う（使わなくても可能）
   - 実質、解放処理付きswitchのような扱い
   - 同期的な初期化とState切り替わり時の終了処理の記述に特化している
+  
+```mermaid
+flowchart LR
+subgraph MainSystem
+  subgraph TitleSceneSituation
+    TitleSetupSituation --> TitleMainSituation
+  end
+
+  subgraph HomeSceneSituation
+    HomeMainSituation <--> EquipmentSituation
+  end
+  
+  subgraph GameSceneSituation
+    subgraph GameMainSituation
+      PlayingState <--> PauseState
+      PlayingState <--> CutInState
+    end
+  
+    GameStartSituation --> GameMainSituation --> GameResultSituation
+  end
+  
+  TitleSceneSituation --> HomeSceneSituation <--> GameSceneSituation
+end
+```
