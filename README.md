@@ -51,7 +51,7 @@ Unityのシーンでは管理しづらい階層的なシーン管理（ここで
 Situationでは大きすぎるような簡易的な状態毎の定義を記述するために使用します
 
 例えば以下のような状態で使用します
-- GameMainSituation // 装備画面
+- GameMainSituation // ゲーム中
   - State.Playing // プレイ中
   - State.Pause // 一時停止中
   - State.CutIn // カットイン再生中
