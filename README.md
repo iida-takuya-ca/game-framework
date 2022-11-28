@@ -131,4 +131,8 @@ C#のCancellationTokenやUniRx等のCompositeDisposableなどの非同期処理�
   - 上記のような背景から、「ライフサイクル管理とセットのInstance共有システム」と言う定義で作成している
 
 ### LayeredTime
+UnityのTime.deltaTimeをラップした物で、これらをネスト管理する事が可能な仕組みです
 
+- なぜネスト管理が必要なのか
+  - Gameではスローの表現を多層的に行う事が多く、Unity標準のUnscaled機能などでは対応しきれない事が多いため
+    - UIのTimeScale > 3D空間のTimeScale > 3DキャラのTimeScale > 3Dキャラの発射したObjectのTimeScale といったようなイメージ
