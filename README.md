@@ -122,5 +122,13 @@ C#のCancellationTokenやUniRx等のCompositeDisposableなどの非同期処理�
   - 既存の物だと、拡張メソッドでは回避しづらくなるケースもあるが、IScopeは拡張メソッドでUniRxでのTakeUntil, AddToを拡張したり、CancellationTokenへの変換なども対応しやすいため
 
 ### ServiceContainer
+各ライフサイクル中で共通化したいInstance（わかりやすく言えばSingletonのような物）を管理するためのコンテナです
+
+これ自体はDIとほぼ同様の動き方をしており、DIを使わない想定の設計がgame-frameworkにはのっています
+
+- なぜDIではないのか
+  - コードの制約を作る上では、DIの優秀な点は多く挙げられるが、Gameのような複雑な依存度が多いケースでは、引数のリレーが発生したり、どこかでそれを壊すようなSingletonが発生してしまったりする事が多い
+  - 上記のような背景から、「ライフサイクル管理とセットのInstance共有システム」と言う定義で作成している
+
 ### LayeredTime
 
