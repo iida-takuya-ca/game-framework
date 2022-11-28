@@ -15,6 +15,7 @@ game-frameworkでは、「Unityにおけるシーン管理」だけでは不足�
 具体的には
 - MainSystem
 - Situation
+- State
 
 が該当します
 
@@ -46,3 +47,27 @@ Unityのシーンでは管理しづらい階層的なシーン管理（ここで
   - GameStartSituation // ゲーム開始演出
   - GameMainSituation // ゲームメイン
   - GameResultSituation // ゲーム結果
+
+### State
+Situationでは大きすぎるような簡易的な状態毎の定義を記述するために使用します
+
+例えば以下のような状態で使用します
+- GameMainSituation // 装備画面
+  - State.Playing // プレイ中
+  - State.Pause // 一時停止中
+  - State.CutIn // カットイン再生中
+
+### まとめ
+- MainSystem
+  - 必ず一つ
+  - 常駐システムの初期化や更新を行う場所
+- Situation
+  - Unityシーンの切り替わり + その内部での大きな切り替わり
+  - ロード、初期化、更新、解放などの非同期的な物を含むライフサイクルを管理する
+- State
+  - 必要に応じて使う（使わなくても可能）
+  - 実質、解放処理付きswitchのような扱い
+  - 同期的な初期化とState切り替わり時の終了処理の記述に特化している
+ 
+  - ロードしょきｋ
+  - ロード
