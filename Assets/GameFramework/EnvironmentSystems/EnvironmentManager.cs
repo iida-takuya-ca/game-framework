@@ -101,13 +101,13 @@ namespace GameFramework.EnvironmentSystems {
             // スタックの状態を調べる
             for (var i = 0; i < _stack.Count; i++) {
                 var info = _stack[i];
-                if (info.timer <= 0.0f) {
+                if (info.timer < 0.0f) {
                     continue;
                 }
                 
-                // カレントではなければ、時間を0にする
+                // カレントではなければ、時間を-1にする
                 if (i != _stack.Count - 1) {
-                    info.timer = 0.0f;
+                    info.timer = -1.0f;
                     continue;
                 }
                 
