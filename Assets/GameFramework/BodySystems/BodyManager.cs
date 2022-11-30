@@ -130,6 +130,8 @@ namespace GameFramework.BodySystems {
         private void BuildDefault(IBody body, GameObject gameObject) {
             body.AddController(new LocatorController());
             body.AddController(new ParentController());
+            body.AddController(new MeshController());
+            body.AddController(new ConstraintController());
             
             // Componentとして入っている物を抽出
             var controllers = gameObject.GetComponentsInChildren<SerializedBodyController>(true);

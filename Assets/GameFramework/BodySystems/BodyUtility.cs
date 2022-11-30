@@ -31,5 +31,20 @@ namespace GameFramework.BodySystems {
 #endif
             Object.Destroy(component);
         }
+
+        /// <summary>
+        /// レイヤーの再帰的な設定
+        /// </summary>
+        public static void SetLayer(GameObject target, int layer, bool recursive = true) {
+            target.layer = layer;
+            if (!recursive) {
+                return;
+            }
+            
+            var targetTrans = target.transform;
+            for (var i = 0; i < targetTrans.childCount; i++) {
+                SetLayer(targetTrans.GetChild(i).gameObject, layer);
+            }
+        }
     }
 }
