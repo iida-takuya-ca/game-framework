@@ -25,6 +25,13 @@ namespace GameFramework.MotionSystems
         }
 
         /// <summary>
+        /// AnimatorController用のPlayableを取得
+        /// </summary>
+        public AnimatorControllerPlayable GetPlayable() {
+            return _playable;
+        }
+
+        /// <summary>
         /// 初期化処理
         /// </summary>
         protected override void InitializeInternal(PlayableGraph graph)
