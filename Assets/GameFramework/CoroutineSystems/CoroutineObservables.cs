@@ -12,7 +12,7 @@ namespace GameFramework.CoroutineSystems {
         /// <summary>
         /// コルーチンの開始処理
         /// </summary>
-        public static IObservable<Unit> StartCoroutineAsync(this CoroutineRunner source, IEnumerator enumerator) {
+        public static IObservable<Unit> StartCoroutineAsync(this CoroutineRunner source, IEnumerator enumerator, Action onCanceled = null) {
             return Observable.Create<Unit>(observer => {
                 var isDone = false;
                 var coroutine = source.StartCoroutine(enumerator, () => {
@@ -21,6 +21,7 @@ namespace GameFramework.CoroutineSystems {
                     observer.OnCompleted();
                 }, () => {
                     isDone = true;
+                    onCanceled?.Invoke();
                     observer.OnCompleted();
                 }, exception => {
                     isDone = true;
@@ -31,6 +32,7 @@ namespace GameFramework.CoroutineSystems {
                     if (!isDone) {
                         // ストリームキャンセルによるコルーチン停止
                         source.StopCoroutine(coroutine);
+                        onCanceled?.Invoke();
                     }
                 });
             });

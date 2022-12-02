@@ -4,6 +4,7 @@ using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
 using GameFramework.ModelSystems;
+using GameFramework.TaskSystems;
 using UniRx;
 
 namespace SampleGame {
@@ -48,12 +49,24 @@ namespace SampleGame {
         /// <summary>
         /// プレイヤーエンティティの初期化処理
         /// </summary>
-        public static IObservable<Entity> SetupPlayerAsync(this Entity source, string assetKey) {
+        public static IObservable<Entity> SetupPlayerAsync(this Entity source, BattlePlayerModel model) {
             return source.SetupAsync(() => {
-                return new PlayerPrefabAssetRequest(assetKey)
+                return new PlayerPrefabAssetRequest(model.AssetKey)
                     .LoadAsync()
                     .Select(prefab => Services.Get<BodyManager>().CreateFromPrefab(prefab));
-            }, entity => Observable.ReturnUnit());
+            }, entity => {
+                return new PlayerSetupDataAssetRequest(model.AssetKey)
+                    .LoadAsync()
+                    .Do(data => {
+                        var taskRunner = Services.Get<TaskRunner>();
+                        var actor = new PlayerActor(entity.FindBody(), data);
+                        taskRunner.Register(actor, TaskOrder.Actor);
+                        var logic = new BattlePlayerLogic(actor, model);
+                        taskRunner.Register(logic, TaskOrder.Logic);
+                        entity.GetComponent<LogicEntityComponent>().AddLogic(logic);
+                    })
+                    .AsUnitObservable();
+            });
         }
 
         /// <summary>

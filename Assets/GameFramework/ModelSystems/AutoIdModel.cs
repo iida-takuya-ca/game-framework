@@ -39,7 +39,7 @@ namespace GameFramework.ModelSystems {
                 var model = new TModel();
                 var id = _nextId++;
                 model.OnCreated(id);
-                _models[IdToIndex(id)] = model;
+                _models.Add(model);
                 return model;
             }
         

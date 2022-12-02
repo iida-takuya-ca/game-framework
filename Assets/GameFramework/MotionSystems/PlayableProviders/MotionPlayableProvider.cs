@@ -41,7 +41,7 @@ namespace GameFramework.MotionSystems
                 return;
             }
 
-            DisposeInternal();
+            InitializeInternal(graph);
             _initialized = true;
         }
 

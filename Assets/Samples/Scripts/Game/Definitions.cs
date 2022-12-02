@@ -6,6 +6,7 @@ namespace SampleGame {
     public enum TaskOrder {
         PreSystem,
         Logic,
+        Actor,
         Body,
         Collision,
         Camera,

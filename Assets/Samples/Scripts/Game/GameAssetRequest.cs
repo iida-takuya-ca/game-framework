@@ -43,4 +43,12 @@ namespace SampleGame {
         public PlayerPrefabAssetRequest(string assetKey)
             : base($"Player/{assetKey}/Models/prfb_{assetKey}.prefab"){}
     }
+
+    /// <summary>
+    /// PlayerSetupDataのAssetRequest
+    /// </summary>
+    public class PlayerSetupDataAssetRequest : GameAssetRequest<PlayerSetupData> {
+        public PlayerSetupDataAssetRequest(string assetKey)
+            : base($"Assets/Samples/Battle/PlayerSetup/dat_player_setup_{assetKey}.asset"){}
+    }
 }
