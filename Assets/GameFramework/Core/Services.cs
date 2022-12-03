@@ -63,8 +63,8 @@ namespace GameFramework.Core {
             // Play/Edit切り替わり時にインスタンスを解放
             EditorApplication.playModeStateChanged += change => {
                 switch (change) {
+                    case PlayModeStateChange.EnteredEditMode:
                     case PlayModeStateChange.ExitingEditMode:
-                    case PlayModeStateChange.ExitingPlayMode:
                         s_instance?.Dispose();
                         s_instance = null;
                         break;

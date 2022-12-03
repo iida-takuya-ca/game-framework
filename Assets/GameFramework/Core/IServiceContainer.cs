@@ -6,6 +6,11 @@ namespace GameFramework.Core {
     /// </summary>
     public interface IServiceContainer : IDisposable {
         /// <summary>
+        /// コンテナのクリア
+        /// </summary>
+        void Clear();
+        
+        /// <summary>
         /// サービスの設定
         /// </summary>
         /// <param name="service">登録するインスタンス</param>

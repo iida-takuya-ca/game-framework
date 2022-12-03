@@ -44,27 +44,7 @@ namespace GameFramework.Core {
         /// 廃棄処理
         /// </summary>
         public void Dispose() {
-            // 子を解放
-            for (var i = _children.Count - 1; i >= 0; i--) {
-                _children[i].Dispose();
-            }
-            _children.Clear();
-            
-            if (_autoDispose) {
-                // 逆順に解放
-                for (var i = _disposableServices.Count - 1; i >= 0; i--) {
-                    var disposable = _disposableServices[i];
-                    if (disposable == null) {
-                        continue;
-                    }
-                    disposable.Dispose();
-                }
-            }
-            
-            // サービス参照をクリア
-            _disposableServices.Clear();
-            _services.Clear();
-            _serviceLists.Clear();
+            ClearInternal();
         }
 
         /// <summary>
@@ -109,6 +89,13 @@ namespace GameFramework.Core {
             if (service is IDisposable disposable) {
                 _disposableServices.Add(disposable);
             }
+        }
+
+        /// <summary>
+        /// コンテナ内のクリア
+        /// </summary>
+        void IServiceContainer.Clear() {
+            ClearInternal();
         }
 
         /// <summary>
@@ -182,6 +169,33 @@ namespace GameFramework.Core {
         /// <param name="index">インデックス</param>
         T IServiceContainer.Get<T>(int index) {
             return (T)((IServiceContainer)this).Get(typeof(T), index);
+        }
+
+        /// <summary>
+        /// コンテナ内のクリア
+        /// </summary>
+        private void ClearInternal() {
+            // 子を解放
+            for (var i = _children.Count - 1; i >= 0; i--) {
+                _children[i].Dispose();
+            }
+            _children.Clear();
+            
+            if (_autoDispose) {
+                // 逆順に解放
+                for (var i = _disposableServices.Count - 1; i >= 0; i--) {
+                    var disposable = _disposableServices[i];
+                    if (disposable == null) {
+                        continue;
+                    }
+                    disposable.Dispose();
+                }
+            }
+            
+            // サービス参照をクリア
+            _disposableServices.Clear();
+            _services.Clear();
+            _serviceLists.Clear();
         }
     }
 }

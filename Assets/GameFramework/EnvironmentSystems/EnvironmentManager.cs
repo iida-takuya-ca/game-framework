@@ -93,6 +93,18 @@ namespace GameFramework.EnvironmentSystems {
         }
 
         /// <summary>
+        /// 強制更新フラグ
+        /// </summary>
+        public void SetDirty() {
+            if (_stack.Count <= 0) {
+                return;
+            }
+
+            var currentInfo = _stack[_stack.Count - 1];
+            currentInfo.timer = Mathf.Max(0.0f, currentInfo.timer);
+        }
+
+        /// <summary>
         /// タスク後更新処理
         /// </summary>
         protected override void LateUpdateInternal() {

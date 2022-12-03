@@ -9,7 +9,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Bodyの検索
         /// </summary>
-        public static Body FindBody(this Entity source) {
+        public static Body GetBody(this Entity source) {
             var component = source.GetComponent<BodyEntityComponent>();
             if (component == null) {
                 return null;

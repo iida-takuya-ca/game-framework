@@ -32,7 +32,11 @@ namespace GameFramework.BodySystems {
         // 有効状態
         public bool IsActive {
             get => IsValid && GameObject.activeSelf;
-            set => GameObject.SetActive(value);
+            set {
+                if (IsValid) {
+                    GameObject.SetActive(value);
+                }
+            }
         }
         // 制御対象のGameObject
         public GameObject GameObject { get; private set; }
