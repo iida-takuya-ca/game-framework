@@ -6,11 +6,13 @@ namespace GameFramework.LogicSystems {
     /// <summary>
     /// ロジック処理
     /// </summary>
-    public abstract class Logic : ILateUpdatableTask, IDisposable, IScope {
+    public abstract class Logic : ILateUpdatableTask, IDisposable, IScope, ITaskEventHandler {
         // アクティブスコープ
         private DisposableScope _activeScope;
         // 廃棄済みフラグ
         private bool _disposed;
+        // タスクを回してるRunner
+        private TaskRunner _taskRunner;
 
         // アクティブ状態
         public bool IsActive => _activeScope != null;
@@ -29,6 +31,12 @@ namespace GameFramework.LogicSystems {
             DisposeInternal();
             OnExpired?.Invoke();
             OnExpired = null;
+            
+            // Taskから登録を除外
+            if (_taskRunner != null) {
+                _taskRunner.Unregister(this);
+                _taskRunner = null;
+            }
         }
 
         /// <summary>
@@ -68,6 +76,22 @@ namespace GameFramework.LogicSystems {
         /// </summary>
         void ILateUpdatableTask.LateUpdate() {
             LateUpdateInternal();
+        }
+
+        /// <summary>
+        /// タスク登録時
+        /// </summary>
+        void ITaskEventHandler.OnRegistered(TaskRunner runner) {
+            _taskRunner = runner;
+        }
+
+        /// <summary>
+        /// タスク登録解除時
+        /// </summary>
+        void ITaskEventHandler.OnUnregistered(TaskRunner runner) {
+            if (runner == _taskRunner) {
+                _taskRunner = null;
+            }
         }
 
         /// <summary>
