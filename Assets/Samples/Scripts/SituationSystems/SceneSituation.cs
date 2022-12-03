@@ -21,12 +21,7 @@ public abstract class SceneSituation : Situation {
     protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
         // シーンの切り替え
         yield return SceneManager.LoadSceneAsync(SceneAssetPath, LoadSceneMode.Single);
-    }
-
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    protected override void SetupInternal(TransitionHandle handle, IScope scope) {
+        
         // シーンの取得
         Scene = SceneManager.GetActiveScene();
 
