@@ -8,7 +8,9 @@ namespace GameFramework.EntitySystems {
     /// </summary>
     public abstract class EntityComponent : IEntityComponent, IScope {
         // Attach中のScope
-        private DisposableScope _attachScope;
+        private DisposableScope _attachScope = new DisposableScope();
+        // Active中のScope
+        private DisposableScope _activeScope = new DisposableScope();
 
         // Scope終了通知
         public event Action OnExpired;
@@ -21,6 +23,10 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public void Dispose() {
             DisposeInternal();
+            _activeScope.Dispose();
+            _activeScope = null;
+            _attachScope.Dispose();
+            _attachScope = null;
             OnExpired?.Invoke();
             OnExpired = null;
         }
@@ -35,8 +41,22 @@ namespace GameFramework.EntitySystems {
                 return;
             }
             Entity = entity;
-            _attachScope = new DisposableScope();
             AttachedInternal(_attachScope);
+        }
+
+        /// <summary>
+        /// アクティブ化
+        /// </summary>
+        void IEntityComponent.Activate() {
+            ActivateInternal(_activeScope);
+        }
+
+        /// <summary>
+        /// 非アクティブ化
+        /// </summary>
+        void IEntityComponent.Deactivate() {
+            DeactivateInternal();
+            _activeScope.Clear();
         }
 
         /// <summary>
@@ -49,8 +69,7 @@ namespace GameFramework.EntitySystems {
                 return;
             }
             DetachedInternal();
-            _attachScope.Dispose();
-            _attachScope = null;
+            _attachScope.Clear();
             Entity = null;
         }
 
@@ -63,6 +82,16 @@ namespace GameFramework.EntitySystems {
         /// Entityに登録された時の処理
         /// </summary>
         protected virtual void AttachedInternal(IScope scope) {}
+
+        /// <summary>
+        /// アクティブ化時の処理
+        /// </summary>
+        protected virtual void ActivateInternal(IScope scope) {}
+        
+        /// <summary>
+        /// 非アクティブ化時の処理
+        /// </summary>
+        protected virtual void DeactivateInternal() {}
 
         /// <summary>
         /// Entityから登録解除された時の処理

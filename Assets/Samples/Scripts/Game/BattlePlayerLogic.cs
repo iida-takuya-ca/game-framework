@@ -1,6 +1,7 @@
 using GameFramework.Core;
 using GameFramework.EntitySystems;
 using UniRx;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace SampleGame {
@@ -34,6 +35,30 @@ namespace SampleGame {
             // 移動
             
             // 攻撃
+        }
+
+        protected override void UpdateInternal() {
+            // テストコード
+            if (Input.GetKeyDown(KeyCode.D)) {
+                _actor.DamageAsync(0)
+                    .Subscribe();
+            }
+            if (Input.GetKey(KeyCode.UpArrow)) {
+                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(Vector3.forward * 5))
+                    .Subscribe();
+            }
+            if (Input.GetKey(KeyCode.DownArrow)) {
+                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(-Vector3.forward * 5))
+                    .Subscribe();
+            }
+            if (Input.GetKey(KeyCode.RightArrow)) {
+                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(Vector3.right * 5))
+                    .Subscribe();
+            }
+            if (Input.GetKey(KeyCode.LeftArrow)) {
+                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(-Vector3.right * 5))
+                    .Subscribe();
+            }
         }
     }
 }

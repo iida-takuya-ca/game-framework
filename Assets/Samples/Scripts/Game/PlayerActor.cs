@@ -3,7 +3,7 @@ using System.Collections;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
-using GameFramework.LogicSystems;
+using GameFramework.EntitySystems;
 using GameFramework.MotionSystems;
 using UniRx;
 using UnityEngine;
@@ -12,7 +12,7 @@ namespace SampleGame {
     /// <summary>
     /// プレイヤー制御用アクター
     /// </summary>
-    public class PlayerActor : Logic, IStatusEventListener {
+    public class PlayerActor : Actor, IStatusEventListener {
         /// <summary>
         /// 初期化データ
         /// </summary>
@@ -42,13 +42,11 @@ namespace SampleGame {
         // ステータスサイクル変化通知
         private Subject<Tuple<string, int>> _statusCycleSubject = new Subject<Tuple<string, int>>();
 
-        public Body Body { get; private set; }
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PlayerActor(Body body, ISetupData setupData) {
-            Body = body;
+        public PlayerActor(Body body, ISetupData setupData)
+            : base(body, 1) {
             var motionController = body.GetController<MotionController>();
             _animatorControllerProvider = motionController.Player.SetMotion(setupData.Controller, 0.0f);
             _coroutineRunner = new CoroutineRunner();
@@ -69,7 +67,10 @@ namespace SampleGame {
                             // 移動モーションを戻す
                             SetRunningStatus(false);
                         })
-                    .Subscribe()
+                    .Subscribe(_ => {
+                        observer.OnNext(Unit.Default);
+                        observer.OnCompleted();
+                    })
                     .ScopeTo(_actionScope);
             });
         }
@@ -87,7 +88,10 @@ namespace SampleGame {
                             var motionController = Body.GetController<MotionController>();
                             motionController.Player.SetMotion(_animatorControllerProvider, 0.2f);
                         })
-                    .Subscribe()
+                    .Subscribe(_ => {
+                        observer.OnNext(Unit.Default);
+                        observer.OnCompleted();
+                    })
                     .ScopeTo(_actionScope);
             });
         }
@@ -100,7 +104,10 @@ namespace SampleGame {
                 CancelAction();
                 
                 return _coroutineRunner.StartCoroutineAsync(PlayDamageRoutine(damageIndex))
-                    .Subscribe()
+                    .Subscribe(_ => {
+                        observer.OnNext(Unit.Default);
+                        observer.OnCompleted();
+                    })
                     .ScopeTo(_actionScope);
             });
         }
@@ -126,7 +133,8 @@ namespace SampleGame {
         protected override void DisposeInternal() {
             _moveController = null;
             _coroutineRunner.Dispose();
-            _moveController.Dispose();
+            _moveController?.Dispose();
+            _moveController = null;
         }
 
         /// <summary>

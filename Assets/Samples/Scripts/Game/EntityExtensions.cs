@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
-using GameFramework.ModelSystems;
 using GameFramework.TaskSystems;
 using UniRx;
 
@@ -23,6 +22,7 @@ namespace SampleGame {
                 // Entityの初期化
                 var bodyEntityComponent = source.AddOrGetComponent<BodyEntityComponent>();
                 source.AddOrGetComponent<LogicEntityComponent>();
+                source.AddOrGetComponent<ActorEntityComponent>();
                 source.AddOrGetComponent<ModelEntityComponent>();
 
                 var streams = new List<IObservable<Unit>>();
@@ -63,45 +63,11 @@ namespace SampleGame {
                         taskRunner.Register(actor, TaskOrder.Actor);
                         var logic = new BattlePlayerLogic(actor, model);
                         taskRunner.Register(logic, TaskOrder.Logic);
-                        entity.GetComponent<LogicEntityComponent>().AddLogic(logic);
+                        entity.AddActor(actor)
+                            .AddLogic(logic);
                     })
                     .AsUnitObservable();
             });
-        }
-
-        /// <summary>
-        /// Bodyの検索
-        /// </summary>
-        public static Body FindBody(this Entity source) {
-            var component = source.GetComponent<BodyEntityComponent>();
-            if (component == null) {
-                return null;
-            }
-            return component.Body;
-        }
-
-        /// <summary>
-        /// Logicの検索
-        /// </summary>
-        public static T FindLogic<T>(this Entity source)
-            where T : EntityLogic {
-            var component = source.GetComponent<LogicEntityComponent>();
-            if (component == null) {
-                return null;
-            }
-            return component.GetLogic<T>();
-        }
-
-        /// <summary>
-        /// Modelの検索
-        /// </summary>
-        public static T FindModel<T>(this Entity source)
-            where T : IModel {
-            var component = source.GetComponent<ModelEntityComponent>();
-            if (component == null) {
-                return default;
-            }
-            return component.GetModel<T>();
         }
     }
 }

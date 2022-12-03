@@ -33,38 +33,43 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// ロジックの追加(Remove時に自動削除)
         /// </summary>
-        public TLogic AddLogic<TLogic>(TLogic logic) 
+        public Entity AddLogic<TLogic>(TLogic logic) 
             where TLogic : EntityLogic {
             var type = typeof(TLogic);
             if (_logics.ContainsKey(type)) {
                 Debug.LogError($"Already exists logic. type:{type.Name}");
-                return null;
+                return Entity;
             }
 
             if (logic.Entity != null)
             {
                 Debug.LogError($"Entity is not null. type:{type.Name}");
-                return null;
+                return Entity;
             }
             
             _logics[type] = logic;
             logic.Attach(Entity);
-            return logic;
+            if (Entity.IsActive) {
+                logic.Activate();
+            }
+            return Entity;
         }
         
         /// <summary>
         /// ロジックの削除
         /// </summary>
-        public void RemoveLogic<TLogic>()
+        public Entity RemoveLogic<TLogic>()
             where TLogic : Logic {
             var type = typeof(TLogic);
             if (!_logics.TryGetValue(type, out var logic)) {
-                return;
+                return Entity;
             }
             
             _logics.Remove(typeof(TLogic));
+            logic.Deactivate();
             logic.Detach(Entity);
             logic.Dispose();
+            return Entity;
         }
 
         /// <summary>

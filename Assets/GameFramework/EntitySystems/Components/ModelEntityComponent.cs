@@ -26,29 +26,30 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// モデルの設定
         /// </summary>
-        public TModel SetModel<TModel>(TModel model)
+        public Entity SetModel<TModel>(TModel model)
             where TModel : class, IModel {
             var type = typeof(TModel);
             if (_models.ContainsKey(type)) {
                 Debug.LogError($"Already exists model. type:{type.Name}");
-                return null;
+                return Entity;
             }
             
             _models[type] = model;
-            return model;
+            return Entity;
         }
         
         /// <summary>
         /// モデルの設定クリア（削除はされない）
         /// </summary>
-        public void ClearModel<TModel>()
+        public Entity ClearModel<TModel>()
         where TModel : IModel {
             var type = typeof(TModel);
             if (!_models.TryGetValue(type, out var model)) {
-                return;
+                return Entity;
             }
             
             _models.Remove(typeof(TModel));
+            return Entity;
         }
 
         /// <summary>

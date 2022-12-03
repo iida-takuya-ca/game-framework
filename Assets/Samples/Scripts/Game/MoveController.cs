@@ -34,6 +34,7 @@ namespace SampleGame {
             _owner = null;
             _target = null;
             _targetPosition = null;
+            IsMoving = false;
         }
 
         /// <summary>
@@ -42,6 +43,7 @@ namespace SampleGame {
         public void SetTarget(Vector3 target) {
             _target = null;
             _targetPosition = target;
+            IsMoving = true;
         }
 
         /// <summary>
@@ -50,6 +52,7 @@ namespace SampleGame {
         public void SetTarget(Transform target, Vector3 offset) {
             _target = target;
             _targetPosition = offset;
+            IsMoving = true;
         }
 
         /// <summary>
@@ -84,7 +87,7 @@ namespace SampleGame {
             
             // 向きを揃える
             var angles = _owner.eulerAngles;
-            var targetAngle = Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg;
+            var targetAngle = Mathf.Atan2(vector.x, vector.z) * Mathf.Rad2Deg;
             angles.y = Mathf.MoveTowardsAngle(angles.y, targetAngle, AngularVelocity * deltaTime);
             _owner.eulerAngles = angles;
             
@@ -95,7 +98,7 @@ namespace SampleGame {
                 // 行き過ぎている
                 return;
             }
-            var distance = Mathf.Min(maxDistance, Velocity * deltaTime);
+            var distance = Mathf.Min(maxDistance * 0.7f, Velocity * deltaTime);
             _owner.position += forward * distance;
         }
     }

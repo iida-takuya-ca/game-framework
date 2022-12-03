@@ -15,13 +15,38 @@ namespace GameFramework.EntitySystems {
         private Dictionary<Type, IEntityComponent> _components = new Dictionary<Type, IEntityComponent>();
         // EntityのID
         public int Id { get; private set; }
+        // Active状態
+        public bool IsActive { get; private set; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Entity()
+        public Entity(bool active = true)
         {
             Id = _nextId++;
+            IsActive = active;
+        }
+
+        /// <summary>
+        /// アクティブ状態の変更
+        /// </summary>
+        /// <param name="active">Activeか</param>
+        public void SetActive(bool active) {
+            if (active == IsActive) {
+                return;
+            }
+
+            IsActive = active;
+            
+            // ComponentのActive状態変更
+            foreach (var pair in _components) {
+                if (active) {
+                    pair.Value.Activate();
+                }
+                else {
+                    pair.Value.Deactivate();
+                }
+            }
         }
 
         /// <summary>
@@ -65,6 +90,9 @@ namespace GameFramework.EntitySystems {
             var component = (IEntityComponent)constructor.Invoke(Array.Empty<object>());
             _components[type] = component;
             component.Attached(this);
+            if (IsActive) {
+                component.Activate();
+            }
             return (EntityComponent)component;
         }
 
@@ -101,6 +129,9 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public void Dispose() {
             foreach (var component in _components.Values) {
+                if (IsActive) {
+                    component.Deactivate();
+                }
                 component.Detached(this);
                 component.Dispose();
             }
