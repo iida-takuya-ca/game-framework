@@ -78,7 +78,7 @@ namespace GameFramework.EntitySystems {
         protected override void DisposeInternal() {
             foreach (var logic in _logics.Values)
             {
-                logic.Detach(Entity);
+                logic.Dispose();
             }
             _logics.Clear();
         }
