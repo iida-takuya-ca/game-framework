@@ -102,5 +102,39 @@ namespace SampleGame {
             }
             listener.OnStatusExit(_status);
         }
+
+        /// <summary>
+        /// ステートマシン開始時の処理
+        /// </summary>
+        public override void OnStateMachineEnter(Animator animator, int stateMachinePathHash, AnimatorControllerPlayable controller) {
+            base.OnStateMachineEnter(animator, stateMachinePathHash, controller);
+
+            if ((_masks & EventMasks.Enter) == 0) {
+                return;
+            }
+
+            var listener = animator.GetComponentInParent<IStatusEventListener>();
+            if (listener == null) {
+                return;
+            }
+            listener.OnStatusEnter(_status);
+        }
+
+        /// <summary>
+        /// ステートマシン終了時の処理
+        /// </summary>
+        public override void OnStateMachineExit(Animator animator, int stateMachinePathHash, AnimatorControllerPlayable controller) {
+            base.OnStateMachineExit(animator, stateMachinePathHash, controller);
+
+            if ((_masks & EventMasks.Exit) == 0) {
+                return;
+            }
+
+            var listener = animator.GetComponentInParent<IStatusEventListener>();
+            if (listener == null) {
+                return;
+            }
+            listener.OnStatusExit(_status);
+        }
     }
 }

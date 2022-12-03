@@ -24,41 +24,61 @@ namespace SampleGame {
         /// アクティブ時処理
         /// </summary>
         protected override void ActivateInternal(IScope scope) {
+            var input = Services.Get<BattleInput>();
+            
             // ダメージ再生
             _model.OnDamagedAsObservable()
                 .TakeUntil(scope)
                 .Subscribe(x => {
                     _actor.DamageAsync(Random.Range(0, 3))
-                        .Subscribe();
+                        .Subscribe()
+                        .ScopeTo(scope);
                 });
             
-            // 移動
+            // 死亡
+            _model.OnDeadAsObservable()
+                .TakeUntil(scope)
+                .Subscribe(_ => {
+                    _actor.SetDeath(true);
+                });
             
             // 攻撃
+            input.AttackSubject
+                .TakeUntil(scope)
+                .Subscribe(_ => {
+                    _actor.PlayActionAsync(new PlayerActor.ActionContext {
+                            controller = null
+                        })
+                        .Subscribe()
+                        .ScopeTo(scope);
+                });
+            
+            // ジャンプ
+            input.JumpSubject
+                .TakeUntil(scope)
+                .Subscribe(_ => {
+                    _actor.Jump();
+                });
         }
 
+        /// <summary>
+        /// 更新処理
+        /// </summary>
         protected override void UpdateInternal() {
-            // テストコード
-            if (Input.GetKeyDown(KeyCode.D)) {
-                _actor.DamageAsync(0)
-                    .Subscribe();
-            }
-            if (Input.GetKey(KeyCode.UpArrow)) {
-                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(Vector3.forward * 5))
-                    .Subscribe();
-            }
-            if (Input.GetKey(KeyCode.DownArrow)) {
-                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(-Vector3.forward * 5))
-                    .Subscribe();
-            }
-            if (Input.GetKey(KeyCode.RightArrow)) {
-                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(Vector3.right * 5))
-                    .Subscribe();
-            }
-            if (Input.GetKey(KeyCode.LeftArrow)) {
-                _actor.ApproachAsync(_actor.Body.Transform.TransformPoint(-Vector3.right * 5))
-                    .Subscribe();
-            }
+            var input = Services.Get<BattleInput>();
+            var cameraController = Services.Get<CameraController>();
+            var camera = cameraController.MainCamera;
+            
+            // 移動
+            var moveVector = input.MoveVector;
+            var forward = camera.transform.forward;
+            forward.y = 0.0f;
+            forward.Normalize();
+            var right = forward;
+            right.x = forward.z;
+            right.z = -forward.x;
+            var moveDirection = forward * moveVector.y + right * moveVector.x;
+            _actor.Move(moveDirection);
         }
     }
 }

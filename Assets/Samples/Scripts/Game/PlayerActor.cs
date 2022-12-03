@@ -18,7 +18,6 @@ namespace SampleGame {
         /// </summary>
         public interface ISetupData {
             RuntimeAnimatorController Controller { get; }
-            float Velocity { get; }
             float AngularVelocity { get; }
         }
 
@@ -31,8 +30,6 @@ namespace SampleGame {
 
         // 行動キャンセル通知用
         private DisposableScope _actionScope = new DisposableScope();
-        // 移動制御用
-        private MoveController _moveController;
         // コルーチン実行用
         private CoroutineRunner _coroutineRunner;
         // AnimatorController制御用
@@ -41,6 +38,9 @@ namespace SampleGame {
         private string _currentStatus = "";
         // ステータスサイクル変化通知
         private Subject<Tuple<string, int>> _statusCycleSubject = new Subject<Tuple<string, int>>();
+        
+        // 移動制御用
+        private MoveController _moveController;
 
         /// <summary>
         /// コンストラクタ
@@ -50,31 +50,36 @@ namespace SampleGame {
             var motionController = body.GetController<MotionController>();
             _animatorControllerProvider = motionController.Player.SetMotion(setupData.Controller, 0.0f);
             _coroutineRunner = new CoroutineRunner();
-            _moveController = new MoveController(body.Transform, setupData.Velocity, setupData.AngularVelocity, 0.1f);
-        }
-
-        /// <summary>
-        /// 特定座標まで移動する
-        /// </summary>
-        public IObservable<Unit> ApproachAsync(Vector3 point) {
-            return Observable.Create<Unit>(observer => {
-                CancelAction();
-                
-                return _coroutineRunner.StartCoroutineAsync(ApproachRoutine(point),
-                        () => {
-                            // 移動終了
-                            _moveController.ClearTarget();
-                            // 移動モーションを戻す
-                            SetRunningStatus(false);
-                        })
-                    .Subscribe(_ => {
-                        observer.OnNext(Unit.Default);
-                        observer.OnCompleted();
-                    })
-                    .ScopeTo(_actionScope);
+            _moveController = new MoveController(body.Transform, setupData.AngularVelocity, rate => {
+                _animatorControllerProvider.GetPlayable().SetFloat("speed", rate);
             });
         }
 
+        /// <summary>
+        /// 死亡状態の設定
+        /// </summary>
+        public void SetDeath(bool death) {
+            CancelAction();
+            _animatorControllerProvider.GetPlayable().SetBool("death", death);
+        }
+
+        /// <summary>
+        /// 指定方向への移動
+        /// </summary>
+        public void Move(Vector3 direction) {
+            _moveController.Move(direction);
+        }
+
+        /// <summary>
+        /// ジャンプ
+        /// </summary>
+        public void Jump() {
+            if (_currentStatus != "Idle" && _currentStatus != "Run") {
+                return;
+            }
+            _animatorControllerProvider.GetPlayable().SetTrigger("onJump");
+        }
+        
         /// <summary>
         /// アクションの再生
         /// </summary>
@@ -138,31 +143,14 @@ namespace SampleGame {
         }
 
         /// <summary>
-        /// 目的地までの移動
-        /// </summary>
-        private IEnumerator ApproachRoutine(Vector3 point) {
-            // 移動先設定
-            _moveController.SetTarget(point);
-
-            // 移動モーションに変更
-            SetRunningStatus(true);
-
-            // 到着チェック
-            while (_moveController.IsMoving) {
-                yield return null;
-            }
-
-            // 移動終了
-            _moveController.ClearTarget();
-
-            // 移動モーションを戻す
-            SetRunningStatus(false);
-        }
-
-        /// <summary>
         /// アクションの再生
         /// </summary>
         private IEnumerator PlayActionRoutine(ActionContext context, IScope cancelScope) {
+            if (context.controller == null) {
+                Debug.LogWarning("Not found action controller.");
+                yield break;
+            }
+            
             // アクション専用のControllerに変更
             var motionController = Body.GetController<MotionController>();
             motionController.Player.SetMotion(context.controller, 0.2f);

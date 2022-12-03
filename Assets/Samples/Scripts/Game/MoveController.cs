@@ -7,12 +7,9 @@ namespace SampleGame {
     /// </summary>
     public class MoveController : IDisposable {
         private Transform _owner;
-        private Transform _target;
-        private Vector3? _targetPosition;
-        private float _reachDistance;
+        private Vector3 _moveDirection;
+        private Action<float> _updatePosition;
         
-        // 速度
-        public float Velocity { get; set; }
         // 角速度(度)
         public float AngularVelocity { get; set; }
         // 移動中
@@ -21,10 +18,11 @@ namespace SampleGame {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public MoveController(Transform owner, float velocity, float angularVelocity, float reachDistance) {
+        public MoveController(Transform owner, float angularVelocity, Action<float> updatePosition) {
             _owner = owner;
-            Velocity = velocity;
             AngularVelocity = angularVelocity;
+            _updatePosition = updatePosition;
+            IsMoving = false;
         }
 
         /// <summary>
@@ -32,74 +30,43 @@ namespace SampleGame {
         /// </summary>
         public void Dispose() {
             _owner = null;
-            _target = null;
-            _targetPosition = null;
             IsMoving = false;
         }
 
         /// <summary>
-        /// ターゲット座標の設定
+        /// 移動
         /// </summary>
-        public void SetTarget(Vector3 target) {
-            _target = null;
-            _targetPosition = target;
-            IsMoving = true;
-        }
-
-        /// <summary>
-        /// ターゲットの設定
-        /// </summary>
-        public void SetTarget(Transform target, Vector3 offset) {
-            _target = target;
-            _targetPosition = offset;
-            IsMoving = true;
-        }
-
-        /// <summary>
-        /// ターゲットのクリア
-        /// </summary>
-        public void ClearTarget() {
-            _target = null;
-            _targetPosition = null;
-            IsMoving = false;
+        public void Move(Vector3 direction) {
+            _moveDirection = direction;
+            _moveDirection.y = 0.0f;
+            _moveDirection.Normalize();
+            IsMoving = _moveDirection.sqrMagnitude > 0.0001f;
         }
 
         /// <summary>
         /// 更新処理
         /// </summary>
         public void Update(float deltaTime) {
-            if (!_targetPosition.HasValue) {
-                return;
-            }
+            IsMoving = _moveDirection.sqrMagnitude > 0.0001f;
             
-            var target = _targetPosition.Value;
-            if (_target != null) {
-                target = _target.TransformPoint(target);
-            }
-            
-            var vector = target - _owner.position;
-            IsMoving = vector.sqrMagnitude > (_reachDistance * _reachDistance);
-
-            // 既に到着している
             if (!IsMoving) {
+                _updatePosition?.Invoke(0.0f);
                 return;
             }
             
             // 向きを揃える
             var angles = _owner.eulerAngles;
-            var targetAngle = Mathf.Atan2(vector.x, vector.z) * Mathf.Rad2Deg;
+            var targetAngle = Mathf.Atan2(_moveDirection.x, _moveDirection.z) * Mathf.Rad2Deg;
             angles.y = Mathf.MoveTowardsAngle(angles.y, targetAngle, AngularVelocity * deltaTime);
             _owner.eulerAngles = angles;
             
-            // 距離を詰める
+            // 該当方向に移動する
             var forward = _owner.forward;
-            var maxDistance = Vector3.Dot(forward, vector);
-            if (maxDistance <= 0.0f) {
-                // 行き過ぎている
-                return;
-            }
-            var distance = Mathf.Min(maxDistance * 0.7f, Velocity * deltaTime);
-            _owner.position += forward * distance;
+            var forwardRate = Mathf.Max(0.0f, Vector3.Dot(forward, _moveDirection));
+            _updatePosition?.Invoke(forwardRate);
+            
+            // 移動値をリセット
+            _moveDirection = Vector3.zero;
         }
     }
 }

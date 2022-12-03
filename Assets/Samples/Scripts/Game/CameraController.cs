@@ -23,6 +23,7 @@ namespace SampleGame {
         private Constraint[] _constraints;
         
         public bool IsActive => isActiveAndEnabled;
+        public Camera MainCamera => _camera;
 
         /// <summary>
         /// カメラのアクティブ化
