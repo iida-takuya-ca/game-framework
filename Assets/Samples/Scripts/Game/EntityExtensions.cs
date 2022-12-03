@@ -59,7 +59,7 @@ namespace SampleGame {
                     .LoadAsync()
                     .Do(data => {
                         var taskRunner = Services.Get<TaskRunner>();
-                        var actor = new PlayerActor(entity.FindBody(), data);
+                        var actor = new PlayerActor(entity.GetBody(), data);
                         taskRunner.Register(actor, TaskOrder.Actor);
                         var logic = new BattlePlayerLogic(actor, model);
                         taskRunner.Register(logic, TaskOrder.Logic);

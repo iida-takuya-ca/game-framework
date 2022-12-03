@@ -4,6 +4,7 @@ using UnityEngine.Rendering;
 /// <summary>
 /// 環境設定用のアセット
 /// </summary>
+[CreateAssetMenu(fileName = "dat_env_hoge.asset", menuName = "Sample/Environment Context Data")]
 public class EnvironmentContextData : ScriptableObject, IEnvironmentContext {
     [SerializeField] private Material _skybox;
     [SerializeField] private AmbientMode _ambientMode;

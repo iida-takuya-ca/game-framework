@@ -91,6 +91,7 @@ namespace SampleGame {
         protected override void OnDestroyInternal() {
             _sceneSituationContainer.Dispose();
             _taskRunner.Dispose();
+            Services.Instance.Clear();
         }
     }
 }
