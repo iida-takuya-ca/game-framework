@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using GameFramework.Core;
+using GameFramework.TaskSystems;
 using UniRx;
 
 namespace SampleGame {
@@ -19,6 +20,22 @@ namespace SampleGame {
             while (!finished) {
                 yield return null;
             }
+        }
+
+        /// <summary>
+        /// タスクへ登録
+        /// </summary>
+        public static void RegisterTask(this ITask source, TaskOrder order) {
+            var taskRunner = Services.Get<TaskRunner>();
+            taskRunner.Register(source, order);
+        }
+        
+        /// <summary>
+        /// タスクから登録除外
+        /// </summary>
+        public static void UnregisterTask(this ITask source) {
+            var taskRunner = Services.Get<TaskRunner>();
+            taskRunner.Unregister(source);
         }
     }
 }

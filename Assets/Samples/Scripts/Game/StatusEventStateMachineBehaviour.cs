@@ -54,7 +54,7 @@ namespace SampleGame {
             if ((_masks & EventMasks.Enter) == 0) {
                 return;
             }
-
+            
             var listener = animator.GetComponentInParent<IStatusEventListener>();
             if (listener == null) {
                 return;

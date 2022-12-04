@@ -45,10 +45,26 @@ namespace SampleGame {
     }
 
     /// <summary>
-    /// PlayerSetupDataのAssetRequest
+    /// PlayerActorSetupDataのAssetRequest
     /// </summary>
-    public class PlayerSetupDataAssetRequest : GameAssetRequest<PlayerSetupData> {
-        public PlayerSetupDataAssetRequest(string assetKey)
-            : base($"Assets/Samples/Battle/PlayerSetup/dat_player_setup_{assetKey}.asset"){}
+    public class PlayerActorSetupDataAssetRequest : GameAssetRequest<PlayerActorSetupData> {
+        public PlayerActorSetupDataAssetRequest(string assetKey)
+            : base($"Assets/Samples/Data/PlayerActorSetup/dat_player_actor_setup_{assetKey}.asset"){}
+    }
+
+    /// <summary>
+    /// PlayerActorActionDataのAssetRequest
+    /// </summary>
+    public class PlayerActorActionDataAssetRequest : GameAssetRequest<PlayerActorActionData> {
+        public PlayerActorActionDataAssetRequest(string assetKey)
+            : base($"Assets/Samples/Data/PlayerActorAction/dat_player_actor_action_{assetKey}.asset"){}
+    }
+
+    /// <summary>
+    /// BattlePlayerMasterDataのAssetRequest
+    /// </summary>
+    public class BattlePlayerMasterDataAssetRequest : GameAssetRequest<BattlePlayerMasterData> {
+        public BattlePlayerMasterDataAssetRequest(string assetKey)
+            : base($"Assets/Samples/Data/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset"){}
     }
 }

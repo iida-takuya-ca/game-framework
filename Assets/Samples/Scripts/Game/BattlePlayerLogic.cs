@@ -2,6 +2,7 @@ using GameFramework.Core;
 using GameFramework.EntitySystems;
 using UniRx;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 namespace SampleGame {
@@ -43,12 +44,11 @@ namespace SampleGame {
                 });
             
             // 攻撃
+            var actions = _model.ActorModel.Actions;
             input.AttackSubject
                 .TakeUntil(scope)
                 .Subscribe(_ => {
-                    _actor.PlayActionAsync(new PlayerActor.ActionContext {
-                            controller = null
-                        })
+                    _actor.PlayActionAsync(actions[Random.Range(0, actions.Length)])
                         .Subscribe()
                         .ScopeTo(scope);
                 });
@@ -79,6 +79,11 @@ namespace SampleGame {
             right.z = -forward.x;
             var moveDirection = forward * moveVector.y + right * moveVector.x;
             _actor.Move(moveDirection);
+            
+            // テスト用にダメージ発生
+            if (Keyboard.current.qKey.wasPressedThisFrame) {
+                _model.AddDamage(1);
+            }
         }
     }
 }

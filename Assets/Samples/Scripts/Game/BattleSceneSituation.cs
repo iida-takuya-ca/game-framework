@@ -1,3 +1,4 @@
+using System.Collections;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
@@ -6,7 +7,6 @@ using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Animations;
 using ParentConstraint = GameFramework.Kinematics.ParentConstraint;
 
 namespace SampleGame {
@@ -14,16 +14,47 @@ namespace SampleGame {
     /// Battle用のSituation
     /// </summary>
     public class BattleSceneSituation : SceneSituation {
+        /// <summary>
+        /// Body生成クラス
+        /// </summary>
+        private class BodyBuilder : IBodyBuilder {
+            /// <summary>
+            /// 構築処理
+            /// </summary>
+            public void Build(IBody body, GameObject gameObject) {
+                RequireComponent<StatusEventListener>(gameObject);
+            }
+
+            private void RequireComponent<T>(GameObject gameObject)
+                where T : Component {
+                var component = gameObject.GetComponent<T>();
+                if (component == null) {
+                    gameObject.AddComponent<T>();
+                }
+            }
+        }
+        
         // BattleScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
-        // 生成したPlayerのId
-        private int _playerId;
         // 生成したPlayerのEntity
         private Entity _playerEntity;
         // カメラ方向を使ったRoot位置
         private Transform _rootAngle;
         
         public override string SceneAssetPath => "battle";
+
+        /// <summary>
+        /// 読み込み処理
+        /// </summary>
+        protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
+            yield return base.LoadRoutineInternal(handle, scope);
+            
+            // BattleModelの生成
+            var battleModel = BattleModel.Create();
+            battleModel.RegisterTask(TaskOrder.Logic);
+            yield return battleModel.SetupAsync()
+                .StartAsEnumerator(scope);
+        }
 
         /// <summary>
         /// 初期化処理
@@ -33,22 +64,16 @@ namespace SampleGame {
             
             var taskRunner = Services.Get<TaskRunner>();
             var cameraController = Services.Get<CameraController>();
+            var battleModel = BattleModel.Get();
             
             // BodyManagerの生成
-            var bodyManager = new BodyManager();
+            var bodyManager = new BodyManager(new BodyBuilder());
             ServiceContainer.Set(bodyManager);
             taskRunner.Register(bodyManager, TaskOrder.Body);
             
-            // Cameraのタスク登録
-            taskRunner.Register(Services.Get<CameraController>(), TaskOrder.Camera);
-            
-            // Inputのタスク登録
-            taskRunner.Register(Services.Get<BattleInput>(), TaskOrder.Input);
-            
-            // todo:Battleモデルの生成 > ここでPlayerModelを作る
-            var playerModel = BattlePlayerModel.Create();
-            playerModel.Update("HogeMan", "pl001", 100);
-            _playerId = playerModel.Id;
+            // タスク登録
+            Services.Get<CameraController>().RegisterTask(TaskOrder.Camera);
+            Services.Get<BattleInput>().RegisterTask(TaskOrder.Input);
             
             // RootAngle作成
             _rootAngle = new GameObject("RootAngle").transform;
@@ -62,7 +87,7 @@ namespace SampleGame {
             
             // PlayerEntityの生成
             _playerEntity = new Entity();
-            _playerEntity.SetupPlayerAsync(playerModel)
+            _playerEntity.SetupPlayerAsync(battleModel.PlayerModel)
                 .Subscribe(entity => {
                     // CameraのConstraint設定
                     var playerConstraint = cameraController.GetConstraint<ParentConstraint>("Player");
@@ -98,23 +123,30 @@ namespace SampleGame {
         /// </summary>
         /// <param name="handle"></param>
         protected override void CleanupInternal(TransitionHandle handle) {
-            var taskRunner = Services.Get<TaskRunner>();
-            
             // PlayerEntity削除
             _playerEntity.Dispose();
             
-            // todo:ここでBattleModelを解放
-            BattlePlayerModel.Delete(_playerId);
-            
             // Cameraのタスク登録解除
             var cameraController = Services.Get<CameraController>();
-            taskRunner.Unregister(cameraController);
+            cameraController.UnregisterTask();
             
             // Inputのタスク登録解除
             var input = Services.Get<BattleInput>();
-            taskRunner.Unregister(input);
+            input.UnregisterTask();
             
             base.CleanupInternal(handle);
+        }
+
+        /// <summary>
+        /// 解放処理
+        /// </summary>
+        protected override void UnloadInternal(TransitionHandle handle) {
+            // BattleModel削除
+            var battleModel = BattleModel.Get();
+            battleModel.UnregisterTask();
+            BattleModel.Delete();
+            
+            base.UnloadInternal(handle);
         }
     }
 }

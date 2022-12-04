@@ -55,7 +55,7 @@ namespace SampleGame {
                     .LoadAsync()
                     .Select(prefab => Services.Get<BodyManager>().CreateFromPrefab(prefab));
             }, entity => {
-                return new PlayerSetupDataAssetRequest(model.AssetKey)
+                return new PlayerActorSetupDataAssetRequest(model.AssetKey)
                     .LoadAsync()
                     .Do(data => {
                         var taskRunner = Services.Get<TaskRunner>();

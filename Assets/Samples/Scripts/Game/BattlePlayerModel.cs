@@ -18,6 +18,8 @@ namespace SampleGame {
         public int Health { get; private set; } = 0;
         public int HealthMax { get; private set; } = 0;
         public bool IsDead => Health <= 0;
+        
+        public BattlePlayerActorModel ActorModel { get; private set; }
 
         public IObservable<Tuple<BattlePlayerModel, int>> OnUpdatedHealthAsObservable() {
             return Observable.FromEvent<Tuple<BattlePlayerModel, int>>(
@@ -46,8 +48,8 @@ namespace SampleGame {
         public void Update(string name, string assetKey, int healthMax) {
             Name = name;
             AssetKey = assetKey;
-            Health = healthMax;
             HealthMax = healthMax;
+            Health = HealthMax;
             
             OnUpdatedHealth?.Invoke(new Tuple<BattlePlayerModel, int>(this, Health));
             OnUpdated?.Invoke(this);
@@ -70,6 +72,21 @@ namespace SampleGame {
             if (IsDead) {
                 OnDead?.Invoke(this);
             }
+        }
+
+        /// <summary>
+        /// 生成時処理
+        /// </summary>
+        protected override void OnCreatedInternal() {
+            ActorModel = BattlePlayerActorModel.Create();
+        }
+
+        /// <summary>
+        /// 削除時処理
+        /// </summary>
+        protected override void OnDeletedInternal() {
+            BattlePlayerActorModel.Delete(ActorModel.Id);
+            ActorModel = null;
         }
     }
 }
