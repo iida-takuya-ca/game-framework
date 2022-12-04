@@ -29,7 +29,7 @@ namespace SampleGame {
                 
                 // Bodyの生成
                 if (onCreateBody != null) {
-                    streams.Add(onCreateBody.Invoke()
+                    streams.Add(Observable.Defer(() => onCreateBody.Invoke())
                         .Do(body => bodyEntityComponent.SetBody(body))
                         .AsUnitObservable()
                     );
@@ -37,7 +37,7 @@ namespace SampleGame {
                 
                 // Body生成後の初期化
                 if (onSetupEntity != null) {
-                    streams.Add(onSetupEntity.Invoke(source));
+                    streams.Add(Observable.Defer(() => onSetupEntity.Invoke(source)));
                 }
 
                 return streams.Concat()
@@ -55,18 +55,13 @@ namespace SampleGame {
                     .LoadAsync()
                     .Select(prefab => Services.Get<BodyManager>().CreateFromPrefab(prefab));
             }, entity => {
-                return new PlayerActorSetupDataAssetRequest(model.AssetKey)
-                    .LoadAsync()
-                    .Do(data => {
-                        var taskRunner = Services.Get<TaskRunner>();
-                        var actor = new PlayerActor(entity.GetBody(), data);
-                        taskRunner.Register(actor, TaskOrder.Actor);
-                        var logic = new BattlePlayerLogic(actor, model);
-                        taskRunner.Register(logic, TaskOrder.Logic);
-                        entity.AddActor(actor)
-                            .AddLogic(logic);
-                    })
-                    .AsUnitObservable();
+                var actor = new PlayerActor(entity.GetBody(), model.ActorModel.Setup);
+                actor.RegisterTask(TaskOrder.Actor);
+                var logic = new BattlePlayerLogic(actor, model);
+                logic.RegisterTask(TaskOrder.Logic);
+                entity.AddActor(actor)
+                    .AddLogic(logic);
+                return Observable.ReturnUnit();
             });
         }
     }

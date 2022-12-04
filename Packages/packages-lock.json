@@ -110,9 +110,16 @@
         "com.unity.shadergraph": "12.1.7"
       }
     },
+    "com.unity.search.extensions": {
+      "version": "https://github.com/Unity-Technologies/com.unity.search.extensions.git?path=package",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "48ae43582f50e192ea3eb9821c8d7d9deed67203"
+    },
     "com.unity.searcher": {
-      "version": "4.9.1",
-      "depth": 2,
+      "version": "4.9.2",
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
