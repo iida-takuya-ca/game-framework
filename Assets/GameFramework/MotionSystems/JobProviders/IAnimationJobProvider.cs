@@ -1,12 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Collections;
-using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.Animations;
-using UnityEngine.Playables;
 
 namespace GameFramework.MotionSystems {
     /// <summary>
@@ -14,6 +7,11 @@ namespace GameFramework.MotionSystems {
     /// </summary>
     public interface IAnimationJobProvider<T> : IDisposable
         where T : struct, IAnimationJob {
+        /// <summary>
+        /// 実行順
+        /// </summary>
+        int ExecutionOrder { get; }
+        
         /// <summary>
         /// 初期化処理
         /// </summary>

@@ -9,13 +9,12 @@ namespace GameFramework.MotionSystems {
     /// <summary>
     /// Rootモーションのスケールコントロール用JobProvider
     /// </summary>
-    public class
-        RootScaleAnimationJobProvider : IAnimationJobProvider<RootScaleAnimationJobProvider.RootScaleAnimationJob> {
+    public class RootScaleAnimationJobProvider : IAnimationJobProvider<RootScaleAnimationJobProvider.AnimationJob> {
         /// <summary>
         /// Job本体
         /// </summary>
         [BurstCompile]
-        public struct RootScaleAnimationJob : IAnimationJob {
+        public struct AnimationJob : IAnimationJob {
             [ReadOnly]
             public NativeArray<float3> vectorProperties;
 
@@ -36,6 +35,9 @@ namespace GameFramework.MotionSystems {
 
         // パラメータを渡すための配列
         private NativeArray<float3> _vectorProperties;
+
+        // 実行優先度
+        int IAnimationJobProvider<AnimationJob>.ExecutionOrder => 0;
 
         // ルート移動のスケール
         public Vector3 PositionScale {
@@ -60,12 +62,12 @@ namespace GameFramework.MotionSystems {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        RootScaleAnimationJob IAnimationJobProvider<RootScaleAnimationJob>.Initialize(MotionPlayer player) {
+        AnimationJob IAnimationJobProvider<AnimationJob>.Initialize(MotionPlayer player) {
             _vectorProperties = new NativeArray<float3>(2, Allocator.Persistent);
             _vectorProperties[0] = Vector3.one;
             _vectorProperties[1] = Vector3.one;
 
-            return new RootScaleAnimationJob {
+            return new AnimationJob {
                 vectorProperties = _vectorProperties,
             };
         }

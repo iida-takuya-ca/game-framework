@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
     /// <summary>
@@ -26,9 +28,16 @@ namespace GameFramework.Kinematics {
             public string targetPath;
             [Tooltip("影響率")]
             public float weight = 1.0f;
+        }
 
-            // 正規化済みWeight
-            public float NormalizedWeight { get; set; } = 1.0f;
+        // ターゲット情報
+        private class TargetInfo {
+            // ターゲットの元情報
+            public TargetSource source = new TargetSource();
+            // 参照するTarget
+            public Transform target;
+            // 正規化済みのWeight
+            public float normalizedWeight;
         }
 
         [SerializeField, Tooltip("更新モード")]
@@ -38,6 +47,8 @@ namespace GameFramework.Kinematics {
         [SerializeField, Tooltip("ターゲットリスト")]
         private TargetSource[] _sources = Array.Empty<TargetSource>();
 
+        // ターゲット情報リスト
+        private TargetInfo[] _targetInfos = Array.Empty<TargetInfo>();
         // Weightが正規化済みか
         private bool _normalized = false;
 
@@ -50,6 +61,10 @@ namespace GameFramework.Kinematics {
         public TargetSource[] Sources {
             set {
                 _sources = value;
+                _targetInfos = value.Select(x => new TargetInfo {
+                        source = x,
+                    })
+                    .ToArray();
                 _normalized = false;
             }
         }
@@ -77,6 +92,22 @@ namespace GameFramework.Kinematics {
 
                 source.target = transform.Find(source.targetPath);
             }
+
+            _active = false;
+
+            for (var i = 0; i < _targetInfos.Length; i++) {
+                var info = _targetInfos[i];
+                if (info.target != null) {
+                    _active = true;
+                    continue;
+                }
+
+                info.target = _sources[i].target;
+
+                if (info.target != null) {
+                    _active = true;
+                }
+            }
         }
 
         /// <summary>
@@ -95,6 +126,27 @@ namespace GameFramework.Kinematics {
         public abstract void ApplyTransform();
 
         /// <summary>
+        /// Constraintの共通ジョブパラメータ取得
+        /// </summary>
+        protected ConstraintAnimationJobParameter CreateJobParameter(Animator animator) {
+            var infos = _targetInfos.Where(x => x.target != null)
+                .ToArray();
+            
+            // Job用パラメータ再構築
+            var parameter = new ConstraintAnimationJobParameter();
+            parameter.targetInfos = new NativeArray<ConstraintAnimationJobParameter.TargetInfo>(infos.Length, Allocator.Persistent);
+
+            for (var i = 0; i < infos.Length; i++) {
+                parameter.targetInfos[i] = new ConstraintAnimationJobParameter.TargetInfo {
+                    normalizedWeight = infos[i].normalizedWeight,
+                    targetHandle = animator.BindSceneTransform(infos[i].target)
+                };
+            }
+
+            return parameter;
+        }
+
+        /// <summary>
         /// ターゲット座標
         /// </summary>
         protected Vector3 GetTargetPosition() {
@@ -105,12 +157,12 @@ namespace GameFramework.Kinematics {
 
             var position = Vector3.zero;
 
-            foreach (var source in _sources) {
-                if (source.target == null) {
+            foreach (var info in _targetInfos) {
+                if (info.target == null) {
                     continue;
                 }
 
-                position += source.target.position * source.NormalizedWeight;
+                position += info.target.position * info.normalizedWeight;
             }
 
             return position;
@@ -127,13 +179,13 @@ namespace GameFramework.Kinematics {
 
             var rotation = Quaternion.identity;
 
-            foreach (var source in _sources) {
-                if (source.target == null) {
+            foreach (var info in _targetInfos) {
+                if (info.target == null) {
                     continue;
                 }
 
-                rotation *= Quaternion.Slerp(Quaternion.identity, source.target.rotation,
-                    source.NormalizedWeight);
+                rotation *= Quaternion.Slerp(Quaternion.identity, info.target.rotation,
+                    info.normalizedWeight);
             }
 
             return rotation;
@@ -150,12 +202,12 @@ namespace GameFramework.Kinematics {
 
             var scale = Vector3.zero;
 
-            foreach (var source in _sources) {
-                if (source.target == null) {
+            foreach (var info in _targetInfos) {
+                if (info.target == null) {
                     continue;
                 }
 
-                scale += source.target.localScale * source.NormalizedWeight;
+                scale += info.target.localScale * info.normalizedWeight;
             }
 
             return scale;
@@ -165,14 +217,14 @@ namespace GameFramework.Kinematics {
         /// ターゲットのWeightを合計で1になるように正規化
         /// </summary>
         private void NormalizeWeights() {
-            var totalWeight = _sources.Where(x => x.target != null).Sum(x => x.weight);
+            var totalWeight = _targetInfos.Where(x => x.target != null).Sum(x => x.source.weight);
 
             if (totalWeight <= float.Epsilon) {
                 return;
             }
 
-            foreach (var source in _sources) {
-                source.NormalizedWeight = source.weight / totalWeight;
+            foreach (var info in _targetInfos) {
+                info.normalizedWeight = info.source.weight / totalWeight;
             }
         }
 

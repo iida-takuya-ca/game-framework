@@ -1,11 +1,12 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
     /// <summary>
     /// 座標コンストレイント
     /// </summary>
-    public class PositionConstraint : Constraint {
+    public class PositionConstraint : Constraint, IJobPositionConstraint {
         // コンストレイント設定
         [Serializable]
         public class ConstraintSettings {
@@ -56,6 +57,18 @@ namespace GameFramework.Kinematics {
             }
 
             transform.position = GetTargetPosition() + offset;
+        }
+
+        /// <summary>
+        /// ジョブ要素の生成
+        /// </summary>
+        PositionConstraintAnimationJob.Element IJobPositionConstraint.CreateJobElement(Animator animator) {
+            var jobElement = new PositionConstraintAnimationJob.Element();
+            jobElement.space = Settings.space;
+            jobElement.offsetPosition = Settings.offsetPosition;
+            jobElement.ownerHandle = animator.BindStreamTransform(transform);
+            jobElement.constraintAnimationJobParameter = CreateJobParameter(animator);
+            return jobElement;
         }
     }
 }

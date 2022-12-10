@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
     /// <summary>
@@ -125,6 +128,27 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
+        /// Constraintの共通ジョブパラメータ取得
+        /// </summary>
+        protected ConstraintAnimationJobParameter CreateJobParameter(Animator animator) {
+            var infos = _targetInfos.Where(x => x.target != null)
+                .ToArray();
+            
+            // Job用パラメータ再構築
+            var parameter = new ConstraintAnimationJobParameter();
+            parameter.targetInfos = new NativeArray<ConstraintAnimationJobParameter.TargetInfo>(infos.Length, Allocator.Persistent);
+
+            for (var i = 0; i < infos.Length; i++) {
+                parameter.targetInfos[i] = new ConstraintAnimationJobParameter.TargetInfo {
+                    normalizedWeight = infos[i].normalizedWeight,
+                    targetHandle = animator.BindSceneTransform(infos[i].target)
+                };
+            }
+
+            return parameter;
+        }
+
+        /// <summary>
         /// Transformを反映
         /// </summary>
         protected abstract void ApplyTransform();
@@ -162,13 +186,13 @@ namespace GameFramework.Kinematics {
 
             var rotation = Quaternion.identity;
 
-            foreach (var source in _targetInfos) {
-                if (source.target == null) {
+            foreach (var info in _targetInfos) {
+                if (info.target == null) {
                     continue;
                 }
 
-                rotation *= Quaternion.Slerp(Quaternion.identity, source.target.rotation,
-                    source.normalizedWeight);
+                rotation *= Quaternion.Slerp(Quaternion.identity, info.target.rotation,
+                    info.normalizedWeight);
             }
 
             return rotation;
@@ -185,12 +209,12 @@ namespace GameFramework.Kinematics {
 
             var scale = Vector3.zero;
 
-            foreach (var source in _targetInfos) {
-                if (source.target == null) {
+            foreach (var info in _targetInfos) {
+                if (info.target == null) {
                     continue;
                 }
 
-                scale += source.target.localScale * source.normalizedWeight;
+                scale += info.target.localScale * info.normalizedWeight;
             }
 
             return scale;
