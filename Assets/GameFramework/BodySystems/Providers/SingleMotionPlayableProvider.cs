@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems {
+namespace GameFramework.BodySystems {
     /// <summary>
     /// 1つのClipを再生するPlayable用のProvider
     /// </summary>

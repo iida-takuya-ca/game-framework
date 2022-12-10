@@ -1,4 +1,5 @@
 using System;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine.Animations;
@@ -7,6 +8,7 @@ namespace GameFramework.Kinematics {
     /// <summary>
     /// AnimationJobに渡すパラメータ
     /// </summary>
+    [BurstCompile]
     public struct ConstraintAnimationJobParameter : IDisposable {
         /// <summary>
         /// AnimationJobで扱うターゲット

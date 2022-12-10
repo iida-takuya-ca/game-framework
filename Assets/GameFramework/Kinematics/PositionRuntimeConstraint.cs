@@ -29,13 +29,13 @@ namespace GameFramework.Kinematics {
         /// <summary>
         /// ジョブ要素の生成
         /// </summary>
-        PositionConstraintAnimationJob.Element IJobPositionConstraint.CreateJobElement(Animator animator) {
-            var jobElement = new PositionConstraintAnimationJob.Element();
-            jobElement.space = Settings.space;
-            jobElement.offsetPosition = Settings.offsetPosition;
-            jobElement.ownerHandle = animator.BindStreamTransform(Owner);
-            jobElement.constraintAnimationJobParameter = CreateJobParameter(animator);
-            return jobElement;
+        PositionConstraintJobHandle IJobPositionConstraint.CreateJobHandle(Animator animator) {
+            var handle = new PositionConstraintJobHandle();
+            handle.space = Settings.space;
+            handle.offsetPosition = Settings.offsetPosition;
+            handle.ownerHandle = animator.BindStreamTransform(Owner);
+            handle.constraintAnimationJobParameter = CreateJobParameter(animator);
+            return handle;
         }
 
         /// <summary>

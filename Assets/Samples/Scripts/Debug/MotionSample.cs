@@ -80,7 +80,7 @@ public class MotionSample : MonoBehaviour {
         }
 
         // ルート座標スケール更新
-        motionController.Player.RootPositionScale = _rootPositionScale;
+        motionController.RootPositionScale = _rootPositionScale;
         _body.GetComponent<Animator>().SetFloat("WalkSpeed", _walkSpeed);
 
         // 更新速度変更

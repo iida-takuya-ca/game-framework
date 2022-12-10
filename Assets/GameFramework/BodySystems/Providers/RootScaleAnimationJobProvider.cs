@@ -4,8 +4,9 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Animations;
+using GameFramework.MotionSystems;
 
-namespace GameFramework.MotionSystems {
+namespace GameFramework.BodySystems {
     /// <summary>
     /// Rootモーションのスケールコントロール用JobProvider
     /// </summary>
@@ -37,7 +38,7 @@ namespace GameFramework.MotionSystems {
         private NativeArray<float3> _vectorProperties;
 
         // 実行優先度
-        int IAnimationJobProvider<AnimationJob>.ExecutionOrder => 0;
+        int IAnimationJobProvider.ExecutionOrder => 0;
 
         // ルート移動のスケール
         public Vector3 PositionScale {

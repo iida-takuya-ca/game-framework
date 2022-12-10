@@ -1,7 +1,8 @@
 using System;
+using GameFramework.MotionSystems;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems {
+namespace GameFramework.BodySystems {
     /// <summary>
     /// Playable用のProvider基底
     /// </summary>

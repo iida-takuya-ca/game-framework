@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
+using GameFramework.MotionSystems;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems {
+namespace GameFramework.BodySystems {
     /// <summary>
     /// 複数のClipをブレンド再生するPlayable用のProvider
     /// </summary>

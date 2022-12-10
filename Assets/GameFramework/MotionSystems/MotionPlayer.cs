@@ -40,7 +40,7 @@ namespace GameFramework.MotionSystems {
         /// </summary>
         public class AnimationJobInfo {
             public AnimationScriptPlayable playable;
-            public IDisposable disposable;
+            public IAnimationJobProvider provider;
             public bool dispose;
         }
 
@@ -50,33 +50,24 @@ namespace GameFramework.MotionSystems {
         private List<AnimationJobInfo> _animationJobInfos = new List<AnimationJobInfo>();
         private IMotionPlayableProvider _prevMotionPlayableProvider;
         private IMotionPlayableProvider _currentMotionPlayableProvider;
-        private RootScaleAnimationJobProvider _rootScaleAnimationJobProvider;
 
         private float _blendDuration;
         private float _blendTime;
         private float _prevTime;
         private float _currentTime;
 
+        // 制御対象のAnimator
+        public Animator Animator { get; private set; }
         // アニメーションの更新をSkipするフレーム数(0以上)
         public int SkipFrame { get; set; } = 0;
         // アニメーションの更新をSkipするかのフレーム数に対するOffset
         public int SkipFrameOffset { get; set; } = 0;
 
-        // ルートスケール（座標）
-        public Vector3 RootPositionScale {
-            get => _rootScaleAnimationJobProvider.PositionScale;
-            set => _rootScaleAnimationJobProvider.PositionScale = value;
-        }
-        // ルートスケール（回転）
-        public Vector3 RootAngleScale {
-            get => _rootScaleAnimationJobProvider.AngleScale;
-            set => _rootScaleAnimationJobProvider.AngleScale = value;
-        }
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public MotionPlayer(Animator animator, DirectorUpdateMode updateMode = DirectorUpdateMode.GameTime) {
+            Animator = animator;
             _graph = PlayableGraph.Create($"{animator.name}:MotionGraph");
             _output = AnimationPlayableOutput.Create(_graph, "Output", animator);
             _mixer = AnimationMixerPlayable.Create(_graph, 2);
@@ -84,10 +75,6 @@ namespace GameFramework.MotionSystems {
             _graph.SetTimeUpdateMode(updateMode);
             _output.SetSourcePlayable(_mixer);
             _graph.Play();
-
-            // RootScaleJobの初期化
-            _rootScaleAnimationJobProvider = new RootScaleAnimationJobProvider();
-            AddJob(_rootScaleAnimationJobProvider);
         }
 
         /// <summary>
@@ -261,36 +248,6 @@ namespace GameFramework.MotionSystems {
         }
 
         /// <summary>
-        /// モーションの設定
-        /// </summary>
-        public SingleMotionPlayableProvider
-            SetMotion(AnimationClip clip, float blendDuration, bool autoDispose = true) {
-            if (clip == null) {
-                ResetMotion(blendDuration);
-                return null;
-            }
-
-            var provider = new SingleMotionPlayableProvider(clip, autoDispose);
-            SetMotion(provider, blendDuration);
-            return provider;
-        }
-
-        /// <summary>
-        /// モーションの設定
-        /// </summary>
-        public AnimatorControllerMotionPlayableProvider SetMotion(RuntimeAnimatorController controller,
-            float blendDuration, bool autoDispose = true) {
-            if (controller == null) {
-                ResetMotion(blendDuration);
-                return null;
-            }
-
-            var provider = new AnimatorControllerMotionPlayableProvider(controller, autoDispose);
-            SetMotion(provider, blendDuration);
-            return provider;
-        }
-
-        /// <summary>
         /// モーションのリセット
         /// </summary>
         public void ResetMotion(float blendDuration) {
@@ -308,9 +265,10 @@ namespace GameFramework.MotionSystems {
             playable.SetInputCount(1);
             var jobInfo = new AnimationJobInfo {
                 playable = playable,
-                disposable = provider
+                provider = provider
             };
             _animationJobInfos.Add(jobInfo);
+            _animationJobInfos.Sort((a, b) => b.provider.ExecutionOrder - a.provider.ExecutionOrder);
 
             // PostProcessの更新
             RefreshPostProcess();
@@ -367,7 +325,7 @@ namespace GameFramework.MotionSystems {
                 }
 
                 info.playable.Destroy();
-                info.disposable.Dispose();
+                info.provider.Dispose();
                 _animationJobInfos.RemoveAt(i);
                 dirty = true;
             }

@@ -6,8 +6,8 @@ namespace GameFramework.Kinematics {
     /// </summary>
     public interface IJobPositionConstraint {
         /// <summary>
-        /// ジョブ要素の生成
+        /// ジョブハンドルの生成
         /// </summary>
-        PositionConstraintAnimationJob.Element CreateJobElement(Animator animator);
+        PositionConstraintJobHandle CreateJobHandle(Animator animator);
     }
 }

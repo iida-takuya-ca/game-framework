@@ -1,9 +1,9 @@
-using System;
+using GameFramework.MotionSystems;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems {
+namespace GameFramework.BodySystems {
     /// <summary>
     /// AnimatorControllerを再生するPlayable用のProvider
     /// </summary>
