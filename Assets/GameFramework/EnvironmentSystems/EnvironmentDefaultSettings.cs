@@ -76,6 +76,7 @@ namespace GameFramework.EnvironmentSystems {
             newSettings.ambientEquatorColor = Color.Lerp(ambientEquatorColor, target.ambientEquatorColor, ratio);
             newSettings.ambientGroundColor = Color.Lerp(ambientGroundColor, target.ambientGroundColor, ratio);
             newSettings.ambientIntensity = Mathf.Lerp(ambientIntensity, target.ambientIntensity, ratio);
+            newSettings.reflectionIntensity = Mathf.Lerp(reflectionIntensity, target.reflectionIntensity, ratio);
             return newSettings;
         }
     }
