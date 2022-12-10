@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using GameFramework.BodySystems;
 using GameFramework.Kinematics;
 
 namespace GameFramework.BodySystems {

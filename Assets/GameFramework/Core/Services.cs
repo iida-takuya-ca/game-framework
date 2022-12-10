@@ -12,7 +12,7 @@ namespace GameFramework.Core {
         private static IServiceContainer s_instance;
         
         // シングルトン用インスタンス取得
-        internal static IServiceContainer Instance {
+        public static IServiceContainer Instance {
             get {
                 if (s_instance == null) {
                     s_instance = new Services();

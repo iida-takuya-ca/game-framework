@@ -615,7 +615,7 @@ PlayerSettings:
     PS4: USE_UNI_RX
     PS5: USE_UNI_RX
     Stadia: USE_UNI_RX
-    Standalone: USE_UNI_RX
+    Standalone: 
     WebGL: USE_UNI_RX
     Windows Store Apps: USE_UNI_RX
     XboxOne: USE_UNI_RX
