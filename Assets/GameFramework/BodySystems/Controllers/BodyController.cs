@@ -7,6 +7,7 @@ namespace GameFramework.BodySystems {
     public abstract class BodyController : IBodyController {
         // 実行優先度
         public virtual int ExecutionOrder => 0;
+
         // 制御対象のBody
         public Body Body { get; private set; }
 
@@ -31,7 +32,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected virtual void DisposeInternal() {
         }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -44,7 +45,7 @@ namespace GameFramework.BodySystems {
         void IBodyController.Update(float deltaTime) {
             UpdateInternal(deltaTime);
         }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>
@@ -59,7 +60,7 @@ namespace GameFramework.BodySystems {
         void IBodyController.LateUpdate(float deltaTime) {
             LateUpdateInternal(deltaTime);
         }
-        
+
         /// <summary>
         /// 後更新処理
         /// </summary>

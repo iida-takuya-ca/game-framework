@@ -10,7 +10,7 @@ namespace GameFramework.Core {
         // 管理用サービス
         private Dictionary<Type, object> _services = new Dictionary<Type, object>();
         private Dictionary<Type, List<object>> _serviceLists = new Dictionary<Type, List<object>>();
-        
+
         // 登録解除用の廃棄可能インスタンスリスト(登録順)
         private List<IDisposable> _disposableServices = new List<IDisposable>();
 
@@ -19,6 +19,7 @@ namespace GameFramework.Core {
 
         // 親のContainer
         private IServiceContainer _parent;
+
         // 子のContainer
         private List<IServiceContainer> _children = new List<IServiceContainer>();
 
@@ -30,11 +31,11 @@ namespace GameFramework.Core {
         public ServiceContainer(IServiceContainer parent = null, bool autoDispose = true) {
             if (parent == null && GetType() != typeof(Services)) {
                 parent = Services.Instance;
-            } 
-            
+            }
+
             _autoDispose = autoDispose;
             _parent = parent;
-            
+
             if (_parent is ServiceContainer container) {
                 container._children.Add(this);
             }
@@ -109,7 +110,7 @@ namespace GameFramework.Core {
                     return result;
                 }
             }
-            
+
             if (_services.TryGetValue(type, out var service)) {
                 return service;
             }
@@ -157,6 +158,7 @@ namespace GameFramework.Core {
                 if (index < list.Count) {
                     return list[index];
                 }
+
                 Debug.LogError($"Invalid service index. Type:{type} Index:{index}");
             }
 
@@ -179,8 +181,9 @@ namespace GameFramework.Core {
             for (var i = _children.Count - 1; i >= 0; i--) {
                 _children[i].Dispose();
             }
+
             _children.Clear();
-            
+
             if (_autoDispose) {
                 // 逆順に解放
                 for (var i = _disposableServices.Count - 1; i >= 0; i--) {
@@ -188,10 +191,11 @@ namespace GameFramework.Core {
                     if (disposable == null) {
                         continue;
                     }
+
                     disposable.Dispose();
                 }
             }
-            
+
             // サービス参照をクリア
             _disposableServices.Clear();
             _services.Clear();

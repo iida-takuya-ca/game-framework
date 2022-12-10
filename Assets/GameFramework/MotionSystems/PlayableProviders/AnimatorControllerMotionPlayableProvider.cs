@@ -3,13 +3,11 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems
-{
+namespace GameFramework.MotionSystems {
     /// <summary>
     /// AnimatorControllerを再生するPlayable用のProvider
     /// </summary>
-    public class AnimatorControllerMotionPlayableProvider : MotionPlayableProvider
-    {
+    public class AnimatorControllerMotionPlayableProvider : MotionPlayableProvider {
         private AnimatorControllerPlayable _playable;
         private RuntimeAnimatorController _controller;
 
@@ -19,8 +17,7 @@ namespace GameFramework.MotionSystems
         /// 初期化処理
         /// </summary>
         public AnimatorControllerMotionPlayableProvider(RuntimeAnimatorController controller, bool autoDispose)
-            : base(autoDispose)
-        {
+            : base(autoDispose) {
             _controller = controller;
         }
 
@@ -34,16 +31,14 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected override void InitializeInternal(PlayableGraph graph)
-        {
+        protected override void InitializeInternal(PlayableGraph graph) {
             _playable = AnimatorControllerPlayable.Create(graph, _controller);
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        protected override void DisposeInternal()
-        {
+        protected override void DisposeInternal() {
             _controller = null;
             _playable.Destroy();
         }

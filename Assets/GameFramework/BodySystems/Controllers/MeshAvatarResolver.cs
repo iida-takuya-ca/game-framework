@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GameFramework.BodySystems {
     /// <summary>
@@ -11,8 +10,8 @@ namespace GameFramework.BodySystems {
         private GameObject _partObject;
 
         // 識別キー
-        string AvatarController.IResolver.Key => _key; 
-        
+        string AvatarController.IResolver.Key => _key;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -30,6 +29,7 @@ namespace GameFramework.BodySystems {
             if (_prefab == null) {
                 return;
             }
+
             _partObject = Object.Instantiate(_prefab);
             var meshController = owner.GetController<MeshController>();
             meshController.MergeMeshes(_partObject, _key);
@@ -42,6 +42,7 @@ namespace GameFramework.BodySystems {
             if (_partObject == null) {
                 return;
             }
+
             var meshController = owner.GetController<MeshController>();
             meshController.DeleteMergedMeshes(_partObject);
             _partObject = null;

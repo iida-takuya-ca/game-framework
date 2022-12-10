@@ -8,6 +8,7 @@ namespace GameFramework.CoroutineSystems {
     public class AdditionalProcessCoroutine : IEnumerator {
         // ベースのコルーチン処理
         private Coroutine _baseCoroutine;
+
         // 追記処理
         private Action _additionalFunc;
 

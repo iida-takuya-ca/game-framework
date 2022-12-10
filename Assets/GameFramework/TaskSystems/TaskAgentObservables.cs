@@ -14,7 +14,7 @@ namespace GameFramework.TaskSystems {
         public static IObservable<Unit> OnUpdateAsObservable(this TaskAgent source) {
             return Observable.FromEvent(h => source.OnUpdate += h, h => source.OnUpdate -= h);
         }
-        
+
         /// <summary>
         /// 後更新タイミング監視
         /// </summary>

@@ -8,7 +8,7 @@ namespace GameFramework.ModelSystems {
     /// Id管理によるモデル
     /// </summary>
     public abstract class IdModel<TKey, TModel> : IModel
-    where TModel : IdModel<TKey, TModel>, new() {
+        where TModel : IdModel<TKey, TModel>, new() {
         /// <summary>
         /// モデル格納用ストレージ
         /// </summary>
@@ -47,7 +47,7 @@ namespace GameFramework.ModelSystems {
                 _models[id] = model;
                 return model;
             }
-        
+
             /// <summary>
             /// モデルの取得
             /// </summary>
@@ -73,12 +73,13 @@ namespace GameFramework.ModelSystems {
                 model.OnDeleted();
             }
         }
-        
+
         // インスタンス管理用クラス
-        private static Storage s_storage = new Storage(); 
+        private static Storage s_storage = new Storage();
 
         // 識別ID
         public TKey Id { get; private set; }
+
         // スコープ通知用
         public event Action OnExpired;
 
@@ -102,7 +103,7 @@ namespace GameFramework.ModelSystems {
         public static TModel Get(TKey id) {
             return s_storage.Get(id);
         }
-        
+
         /// <summary>
         /// 生成処理
         /// </summary>
@@ -110,7 +111,7 @@ namespace GameFramework.ModelSystems {
         public static TModel Create(TKey id) {
             return s_storage.Create(id);
         }
-        
+
         /// <summary>
         /// 削除処理
         /// </summary>
@@ -144,7 +145,7 @@ namespace GameFramework.ModelSystems {
         /// </summary>
         protected virtual void OnDeletedInternal() {
         }
-        
+
         /// <summary>
         /// 生成時処理
         /// </summary>

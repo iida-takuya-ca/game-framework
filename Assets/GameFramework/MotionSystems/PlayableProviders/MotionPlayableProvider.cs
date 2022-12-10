@@ -1,8 +1,7 @@
 using System;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems
-{
+namespace GameFramework.MotionSystems {
     /// <summary>
     /// Playable用のProvider基底
     /// </summary>
@@ -12,7 +11,7 @@ namespace GameFramework.MotionSystems
 
         bool IMotionPlayableProvider.AutoDispose => _autoDispose;
         Playable IMotionPlayableProvider.Playable => Playable;
-        
+
         protected abstract Playable Playable { get; }
 
         /// <summary>
@@ -25,8 +24,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        void IDisposable.Dispose()
-        {
+        void IDisposable.Dispose() {
             if (_initialized) {
                 DisposeInternal();
             }
@@ -35,8 +33,7 @@ namespace GameFramework.MotionSystems
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void IMotionPlayableProvider.Initialize(PlayableGraph graph)
-        {
+        void IMotionPlayableProvider.Initialize(PlayableGraph graph) {
             if (_initialized) {
                 return;
             }
@@ -49,7 +46,7 @@ namespace GameFramework.MotionSystems
         /// 初期化処理(Override用)
         /// </summary>
         protected abstract void InitializeInternal(PlayableGraph graph);
-        
+
         /// <summary>
         /// 解放処理(Override用)
         /// </summary>

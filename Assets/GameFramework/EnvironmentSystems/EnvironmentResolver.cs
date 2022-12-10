@@ -7,24 +7,27 @@ namespace GameFramework.EnvironmentSystems {
         IEnvironmentContext IEnvironmentResolver.GetCurrent() {
             return GetCurrentInternal();
         }
+
         void IEnvironmentResolver.Apply(IEnvironmentContext context) {
             ApplyInternal((TContext)context);
         }
-        IEnvironmentContext IEnvironmentResolver.Lerp(IEnvironmentContext current, IEnvironmentContext target, float rate) {
+
+        IEnvironmentContext IEnvironmentResolver.Lerp(IEnvironmentContext current, IEnvironmentContext target,
+            float rate) {
             return LerpInternal((TContext)current, (TContext)target, rate);
         }
-        
+
         /// <summary>
         /// 現在反映されている値を格納したContextを取得
         /// </summary>
         protected abstract TContext GetCurrentInternal();
-        
+
         /// <summary>
         /// 値の反映
         /// </summary>
         /// <param name="context">反映対象のコンテキスト</param>
         protected abstract void ApplyInternal(TContext context);
-        
+
         /// <summary>
         /// 値の線形補間
         /// </summary>

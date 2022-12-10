@@ -45,13 +45,14 @@ namespace GameFramework.BodySystems {
                 Debug.LogError("resolver is null.");
                 return;
             }
-            
+
             var key = resolver.Key;
-            
+
             // 既に存在していたら削除
             if (_resolvers.TryGetValue(key, out var currentResolver)) {
                 currentResolver.Cleanup(Body);
             }
+
             resolver.Setup(Body);
             _resolvers[key] = resolver;
         }

@@ -1,17 +1,17 @@
 {
-    "name": "GameFramework.SituationSystems",
-    "rootNamespace": "",
-    "references": [
-        "GUID:afebead123e02784da390b52d3e15019",
-        "GUID:cd95dc61d1665ab49b4763d88794bbde"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "GameFramework.SituationSystems",
+  "rootNamespace": "",
+  "references": [
+    "GUID:afebead123e02784da390b52d3e15019",
+    "GUID:cd95dc61d1665ab49b4763d88794bbde"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

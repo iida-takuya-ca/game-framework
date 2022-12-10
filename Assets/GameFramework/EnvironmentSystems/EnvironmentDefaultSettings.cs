@@ -51,7 +51,7 @@ namespace GameFramework.EnvironmentSystems {
                 customReflection = RenderSettings.customReflection,
                 reflectionIntensity = RenderSettings.reflectionIntensity,
                 reflectionBounces = RenderSettings.reflectionBounces,
-                
+
                 fog = RenderSettings.fog,
                 fogColor = RenderSettings.fogColor,
                 fogMode = RenderSettings.fogMode,
@@ -100,7 +100,8 @@ namespace GameFramework.EnvironmentSystems {
         /// <param name="ratio">ブレンド率</param>
         public EnvironmentDefaultSettings Lerp(EnvironmentDefaultSettings target, float ratio) {
             var newSettings = target;
-            newSettings.subtractiveShadowColor = Color.Lerp(subtractiveShadowColor, target.subtractiveShadowColor, ratio);
+            newSettings.subtractiveShadowColor =
+                Color.Lerp(subtractiveShadowColor, target.subtractiveShadowColor, ratio);
             newSettings.ambientSkyColor = Color.Lerp(ambientSkyColor, target.ambientSkyColor, ratio);
             newSettings.ambientEquatorColor = Color.Lerp(ambientEquatorColor, target.ambientEquatorColor, ratio);
             newSettings.ambientGroundColor = Color.Lerp(ambientGroundColor, target.ambientGroundColor, ratio);

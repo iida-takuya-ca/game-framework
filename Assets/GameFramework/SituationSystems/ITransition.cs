@@ -30,37 +30,37 @@ namespace GameFramework.SituationSystems {
         /// 終了エフェクトコルーチン
         /// </summary>
         IEnumerator ExitEffectRoutine();
-        
+
         /// <summary>
         /// 遷移先のロードコルーチン
         /// </summary>
         IEnumerator LoadNextRoutine();
-        
+
         /// <summary>
         /// 遷移先のオープンコルーチン
         /// </summary>
         IEnumerator OpenNextRoutine();
-        
+
         /// <summary>
         /// 遷移元のクローズコルーチン
         /// </summary>
         IEnumerator ClosePrevRoutine();
-        
+
         /// <summary>
         /// 遷移先のアクティベート
         /// </summary>
         void ActivateNext();
-        
+
         /// <summary>
         /// 遷移元のディアクティベート
         /// </summary>
         void DeactivatePrev();
-        
+
         /// <summary>
         /// 遷移元の解放コルーチン
         /// </summary>
         IEnumerator UnloadPrevRoutine();
-        
+
         /// <summary>
         /// 完了処理
         /// </summary>

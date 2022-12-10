@@ -1,18 +1,18 @@
 {
-    "name": "GameFramework.MotionSystems",
-    "rootNamespace": "",
-    "references": [
-        "GUID:d8b63aba1907145bea998dd612889d6b",
-        "GUID:2665a8d13d1b3f18800f46e256720795",
-        "GUID:6f86735331082a34db1f5c5a53a37d19"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "GameFramework.MotionSystems",
+  "rootNamespace": "",
+  "references": [
+    "GUID:d8b63aba1907145bea998dd612889d6b",
+    "GUID:2665a8d13d1b3f18800f46e256720795",
+    "GUID:6f86735331082a34db1f5c5a53a37d19"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

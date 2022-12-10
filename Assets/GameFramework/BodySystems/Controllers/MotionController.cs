@@ -10,10 +10,10 @@ namespace GameFramework.BodySystems {
     public class MotionController : SerializedBodyController {
         [SerializeField, Tooltip("モーション更新モード")]
         private DirectorUpdateMode _updateMode = DirectorUpdateMode.GameTime;
-        
+
         // モーション再生用クラス
         public MotionPlayer Player { get; private set; }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>

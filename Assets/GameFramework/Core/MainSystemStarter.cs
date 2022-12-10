@@ -8,7 +8,7 @@ namespace GameFramework.Core {
     public abstract class MainSystemStarter : MonoBehaviour {
         [SerializeField, Tooltip("Bootに使用するシーン名")]
         private string _bootSceneName = "";
-        
+
         // 使用しているStarter
         public static MainSystemStarter Current { get; private set; }
 
@@ -16,7 +16,7 @@ namespace GameFramework.Core {
         /// MainSystemに渡す引数
         /// </summary>
         public abstract object[] GetArguments();
-        
+
         /// <summary>
         /// 生成時処理
         /// </summary>
@@ -25,7 +25,7 @@ namespace GameFramework.Core {
                 DestroyImmediate(gameObject);
                 return;
             }
-            
+
             DontDestroyOnLoad(gameObject);
             Current = this;
         }
@@ -37,7 +37,7 @@ namespace GameFramework.Core {
             if (Current != this) {
                 return;
             }
-            
+
             SceneManager.LoadScene(_bootSceneName);
         }
 

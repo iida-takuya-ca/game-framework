@@ -12,15 +12,14 @@ namespace GameFramework.BodySystems {
         /// </summary>
         [Serializable]
         public class Info {
-            [Tooltip("Materialを取得する際のキー")]
-            public string key;
+            [Tooltip("Materialを取得する際のキー")] public string key;
+
             [Tooltip("MaterialがアサインされているRenderer")]
             public Renderer renderer;
-            [Tooltip("対象のMaterial")]
-            public Material material;
+
+            [Tooltip("対象のMaterial")] public Material material;
         }
 
-        [Tooltip("マテリアル登録情報")]
-        public Info[] infos;
+        [Tooltip("マテリアル登録情報")] public Info[] infos;
     }
 }

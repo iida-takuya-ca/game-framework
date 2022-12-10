@@ -11,12 +11,16 @@ namespace GameFramework.Core {
         private enum State {
             // 無効値
             Invalid = -1,
+
             // 初期化中
             Starting,
+
             // 有効状態
             Active,
+
             // リブート中
             Rebooting,
+
             // 廃棄済み
             Destroyed,
         }
@@ -26,11 +30,13 @@ namespace GameFramework.Core {
 
         // 自身がカレントシステムか
         public bool IsCurrent => Current == this;
+
         // アクティブ状態か
         public bool IsActive => _currentState == State.Active;
 
         // メインシステムが存在するか
         public static bool Exists => Current != null;
+
         // 現在のメインシステム
         private static MainSystem Current { get; set; }
 
@@ -132,10 +138,10 @@ namespace GameFramework.Core {
             // Starterから引数を取得
             var starter = MainSystemStarter.Current;
             var arguments = starter != null ? starter.GetArguments() : Array.Empty<object>();
-            
+
             // 開始処理
             yield return StartRoutine(arguments);
-            
+
             // Starterを削除
             if (starter != null) {
                 Destroy(starter.gameObject);
@@ -193,7 +199,7 @@ namespace GameFramework.Core {
 
             if (this == Instance) {
                 Instance = null;
-            } 
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace GameFramework.TaskSystems {
     public interface ITask {
         // タスクの有効状態
         bool IsActive { get; }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>

@@ -21,12 +21,15 @@ namespace GameFramework.CoroutineSystems {
             public Exception exception;
             public bool isCompleted;
 
-            public bool IsCanceled => isCanceled || (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested);
+            public bool IsCanceled =>
+                isCanceled || (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested);
+
             public bool IsDone => IsCanceled || exception != null || isCompleted;
         }
 
         // 制御中のコルーチン
         private readonly List<CoroutineInfo> _coroutineInfos = new List<CoroutineInfo>();
+
         // 更新が完了したコルーチンのIDを保持するリスト
         private readonly List<int> _cachedRemoveIndices = new List<int>();
 
@@ -95,11 +98,11 @@ namespace GameFramework.CoroutineSystems {
                 if (info.IsDone) {
                     continue;
                 }
-                
+
                 // キャンセル処理
                 CancelCoroutine(info);
             }
-            
+
             _coroutineInfos.Clear();
         }
 

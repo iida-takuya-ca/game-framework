@@ -7,7 +7,7 @@ namespace GameFramework.EnvironmentSystems {
         /// 現在反映されている値を格納したContextを取得
         /// </summary>
         IEnvironmentContext GetCurrent();
-        
+
         /// <summary>
         /// 値の反映
         /// </summary>

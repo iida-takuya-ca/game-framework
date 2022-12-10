@@ -13,25 +13,19 @@ namespace GameFramework.Core {
         /// </summary>
         public static CancellationToken ToCancellationToken(this IScope source) {
             var cts = new CancellationTokenSource();
-            source.OnExpired += () => {
-                cts.Cancel();
-            };
+            source.OnExpired += () => { cts.Cancel(); };
             return cts.Token;
         }
 
         /// <summary>
         /// CancellationTokenのScope変換
         /// </summary>
-        public static IScope ToScope(this CancellationToken source)
-        {
+        public static IScope ToScope(this CancellationToken source) {
             var scope = new DisposableScope();
-            source.Register(() =>
-            {
-                scope.Dispose();
-            });
+            source.Register(() => { scope.Dispose(); });
             return scope;
         }
-        
+
         /// <summary>
         /// IDisposableのScope登録
         /// </summary>

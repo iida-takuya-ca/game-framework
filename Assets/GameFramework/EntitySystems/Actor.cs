@@ -10,16 +10,16 @@ namespace GameFramework.EntitySystems {
         // 制御優先度
         int Priority { get; }
     }
-    
+
     /// <summary>
     /// Body制御用ロジック
     /// </summary>
     public abstract class Actor : Logic, IActor {
         private int _priority;
-        
+
         // 制御対象のBody
         public Body Body { get; private set; }
-        
+
         // 制御優先度
         int IActor.Priority => _priority;
 

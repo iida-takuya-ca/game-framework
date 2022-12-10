@@ -10,6 +10,7 @@ namespace GameFramework.CoroutineSystems {
 
         // 現在の位置(未使用)
         public object Current => null;
+
         // 完了しているか
         public bool IsDone { get; private set; }
 

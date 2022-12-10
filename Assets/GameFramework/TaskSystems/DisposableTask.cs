@@ -6,7 +6,7 @@ namespace GameFramework.TaskSystems {
     /// </summary>
     public abstract class DisposableTask : ITask, ITaskEventHandler, IDisposable {
         private TaskRunner _taskRunner;
-        
+
         // Taskが有効状態か
         public virtual bool IsActive => true;
 
@@ -21,11 +21,12 @@ namespace GameFramework.TaskSystems {
                 _taskRunner = null;
             }
         }
-        
+
         /// <summary>
         /// 廃棄処理(override用)
         /// </summary>
-        protected virtual void DisposeInternal() {}
+        protected virtual void DisposeInternal() {
+        }
 
         /// <summary>
         /// 更新処理
@@ -33,11 +34,12 @@ namespace GameFramework.TaskSystems {
         void ITask.Update() {
             UpdateInternal();
         }
-        
+
         /// <summary>
         /// 更新処理(override用)
         /// </summary>
-        protected virtual void UpdateInternal() {}
+        protected virtual void UpdateInternal() {
+        }
 
         /// <summary>
         /// Taskの登録通知

@@ -16,6 +16,7 @@ namespace GameFramework.BodySystems {
 
         // 親のParentController
         private ParentController _parent;
+
         // 子のParentControllerリスト
         private List<ParentController> _children = new List<ParentController>();
 
@@ -24,7 +25,7 @@ namespace GameFramework.BodySystems {
         private Vector3 _offsetPosition;
         private Quaternion _offsetRotation;
         private ScaleType _scaleType;
-        
+
         // 処理順番
         public override int ExecutionOrder => 1000;
 
@@ -36,7 +37,8 @@ namespace GameFramework.BodySystems {
         /// <param name="offsetPosition">オフセット座標(Local)</param>
         /// <param name="offsetRotation">オフセット回転(Local)</param>
         /// <param name="scaleType">スケール反映タイプ</param>
-        public void SetParent(Body parentBody, Transform targetTransform, Vector3 offsetPosition, Quaternion offsetRotation, ScaleType scaleType) {
+        public void SetParent(Body parentBody, Transform targetTransform, Vector3 offsetPosition,
+            Quaternion offsetRotation, ScaleType scaleType) {
             if (_parent != null) {
                 // 既に接続されていた場合、接続を解除
                 _parent.RemoveChild(this);
@@ -47,22 +49,22 @@ namespace GameFramework.BodySystems {
             if (parentBody == null) {
                 return;
             }
-            
+
             var parent = parentBody.GetController<ParentController>();
             if (parent == null) {
                 return;
             }
-            
+
             // 追従設定初期化
             _targetTransform = targetTransform != null ? targetTransform : parentBody.Transform;
             _offsetPosition = offsetPosition;
             _offsetRotation = offsetRotation;
             _scaleType = scaleType;
-            
+
             // 子として設定
             parent.AddChild(this);
             _parent = parent;
-            
+
             // RootからTransformを再更新
             GetRoot().UpdateTransform();
         }
@@ -78,8 +80,10 @@ namespace GameFramework.BodySystems {
                     children.Add(child.Body);
                     children.AddRange(child.GetChildren());
                 }
+
                 return children.ToArray();
             }
+
             return _children.Select(x => x.Body).ToArray();
         }
 
@@ -112,6 +116,7 @@ namespace GameFramework.BodySystems {
                 if (!child.Body.IsValid) {
                     continue;
                 }
+
                 child.RemoveChild(null);
             }
 
@@ -151,6 +156,7 @@ namespace GameFramework.BodySystems {
                 if (!child.Body.IsValid) {
                     continue;
                 }
+
                 child.UpdateTransform();
             }
         }
@@ -163,6 +169,7 @@ namespace GameFramework.BodySystems {
             while (root._parent != null) {
                 root = root._parent;
             }
+
             return root;
         }
 
@@ -177,6 +184,7 @@ namespace GameFramework.BodySystems {
                     return true;
                 }
             }
+
             return false;
         }
 

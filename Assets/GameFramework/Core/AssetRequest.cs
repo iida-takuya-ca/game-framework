@@ -6,7 +6,7 @@ namespace GameFramework.Core {
         // 読み込みに使うPath
         string Path { get; }
     }
-    
+
     /// <summary>
     /// アセット読み込みリクエスト
     /// </summary>

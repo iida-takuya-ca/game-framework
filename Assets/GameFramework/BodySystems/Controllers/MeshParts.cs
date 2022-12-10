@@ -18,13 +18,10 @@ namespace GameFramework.BodySystems {
         // ユニーク骨情報
         [Serializable]
         public class UniqueBoneInfo {
-            [Tooltip("AutoでConstraintするかのMask")]
-            public ConstraintMasks constraintMask = 0;
-            [Tooltip("ユニーク骨リスト")]
-            public Transform[] targetBones = Array.Empty<Transform>();
+            [Tooltip("AutoでConstraintするかのMask")] public ConstraintMasks constraintMask = 0;
+            [Tooltip("ユニーク骨リスト")] public Transform[] targetBones = Array.Empty<Transform>();
         }
 
-        [Tooltip("メッシュ結合時にユニーク制御する骨情報")]
-        public UniqueBoneInfo[] uniqueBoneInfos = Array.Empty<UniqueBoneInfo>();
+        [Tooltip("メッシュ結合時にユニーク制御する骨情報")] public UniqueBoneInfo[] uniqueBoneInfos = Array.Empty<UniqueBoneInfo>();
     }
 }
