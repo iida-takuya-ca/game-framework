@@ -32,7 +32,6 @@ namespace GameFramework.CoroutineSystems {
                     if (!isDone) {
                         // ストリームキャンセルによるコルーチン停止
                         source.StopCoroutine(coroutine);
-                        onCanceled?.Invoke();
                     }
                 });
             });

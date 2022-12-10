@@ -1,7 +1,12 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Threading;
 using UnityEngine;
+
+#if USE_UNI_TASK
+using Cysharp.Threading.Tasks;
+#endif
 
 namespace GameFramework.CoroutineSystems {
     /// <summary>
@@ -25,5 +30,31 @@ namespace GameFramework.CoroutineSystems {
                 }
             }
         }
+
+#if USE_UNI_TASK
+        /// <summary>
+        /// コルーチン実行（UniTask）
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="enumerator"></param>
+        /// <param name="cancellationToken"></param>
+        public static UniTask StartCoroutineAsync(this CoroutineRunner source, IEnumerator enumerator, CancellationToken cancellationToken) {
+            var completionSource = new UniTaskCompletionSource();
+            if (cancellationToken.IsCancellationRequested) {
+                completionSource.TrySetCanceled(cancellationToken);
+                return completionSource.Task;
+            }
+            
+            source.StartCoroutine(enumerator, () => {
+                completionSource.TrySetResult();
+            }, () => {
+                completionSource.TrySetCanceled();
+            }, exception => {
+                completionSource.TrySetException(exception);
+            }, cancellationToken);
+            
+            return completionSource.Task;
+        }
+#endif
     }
 }

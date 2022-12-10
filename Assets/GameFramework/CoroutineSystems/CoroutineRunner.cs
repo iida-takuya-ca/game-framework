@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace GameFramework.CoroutineSystems {
@@ -11,6 +12,7 @@ namespace GameFramework.CoroutineSystems {
         // コルーチン情報
         private class CoroutineInfo {
             public Coroutine coroutine;
+            public CancellationToken cancellationToken;
             public Action<Exception> onError;
             public Action onCanceled;
             public Action onCompleted;
@@ -19,7 +21,8 @@ namespace GameFramework.CoroutineSystems {
             public Exception exception;
             public bool isCompleted;
 
-            public bool IsDone => isCanceled || exception != null || isCompleted;
+            public bool IsCanceled => isCanceled || (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested);
+            public bool IsDone => IsCanceled || exception != null || isCompleted;
         }
 
         // 制御中のコルーチン
@@ -35,7 +38,7 @@ namespace GameFramework.CoroutineSystems {
         /// <param name="onCanceled">キャンセル時の通知</param>
         /// <param name="onError">エラー時の通知</param>
         public Coroutine StartCoroutine(IEnumerator enumerator, Action onCompleted = null,
-            Action onCanceled = null, Action<Exception> onError = null) {
+            Action onCanceled = null, Action<Exception> onError = null, CancellationToken cancellationToken = default) {
             if (enumerator == null) {
                 Debug.LogError("Invalid coroutine func.");
                 return null;
@@ -44,6 +47,7 @@ namespace GameFramework.CoroutineSystems {
             // コルーチンの追加
             var coroutineInfo = new CoroutineInfo {
                 coroutine = new Coroutine(enumerator),
+                cancellationToken = cancellationToken,
                 onCompleted = onCompleted,
                 onCanceled = onCanceled
             };
@@ -119,7 +123,7 @@ namespace GameFramework.CoroutineSystems {
                 var coroutineInfo = _coroutineInfos[i];
                 var coroutine = coroutineInfo.coroutine;
 
-                if (coroutineInfo.isCanceled) {
+                if (coroutineInfo.IsCanceled) {
                     _cachedRemoveIndices.Add(i);
                     continue;
                 }
