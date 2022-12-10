@@ -13,7 +13,7 @@ namespace SampleGame {
         private SceneSituation _nextSceneSituation;
 
         private float _timer;
-        
+
         public override string SceneAssetPath => "login";
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace SampleGame {
             base.UpdateInternal();
 
             _timer -= Time.deltaTime;
-            
+
             if (_timer <= 0.0f) {
                 ParentContainer.Transition(_nextSceneSituation);
             }

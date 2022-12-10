@@ -21,7 +21,7 @@ public class EnvironmentSettings : MonoBehaviour {
         if (_data == null) {
             return;
         }
-        
+
         var manager = Services.Get<EnvironmentManager>();
         if (manager != null) {
             _handle = manager.Push(_data, _blendDuration);
@@ -35,7 +35,7 @@ public class EnvironmentSettings : MonoBehaviour {
         if (!_handle.IsValid) {
             return;
         }
-        
+
         var manager = Services.Get<EnvironmentManager>();
         if (manager != null) {
             manager.Remove(_handle);

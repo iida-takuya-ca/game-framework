@@ -13,7 +13,8 @@ namespace SampleGame {
         private Subject<string> _exitSubject = new Subject<string>();
 
         public IObservable<string> EnterSubject => _enterSubject;
-        [CanBeNull] public IObservable<Tuple<string, int>> CycleSubject => _cycleSubject;
+        [CanBeNull]
+        public IObservable<Tuple<string, int>> CycleSubject => _cycleSubject;
         public IObservable<string> ExitSubject => _exitSubject;
 
         /// <summary>
@@ -22,14 +23,14 @@ namespace SampleGame {
         void IStatusEventListener.OnStatusEnter(string statusName) {
             _enterSubject.OnNext(statusName);
         }
-        
+
         /// <summary>
         /// ステータスのループ回数変化時
         /// </summary>
         void IStatusEventListener.OnStatusCycle(string statusName, int cycle) {
-            _cycleSubject.OnNext(new Tuple<string, int>(statusName, cycle));            
+            _cycleSubject.OnNext(new Tuple<string, int>(statusName, cycle));
         }
-        
+
         /// <summary>
         /// ステータスを抜けた時
         /// </summary>

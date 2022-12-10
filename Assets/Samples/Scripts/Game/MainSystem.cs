@@ -12,7 +12,7 @@ namespace SampleGame {
     public class MainSystem : MainSystem<MainSystem> {
         [SerializeField]
         private ServiceLocatorInstaller _globalObject;
-        
+
         private TaskRunner _taskRunner;
         private SceneSituationContainer _sceneSituationContainer;
 
@@ -26,19 +26,20 @@ namespace SampleGame {
             _taskRunner.Unregister(_sceneSituationContainer);
             _sceneSituationContainer = new SceneSituationContainer();
             _taskRunner.Register(_sceneSituationContainer);
-            
+
             // 開始用シーンの読み込み
             var startSituation = default(SceneSituation);
             if (args.Length > 0) {
                 startSituation = args[0] as SceneSituation;
             }
+
             if (startSituation == null) {
                 // 未指定ならLogin > Titleへ
                 startSituation = new LoginSceneSituation(new TitleSceneSituation());
             }
-            
+
             var handle = _sceneSituationContainer.Transition(startSituation);
-            yield return handle;   
+            yield return handle;
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace SampleGame {
             DontDestroyOnLoad(_globalObject.gameObject);
             // RootのServiceにインスタンスを登録
             _globalObject.Install(Services.Instance);
-            
+
             // 各種システム初期化
             _taskRunner = new TaskRunner();
             Services.Instance.Set(_taskRunner);
@@ -58,7 +59,7 @@ namespace SampleGame {
             var environmentManager = new EnvironmentManager(new EnvironmentResolver());
             _taskRunner.Register(environmentManager, TaskOrder.PostSystem);
             Services.Instance.Set(environmentManager);
-            
+
             // 各種GlobalObjectのタスク登録
             _taskRunner.Register(Services.Get<FadeController>(), TaskOrder.UI);
 
@@ -67,10 +68,12 @@ namespace SampleGame {
             if (args.Length > 0) {
                 startSituation = args[0] as SceneSituation;
             }
+
             if (startSituation == null) {
                 // 未指定ならLogin > Titleへ
                 startSituation = new LoginSceneSituation(new TitleSceneSituation());
             }
+
             var handle = _sceneSituationContainer.Transition(startSituation);
             yield return handle;
         }

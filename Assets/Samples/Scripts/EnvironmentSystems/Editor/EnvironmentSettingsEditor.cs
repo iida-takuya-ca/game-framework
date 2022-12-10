@@ -10,7 +10,7 @@ using UnityEngine;
 public class EnvironmentSettingsEditor : Editor {
     private SerializedProperty _data;
     private Editor _dataEditor;
-    
+
     /// <summary>
     /// インスペクタ描画
     /// </summary>
@@ -38,7 +38,7 @@ public class EnvironmentSettingsEditor : Editor {
     /// </summary>
     private void ApplyDataEditor() {
         var current = _data.objectReferenceValue;
-        
+
         if (_dataEditor != null && _dataEditor.target == current) {
             return;
         }

@@ -11,7 +11,8 @@ namespace SampleGame {
     public abstract class GameAssetRequest<T> : AssetRequest
         where T : Object {
         public GameAssetRequest(string path)
-            : base(path) {}
+            : base(path) {
+        }
 
         /// <summary>
         /// アセットの読み込み処理
@@ -33,7 +34,8 @@ namespace SampleGame {
     /// </summary>
     public abstract class BodyPrefabAssetRequest : GameAssetRequest<GameObject> {
         public BodyPrefabAssetRequest(string relativePath)
-            : base($"Assets/Samples/BodyAssets/{relativePath}"){}
+            : base($"Assets/Samples/BodyAssets/{relativePath}") {
+        }
     }
 
     /// <summary>
@@ -41,7 +43,8 @@ namespace SampleGame {
     /// </summary>
     public class PlayerPrefabAssetRequest : BodyPrefabAssetRequest {
         public PlayerPrefabAssetRequest(string assetKey)
-            : base($"Player/{assetKey}/Models/prfb_{assetKey}.prefab"){}
+            : base($"Player/{assetKey}/Models/prfb_{assetKey}.prefab") {
+        }
     }
 
     /// <summary>
@@ -49,7 +52,8 @@ namespace SampleGame {
     /// </summary>
     public class PlayerActorSetupDataAssetRequest : GameAssetRequest<PlayerActorSetupData> {
         public PlayerActorSetupDataAssetRequest(string assetKey)
-            : base($"Assets/Samples/Data/PlayerActorSetup/dat_player_actor_setup_{assetKey}.asset"){}
+            : base($"Assets/Samples/Data/PlayerActorSetup/dat_player_actor_setup_{assetKey}.asset") {
+        }
     }
 
     /// <summary>
@@ -57,7 +61,8 @@ namespace SampleGame {
     /// </summary>
     public class PlayerActorActionDataAssetRequest : GameAssetRequest<PlayerActorActionData> {
         public PlayerActorActionDataAssetRequest(string assetKey)
-            : base($"Assets/Samples/Data/PlayerActorAction/dat_player_actor_action_{assetKey}.asset"){}
+            : base($"Assets/Samples/Data/PlayerActorAction/dat_player_actor_action_{assetKey}.asset") {
+        }
     }
 
     /// <summary>
@@ -65,6 +70,7 @@ namespace SampleGame {
     /// </summary>
     public class BattlePlayerMasterDataAssetRequest : GameAssetRequest<BattlePlayerMasterData> {
         public BattlePlayerMasterDataAssetRequest(string assetKey)
-            : base($"Assets/Samples/Data/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset"){}
+            : base($"Assets/Samples/Data/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset") {
+        }
     }
 }

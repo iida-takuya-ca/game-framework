@@ -14,7 +14,7 @@ public class MotionSample : MonoBehaviour {
         AnimatorController,
         AnimationClip,
     }
-    
+
     [SerializeField, Tooltip("再生するAnimatorController")]
     private RuntimeAnimatorController _controller;
     [SerializeField, Tooltip("再生するAnimationClip")]
@@ -42,7 +42,7 @@ public class MotionSample : MonoBehaviour {
     /// </summary>
     private void Awake() {
         _serviceContainer = new ServiceContainer();
-        
+
         _taskRunner = new TaskRunner();
         _serviceContainer.Set(_serviceContainer);
         _bodyManager = new BodyManager();
@@ -62,7 +62,7 @@ public class MotionSample : MonoBehaviour {
     /// </summary>
     private void Update() {
         var motionController = _body.GetController<MotionController>();
-        
+
         // モーション切り替え
         if (Input.GetKeyDown(KeyCode.Space)) {
             _motionState = (MotionState)((int)(_motionState + 1) % Enum.GetValues(typeof(MotionState)).Length);
@@ -78,14 +78,14 @@ public class MotionSample : MonoBehaviour {
                     break;
             }
         }
-        
+
         // ルート座標スケール更新
         motionController.Player.RootPositionScale = _rootPositionScale;
         _body.GetComponent<Animator>().SetFloat("WalkSpeed", _walkSpeed);
 
         // 更新速度変更
         _body.LayeredTime.LocalTimeScale = _timeScale;
-        
+
         _taskRunner.Update();
     }
 

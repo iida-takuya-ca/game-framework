@@ -1,4 +1,3 @@
-
 namespace SampleGame {
     /// <summary>
     /// タスクの実行順
@@ -14,11 +13,10 @@ namespace SampleGame {
         UI,
         PostSystem,
     }
-    
+
     /// <summary>
     /// ゲーム用の定義処理
     /// </summary>
     public static class Definitions {
-    
     }
 }

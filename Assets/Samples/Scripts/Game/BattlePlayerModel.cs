@@ -18,27 +18,30 @@ namespace SampleGame {
         public int Health { get; private set; } = 0;
         public int HealthMax { get; private set; } = 0;
         public bool IsDead => Health <= 0;
-        
+
         public BattlePlayerActorModel ActorModel { get; private set; }
 
         public IObservable<Tuple<BattlePlayerModel, int>> OnUpdatedHealthAsObservable() {
             return Observable.FromEvent<Tuple<BattlePlayerModel, int>>(
-                h => OnUpdatedHealth += h, 
+                h => OnUpdatedHealth += h,
                 h => OnUpdatedHealth -= h);
         }
+
         public IObservable<Tuple<BattlePlayerModel, int>> OnDamagedAsObservable() {
             return Observable.FromEvent<Tuple<BattlePlayerModel, int>>(
-                h => OnDamaged += h, 
+                h => OnDamaged += h,
                 h => OnDamaged -= h);
         }
+
         public IObservable<BattlePlayerModel> OnUpdatedAsObservable() {
             return Observable.FromEvent<BattlePlayerModel>(
-                h => OnUpdated += h, 
+                h => OnUpdated += h,
                 h => OnUpdated -= h);
         }
+
         public IObservable<BattlePlayerModel> OnDeadAsObservable() {
             return Observable.FromEvent<BattlePlayerModel>(
-                h => OnDead += h, 
+                h => OnDead += h,
                 h => OnDead -= h);
         }
 
@@ -50,7 +53,7 @@ namespace SampleGame {
             AssetKey = assetKey;
             HealthMax = healthMax;
             Health = HealthMax;
-            
+
             OnUpdatedHealth?.Invoke(new Tuple<BattlePlayerModel, int>(this, Health));
             OnUpdated?.Invoke(this);
         }
@@ -62,7 +65,7 @@ namespace SampleGame {
             if (IsDead) {
                 return;
             }
-            
+
             var newHealth = Mathf.Clamp(Health - damage, 0, HealthMax);
             damage = Health - newHealth;
             Health = newHealth;

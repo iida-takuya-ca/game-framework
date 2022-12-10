@@ -3,7 +3,6 @@ namespace SampleGame {
     /// MainSystemのStarter
     /// </summary>
     public abstract class MainSystemStarter : GameFramework.Core.MainSystemStarter {
-        
         /// <summary>
         /// MainSystem開始引数の取得
         /// </summary>
@@ -12,7 +11,7 @@ namespace SampleGame {
                 GetStartSituation()
             };
         }
-        
+
         /// <summary>
         /// 開始シチュエーションの取得
         /// </summary>

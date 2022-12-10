@@ -9,7 +9,7 @@ public class SituationSample : MonoBehaviour {
     private SceneSituationContainer _sceneSituationContainer;
     // Task実行用
     private TaskRunner _taskRunner;
-    
+
     /// <summary>
     /// 生成時処理
     /// </summary>

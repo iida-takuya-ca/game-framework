@@ -17,7 +17,8 @@ namespace SampleGame {
         /// <param name="source">初期化対象のEntity</param>
         /// <param name="onCreateBody">Body生成</param>
         /// <param name="onSetupEntity">各種初期化処理</param>
-        public static IObservable<Entity> SetupAsync(this Entity source, Func<IObservable<Body>> onCreateBody, Func<Entity, IObservable<Unit>> onSetupEntity) {
+        public static IObservable<Entity> SetupAsync(this Entity source, Func<IObservable<Body>> onCreateBody,
+            Func<Entity, IObservable<Unit>> onSetupEntity) {
             return Observable.Defer(() => {
                 // Entityの初期化
                 var bodyEntityComponent = source.AddOrGetComponent<BodyEntityComponent>();
@@ -26,7 +27,7 @@ namespace SampleGame {
                 source.AddOrGetComponent<ModelEntityComponent>();
 
                 var streams = new List<IObservable<Unit>>();
-                
+
                 // Bodyの生成
                 if (onCreateBody != null) {
                     streams.Add(Observable.Defer(() => onCreateBody.Invoke())
@@ -34,7 +35,7 @@ namespace SampleGame {
                         .AsUnitObservable()
                     );
                 }
-                
+
                 // Body生成後の初期化
                 if (onSetupEntity != null) {
                     streams.Add(Observable.Defer(() => onSetupEntity.Invoke(source)));

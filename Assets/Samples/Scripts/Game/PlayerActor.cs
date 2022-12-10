@@ -20,7 +20,7 @@ namespace SampleGame {
             RuntimeAnimatorController Controller { get; }
             float AngularVelocity { get; }
         }
-        
+
         /// <summary>
         /// アクションデータ
         /// </summary>
@@ -38,7 +38,7 @@ namespace SampleGame {
         private string _currentStatus = "";
         // ステータスリスナー
         private StatusEventListener _statusEventListener;
-        
+
         // 移動制御用
         private MoveController _moveController;
 
@@ -51,9 +51,8 @@ namespace SampleGame {
             var motionController = body.GetController<MotionController>();
             _animatorControllerProvider = motionController.Player.SetMotion(setupData.Controller, 0.0f, false);
             _coroutineRunner = new CoroutineRunner();
-            _moveController = new MoveController(body.Transform, setupData.AngularVelocity, rate => {
-                _animatorControllerProvider.GetPlayable().SetFloat("speed", rate);
-            });
+            _moveController = new MoveController(body.Transform, setupData.AngularVelocity,
+                rate => { _animatorControllerProvider.GetPlayable().SetFloat("speed", rate); });
         }
 
         /// <summary>
@@ -78,21 +77,23 @@ namespace SampleGame {
             if (_currentStatus != "Idle" && _currentStatus != "Run") {
                 return;
             }
+
             _animatorControllerProvider.GetPlayable().SetTrigger("onJump");
         }
-        
+
         /// <summary>
         /// アクションの再生
         /// </summary>
         public IObservable<Unit> PlayActionAsync(IActionData actionData) {
             return Observable.Create<Unit>(observer => {
                 CancelAction();
-                
+
                 return _coroutineRunner.StartCoroutineAsync(PlayActionRoutine(actionData, _actionScope),
                         () => {
                             if (!Body.IsValid) {
                                 return;
                             }
+
                             // 状態を戻す
                             var motionController = Body.GetController<MotionController>();
                             motionController.Player.SetMotion(_animatorControllerProvider, 0.2f);
@@ -111,7 +112,7 @@ namespace SampleGame {
         public IObservable<Unit> DamageAsync(int damageIndex) {
             return Observable.Create<Unit>(observer => {
                 CancelAction();
-                
+
                 return _coroutineRunner.StartCoroutineAsync(PlayDamageRoutine(damageIndex))
                     .Subscribe(_ => {
                         observer.OnNext(Unit.Default);
@@ -134,9 +135,7 @@ namespace SampleGame {
         protected override void ActivateInternal(IScope scope) {
             _statusEventListener.EnterSubject
                 .TakeUntil(scope)
-                .Subscribe(x => {
-                    _currentStatus = x;
-                });
+                .Subscribe(x => { _currentStatus = x; });
         }
 
         /// <summary>
@@ -166,14 +165,14 @@ namespace SampleGame {
                 Debug.LogWarning("Not found action controller.");
                 yield break;
             }
-            
+
             // アクション専用のControllerに変更
             var motionController = Body.GetController<MotionController>();
             motionController.Player.SetMotion(actionData.Controller, 0.2f);
-            
+
             // 最終アクションが終わるまで待つ
             yield return WaitCycleRoutine("LastAction", 1, cancelScope);
-            
+
             // 元のControllerに戻す
             motionController.Player.SetMotion(_animatorControllerProvider, 0.2f);
         }

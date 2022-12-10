@@ -10,7 +10,7 @@ namespace SampleGame {
     public class FieldSceneSituation : SceneSituation {
         // FieldScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
-        
+
         public override string SceneAssetPath => "field";
 
         /// <summary>

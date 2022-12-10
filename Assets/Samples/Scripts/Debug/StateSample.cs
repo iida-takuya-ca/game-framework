@@ -11,7 +11,7 @@ public class StateSample : MonoBehaviour {
         Vertical,
         Horizontal,
     }
-    
+
     [SerializeField, Tooltip("縦向き用オブジェクト")]
     private GameObject[] _verticalObjects;
     [SerializeField, Tooltip("横並び用オブジェクト")]
@@ -28,10 +28,11 @@ public class StateSample : MonoBehaviour {
                 if (target == null) {
                     continue;
                 }
+
                 target.SetActive(active);
             }
         }
-        
+
         _stateContainer.SetupFromEnum(State.Invalid);
         _stateContainer.SetFunction(State.Standby,
             (prev, scope) => {
@@ -40,11 +41,11 @@ public class StateSample : MonoBehaviour {
             });
         _stateContainer.SetFunction(State.Vertical,
             (prev, scope) => SetActiveObjects(_verticalObjects, true),
-            _ => {},
+            _ => { },
             (next) => SetActiveObjects(_verticalObjects, false));
         _stateContainer.SetFunction(State.Horizontal,
             (prev, scope) => SetActiveObjects(_horizontalObjects, true),
-            _ => {},
+            _ => { },
             (next) => SetActiveObjects(_horizontalObjects, false));
     }
 
@@ -65,7 +66,7 @@ public class StateSample : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             _stateContainer.Change(State.Vertical);
         }
-        
+
         _stateContainer.Update(Time.deltaTime);
     }
 

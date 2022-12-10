@@ -33,14 +33,14 @@ namespace SampleGame {
                 }
             }
         }
-        
+
         // BattleScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
         // 生成したPlayerのEntity
         private Entity _playerEntity;
         // カメラ方向を使ったRoot位置
         private Transform _rootAngle;
-        
+
         public override string SceneAssetPath => "battle";
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace SampleGame {
         /// </summary>
         protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
             yield return base.LoadRoutineInternal(handle, scope);
-            
+
             // BattleModelの生成
             var battleModel = BattleModel.Create();
             battleModel.RegisterTask(TaskOrder.Logic);
@@ -61,20 +61,20 @@ namespace SampleGame {
         /// </summary>
         protected override void SetupInternal(TransitionHandle handle, IScope scope) {
             base.SetupInternal(handle, scope);
-            
+
             var taskRunner = Services.Get<TaskRunner>();
             var cameraController = Services.Get<CameraController>();
             var battleModel = BattleModel.Get();
-            
+
             // BodyManagerの生成
             var bodyManager = new BodyManager(new BodyBuilder());
             ServiceContainer.Set(bodyManager);
             taskRunner.Register(bodyManager, TaskOrder.Body);
-            
+
             // タスク登録
             Services.Get<CameraController>().RegisterTask(TaskOrder.Camera);
             Services.Get<BattleInput>().RegisterTask(TaskOrder.Input);
-            
+
             // RootAngle作成
             _rootAngle = new GameObject("RootAngle").transform;
             var rootAngleConstraint = cameraController.GetConstraint<ParentConstraint>("RootAngle");
@@ -84,7 +84,7 @@ namespace SampleGame {
                     weight = 1.0f
                 }
             };
-            
+
             // PlayerEntityの生成
             _playerEntity = new Entity();
             _playerEntity.SetupPlayerAsync(battleModel.PlayerModel)
@@ -106,7 +106,7 @@ namespace SampleGame {
         /// </summary>
         protected override void UpdateInternal() {
             base.UpdateInternal();
-            
+
             // todo:取り合えずここでRootAngle更新
             var playerBody = _playerEntity.GetBody();
             if (playerBody != null) {
@@ -125,15 +125,15 @@ namespace SampleGame {
         protected override void CleanupInternal(TransitionHandle handle) {
             // PlayerEntity削除
             _playerEntity.Dispose();
-            
+
             // Cameraのタスク登録解除
             var cameraController = Services.Get<CameraController>();
             cameraController.UnregisterTask();
-            
+
             // Inputのタスク登録解除
             var input = Services.Get<BattleInput>();
             input.UnregisterTask();
-            
+
             base.CleanupInternal(handle);
         }
 
@@ -145,7 +145,7 @@ namespace SampleGame {
             var battleModel = BattleModel.Get();
             battleModel.UnregisterTask();
             BattleModel.Delete();
-            
+
             base.UnloadInternal(handle);
         }
     }

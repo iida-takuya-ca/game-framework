@@ -11,7 +11,7 @@ namespace SampleGame {
     public class FadeController : MonoBehaviour, ITask {
         [SerializeField, Tooltip("制御対象のImage")]
         private Image _image;
-        
+
         private Subject<Unit> _finishSubject = new Subject<Unit>();
         private float _targetAlpha;
         private float _timer;
@@ -59,7 +59,7 @@ namespace SampleGame {
             var color = _image.color;
             color.a = Mathf.Lerp(color.a, _targetAlpha, ratio);
             _image.color = color;
-            
+
             // 終了通知
             if (_timer < 0.0f) {
                 _finishSubject.OnNext(Unit.Default);

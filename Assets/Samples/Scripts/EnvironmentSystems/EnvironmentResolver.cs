@@ -11,7 +11,7 @@ public class EnvironmentResolver : EnvironmentResolver<IEnvironmentContext> {
     protected override IEnvironmentContext GetCurrentInternal() {
         return new CurrentEnvironmentContext();
     }
-    
+
     /// <summary>
     /// 値の反映
     /// </summary>
@@ -26,7 +26,8 @@ public class EnvironmentResolver : EnvironmentResolver<IEnvironmentContext> {
     /// <param name="current">補間元</param>
     /// <param name="target">補間先</param>
     /// <param name="ratio">ブレンド率</param>
-    protected override IEnvironmentContext LerpInternal(IEnvironmentContext current, IEnvironmentContext target, float ratio) {
+    protected override IEnvironmentContext LerpInternal(IEnvironmentContext current, IEnvironmentContext target,
+        float ratio) {
         ratio = Mathf.Clamp01(ratio);
 
         var result = new EnvironmentContext();

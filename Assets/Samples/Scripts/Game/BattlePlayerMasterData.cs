@@ -4,7 +4,8 @@ namespace SampleGame {
     /// <summary>
     /// バトル用のプレイヤーマスター
     /// </summary>
-    [CreateAssetMenu(fileName = "dat_battle_player_master_pl000.asset", menuName = "SampleGame/Battle Player Master Data")]
+    [CreateAssetMenu(fileName = "dat_battle_player_master_pl000.asset",
+        menuName = "SampleGame/Battle Player Master Data")]
     public class BattlePlayerMasterData : ScriptableObject {
         public string characterName = "";
         public string assetKey = "pl000";

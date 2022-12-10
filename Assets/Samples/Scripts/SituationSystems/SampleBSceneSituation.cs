@@ -43,7 +43,7 @@ public class SampleBSceneSituation : SceneSituation {
     /// </summary>
     protected override void UpdateInternal() {
         base.UpdateInternal();
-        
+
         if (Input.GetKeyDown(KeyCode.Space)) {
             ParentContainer.Transition(new SampleASceneSituation());
         }

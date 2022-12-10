@@ -11,7 +11,7 @@ namespace SampleGame {
     public class TitleSceneSituation : SceneSituation {
         // TitleScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
-        
+
         public override string SceneAssetPath => "title";
 
         /// <summary>

@@ -7,7 +7,7 @@ using GameFramework.TaskSystems;
 public class SceneSituationContainer : SituationContainer, ILateUpdatableTask {
     // アクティブか
     bool ITask.IsActive => true;
-    
+
     /// <summary>
     /// タスク更新
     /// </summary>

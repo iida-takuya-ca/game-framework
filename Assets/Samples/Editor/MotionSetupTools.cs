@@ -5,8 +5,7 @@ using UnityEngine;
 /// <summary>
 /// モーション初期化ツール
 /// </summary>
-public static class MotionSetupTools
-{
+public static class MotionSetupTools {
     /// <summary>
     /// モーションの初期化
     /// </summary>
@@ -33,7 +32,7 @@ public static class MotionSetupTools
         }
 
         var path = AssetDatabase.GetAssetPath(target);
-        
+
         // Importerの取得
         var modelImporter = AssetImporter.GetAtPath(path) as ModelImporter;
         if (modelImporter == null) {
@@ -50,17 +49,17 @@ public static class MotionSetupTools
             clipAnimation.takeName = baseName + suffix;
             clipAnimation.name = clipAnimation.takeName;
         }
-        
+
         // Materialは全てOFF
         modelImporter.materialImportMode = ModelImporterMaterialImportMode.None;
-        
+
         // Meshの設定も基本削除
         modelImporter.meshCompression = ModelImporterMeshCompression.Off;
         modelImporter.meshOptimizationFlags = 0;
         modelImporter.optimizeMeshPolygons = false;
         modelImporter.optimizeMeshVertices = false;
         modelImporter.importNormals = ModelImporterNormals.None;
-        
+
         // Avatarの設定
         modelImporter.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
 

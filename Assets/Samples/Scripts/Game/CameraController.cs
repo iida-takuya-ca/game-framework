@@ -21,7 +21,7 @@ namespace SampleGame {
         private CinemachineBrain _brain;
         private CinemachineVirtualCameraBase[] _virtualCameras;
         private Constraint[] _constraints;
-        
+
         public bool IsActive => isActiveAndEnabled;
         public Camera MainCamera => _camera;
 
@@ -33,6 +33,7 @@ namespace SampleGame {
             if (virtualCamera == null) {
                 return;
             }
+
             virtualCamera.gameObject.SetActive(true);
         }
 
@@ -44,6 +45,7 @@ namespace SampleGame {
             if (virtualCamera == null) {
                 return;
             }
+
             virtualCamera.gameObject.SetActive(false);
         }
 
@@ -64,7 +66,7 @@ namespace SampleGame {
             foreach (var constraint in _constraints) {
                 constraint.ManualUpdate();
             }
-            
+
             // Brain更新
             _brain.ManualUpdate();
         }
@@ -75,13 +77,15 @@ namespace SampleGame {
         private void Awake() {
             _brain = _camera.GetComponent<CinemachineBrain>();
             _brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.ManualUpdate;
-            
+
             var virtualCameraList = new List<CinemachineVirtualCameraBase>();
             for (var i = 0; i < _virtualCameraRoot.transform.childCount; i++) {
-                var virtualCamera = _virtualCameraRoot.transform.GetChild(i).GetComponent<CinemachineVirtualCameraBase>();
+                var virtualCamera = _virtualCameraRoot.transform.GetChild(i)
+                    .GetComponent<CinemachineVirtualCameraBase>();
                 if (virtualCamera == null) {
                     continue;
                 }
+
                 virtualCameraList.Add(virtualCamera);
             }
 

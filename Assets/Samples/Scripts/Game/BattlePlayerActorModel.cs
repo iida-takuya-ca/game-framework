@@ -14,7 +14,7 @@ namespace SampleGame {
 
         public IObservable<BattlePlayerActorModel> OnUpdatedAsObservable() {
             return Observable.FromEvent<BattlePlayerActorModel>(
-                h => OnUpdated += h, 
+                h => OnUpdated += h,
                 h => OnUpdated -= h);
         }
 

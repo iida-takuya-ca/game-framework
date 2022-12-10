@@ -15,7 +15,7 @@ namespace SampleGame {
         public static IEnumerator StartAsEnumerator<T>(this IObservable<T> source, IScope scope) {
             var finished = false;
             source
-                .Subscribe(_ => {}, () => finished = true)
+                .Subscribe(_ => { }, () => finished = true)
                 .ScopeTo(scope);
             while (!finished) {
                 yield return null;
@@ -29,7 +29,7 @@ namespace SampleGame {
             var taskRunner = Services.Get<TaskRunner>();
             taskRunner.Register(source, order);
         }
-        
+
         /// <summary>
         /// タスクから登録除外
         /// </summary>

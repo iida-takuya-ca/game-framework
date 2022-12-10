@@ -15,12 +15,12 @@ namespace SampleGame {
         private InputAction _moveAction;
         private InputAction _jumpAction;
         private InputAction _attackAction;
-        
+
         public bool IsActive => isActiveAndEnabled;
 
         private Subject<Unit> _jumpSubject = new Subject<Unit>();
         private Subject<Unit> _attackSubject = new Subject<Unit>();
-        
+
         // 移動ベクトル
         public Vector2 MoveVector { get; private set; }
         // ジャンプ通知
@@ -37,6 +37,7 @@ namespace SampleGame {
             if (_jumpAction.triggered) {
                 _jumpSubject.OnNext(Unit.Default);
             }
+
             if (_attackAction.triggered) {
                 _attackSubject.OnNext(Unit.Default);
             }
