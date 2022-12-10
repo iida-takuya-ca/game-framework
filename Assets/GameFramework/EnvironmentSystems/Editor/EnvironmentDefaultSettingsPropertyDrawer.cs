@@ -316,6 +316,7 @@ namespace GameFramework.EnvironmentSystems.Editor
             }
 
             rect.x += rect.width;
+            GUI.enabled = property.serializedObject.targetObjects.Length == 1;
             if (GUI.Button(rect, "Set Settings")) {
                 RenderSettings.sun = _sun.objectReferenceValue as Light;
                 RenderSettings.subtractiveShadowColor = _subtractiveShadowColor.colorValue;
@@ -340,6 +341,7 @@ namespace GameFramework.EnvironmentSystems.Editor
                 RenderSettings.flareStrength = _flareStrength.floatValue;
                 RenderSettings.flareFadeSpeed = _flareFadeSpeed.floatValue;
             }
+            GUI.enabled = true;
 
             rect.x = position.x;
             rect.width = position.width;
