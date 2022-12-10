@@ -10,7 +10,7 @@ namespace GameFramework.BodySystems {
     public class MotionController : SerializedBodyController {
         [SerializeField, Tooltip("モーション更新モード")]
         private DirectorUpdateMode _updateMode = DirectorUpdateMode.GameTime;
-        
+
         // ルートスケール制御用
         private RootScaleAnimationJobProvider _rootScaleAnimationJobProvider;
 

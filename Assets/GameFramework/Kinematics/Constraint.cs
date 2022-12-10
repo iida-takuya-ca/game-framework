@@ -131,10 +131,11 @@ namespace GameFramework.Kinematics {
         protected ConstraintAnimationJobParameter CreateJobParameter(Animator animator) {
             var infos = _targetInfos.Where(x => x.target != null)
                 .ToArray();
-            
+
             // Job用パラメータ再構築
             var parameter = new ConstraintAnimationJobParameter();
-            parameter.targetInfos = new NativeArray<ConstraintAnimationJobParameter.TargetInfo>(infos.Length, Allocator.Persistent);
+            parameter.targetInfos =
+                new NativeArray<ConstraintAnimationJobParameter.TargetInfo>(infos.Length, Allocator.Persistent);
 
             for (var i = 0; i < infos.Length; i++) {
                 parameter.targetInfos[i] = new ConstraintAnimationJobParameter.TargetInfo {

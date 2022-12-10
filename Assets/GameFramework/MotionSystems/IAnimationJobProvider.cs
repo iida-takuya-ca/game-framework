@@ -11,7 +11,7 @@ namespace GameFramework.MotionSystems {
         /// </summary>
         int ExecutionOrder { get; }
     }
-    
+
     /// <summary>
     /// AnimationJob提供用インターフェース
     /// </summary>

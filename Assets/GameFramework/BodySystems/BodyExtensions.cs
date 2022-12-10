@@ -24,7 +24,8 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public static AnimatorControllerMotionPlayableProvider SetMotion(this MotionPlayer source, RuntimeAnimatorController controller,
+        public static AnimatorControllerMotionPlayableProvider SetMotion(this MotionPlayer source,
+            RuntimeAnimatorController controller,
             float blendDuration, bool autoDispose = true) {
             if (controller == null) {
                 source.ResetMotion(blendDuration);

@@ -40,7 +40,7 @@ namespace GameFramework.BodySystems {
         private int _handleCountMax;
         private NativeArray<int> _handleCounts;
         private NativeArray<PositionConstraintJobHandle> _positionConstraintJobHandles;
-    
+
         // 実行優先度
         int IAnimationJobProvider.ExecutionOrder => 5;
 
@@ -49,7 +49,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         public void SetConstraint(IJobPositionConstraint[] constraints) {
             ClearPositionHandles();
-            
+
             var count = Mathf.Min(_handleCountMax, constraints.Length);
             _handleCounts[0] = count;
             for (var i = 0; i < count; i++) {
@@ -64,30 +64,32 @@ namespace GameFramework.BodySystems {
         public ConstraintAnimationJobProvider(int handleCountMax = 128) {
             _handleCountMax = handleCountMax;
         }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
         AnimationJob IAnimationJobProvider<AnimationJob>.Initialize(MotionPlayer player) {
             _animator = player.Animator;
             _handleCounts = new NativeArray<int>(1, Allocator.Persistent);
-            _positionConstraintJobHandles = new NativeArray<PositionConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
-            
+            _positionConstraintJobHandles =
+                new NativeArray<PositionConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
+
             return new AnimationJob {
                 handleCounts = _handleCounts,
                 positionConstraintJobHandles = _positionConstraintJobHandles,
             };
         }
-    
+
         /// <summary>
         /// 廃棄時処理
         /// </summary>
         void IDisposable.Dispose() {
             ClearPositionHandles();
-            
+
             if (_positionConstraintJobHandles.IsCreated) {
                 _positionConstraintJobHandles.Dispose();
             }
+
             if (_handleCounts.IsCreated) {
                 _handleCounts.Dispose();
             }
@@ -100,7 +102,7 @@ namespace GameFramework.BodySystems {
             if (!_handleCounts.IsCreated || !_positionConstraintJobHandles.IsCreated) {
                 return;
             }
-            
+
             var count = _handleCounts[0];
             for (var i = 0; i < count; i++) {
                 _positionConstraintJobHandles[i].constraintAnimationJobParameter.Dispose();

@@ -35,7 +35,7 @@ namespace GameFramework.Kinematics {
                 ownerHandle.GetGlobalTR(stream, out var _, out var rot);
                 offset = math.mul(rot, offset);
             }
-                
+
             ownerHandle.SetPosition(stream, constraintAnimationJobParameter.GetPosition(stream) + offset);
         }
     }

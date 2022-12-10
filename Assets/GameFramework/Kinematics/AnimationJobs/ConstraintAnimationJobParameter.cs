@@ -17,7 +17,7 @@ namespace GameFramework.Kinematics {
             public TransformSceneHandle targetHandle;
             public float normalizedWeight;
         }
-        
+
         // 追従対象のTransform
         public NativeArray<TargetInfo> targetInfos;
 
@@ -43,19 +43,21 @@ namespace GameFramework.Kinematics {
 
             return result;
         }
-        
+
         /// <summary>
         /// 追従向き取得
         /// </summary>
         public quaternion GetRotation(AnimationStream stream) {
             var result = quaternion.identity;
             for (var i = 0; i < targetInfos.Length; i++) {
-                result = math.mul(result, math.slerp(quaternion.identity, targetInfos[i].targetHandle.GetRotation(stream), targetInfos[i].normalizedWeight));
+                result = math.mul(result,
+                    math.slerp(quaternion.identity, targetInfos[i].targetHandle.GetRotation(stream),
+                        targetInfos[i].normalizedWeight));
             }
 
             return result;
         }
-        
+
         /// <summary>
         /// 追従スケール取得
         /// </summary>
