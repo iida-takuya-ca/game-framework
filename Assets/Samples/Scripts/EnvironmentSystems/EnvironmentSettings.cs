@@ -1,4 +1,3 @@
-using System;
 using GameFramework.Core;
 using GameFramework.EnvironmentSystems;
 using UnityEngine;

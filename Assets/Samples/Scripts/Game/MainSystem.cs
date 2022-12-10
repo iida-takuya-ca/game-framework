@@ -1,5 +1,6 @@
 using System.Collections;
 using GameFramework.Core;
+using GameFramework.EnvironmentSystems;
 using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
 using UnityEngine;
@@ -54,6 +55,9 @@ namespace SampleGame {
             Services.Instance.Set(_taskRunner);
             _sceneSituationContainer = new SceneSituationContainer();
             _taskRunner.Register(_sceneSituationContainer);
+            var environmentManager = new EnvironmentManager(new EnvironmentResolver());
+            _taskRunner.Register(environmentManager, TaskOrder.PostSystem);
+            Services.Instance.Set(environmentManager);
             
             // 各種GlobalObjectのタスク登録
             _taskRunner.Register(Services.Get<FadeController>(), TaskOrder.UI);
