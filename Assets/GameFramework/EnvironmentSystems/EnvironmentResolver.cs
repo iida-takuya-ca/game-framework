@@ -30,7 +30,7 @@ namespace GameFramework.EnvironmentSystems {
         /// </summary>
         /// <param name="current">補間元</param>
         /// <param name="target">補間先</param>
-        /// <param name="rate">ブレンド率</param>
-        protected abstract TContext LerpInternal(TContext current, TContext target, float rate);
+        /// <param name="ratio">ブレンド率</param>
+        protected abstract TContext LerpInternal(TContext current, TContext target, float ratio);
     }
 }
