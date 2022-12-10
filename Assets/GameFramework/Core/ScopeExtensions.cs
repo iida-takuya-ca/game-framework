@@ -37,19 +37,22 @@ namespace GameFramework.Core {
         /// </summary>
         public static T ScopeTo<T>(this T source, IScope scope)
             where T : IDisposable {
-            scope.OnExpired += () => {
-                source.Dispose();
-            };
+            scope.OnExpired += source.Dispose;
             return source;
         }
 
         /// <summary>
         /// GameObjectのScope登録
         /// </summary>
-        public static GameObject ScopeTo(this GameObject source, IScope scope) {
+        public static GameObject ScopeTo(this GameObject source, IScope scope, bool immediate = false) {
             scope.OnExpired += () => {
                 if (source != null) {
-                    Object.Destroy(source);
+                    if (immediate) {
+                        Object.DestroyImmediate(source);
+                    }
+                    else {
+                        Object.Destroy(source);
+                    }
                 }
             };
             return source;
@@ -58,11 +61,16 @@ namespace GameFramework.Core {
         /// <summary>
         /// ComponentのScope登録
         /// </summary>
-        public static T ScopeTo<T>(this Component source, IScope scope)
+        public static T ScopeTo<T>(this Component source, IScope scope, bool immediate = false)
             where T : Component {
             scope.OnExpired += () => {
                 if (source != null) {
-                    Object.Destroy(source);
+                    if (immediate) {
+                        Object.DestroyImmediate(source);
+                    }
+                    else {
+                        Object.Destroy(source);
+                    }
                 }
             };
             return source as T;
