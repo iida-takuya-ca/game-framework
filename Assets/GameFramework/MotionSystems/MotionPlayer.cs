@@ -299,10 +299,12 @@ namespace GameFramework.MotionSystems {
 
                 for (var i = _animationJobInfos.Count - 2; i >= 0; i--) {
                     var inputPlayable = _animationJobInfos[i].playable;
+                    outputPlayable.DisconnectInput(0);
                     outputPlayable.ConnectInput(0, inputPlayable, 0);
                     outputPlayable = inputPlayable;
                 }
 
+                outputPlayable.DisconnectInput(0);
                 outputPlayable.ConnectInput(0, _mixer, 0);
             }
             else {
