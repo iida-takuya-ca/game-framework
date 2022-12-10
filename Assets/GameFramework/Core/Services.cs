@@ -10,7 +10,7 @@ namespace GameFramework.Core {
     public sealed class Services : ServiceContainer {
         // シングルトン用インスタンス
         private static IServiceContainer s_instance;
-        
+
         // シングルトン用インスタンス取得
         public static IServiceContainer Instance {
             get {
@@ -53,7 +53,7 @@ namespace GameFramework.Core {
         public static T Get<T>(int index) {
             return Instance.Get<T>(index);
         }
-        
+
 #if UNITY_EDITOR
         /// <summary>
         /// エディタ起動時の処理

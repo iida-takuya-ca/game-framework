@@ -5,11 +5,10 @@ namespace GameFramework.EntitySystems {
     /// <summary>
     /// エンティティ用ロジック処理
     /// </summary>
-    public abstract class EntityLogic : Logic
-    {
+    public abstract class EntityLogic : Logic {
         // アタッチ中のScope
         private DisposableScope _attachScope;
-        
+
         // 持ち主のEntity
         public Entity Entity { get; private set; }
 
@@ -17,13 +16,11 @@ namespace GameFramework.EntitySystems {
         /// Entityに追加された時の処理
         /// </summary>
         /// <param name="entity">持ち主のEntity</param>
-        public void Attach(Entity entity)
-        {
-            if (Entity != null || entity == null)
-            {
+        public void Attach(Entity entity) {
+            if (Entity != null || entity == null) {
                 return;
             }
-            
+
             Entity = entity;
             _attachScope = new DisposableScope();
             AttachInternal();
@@ -33,15 +30,12 @@ namespace GameFramework.EntitySystems {
         /// Entityから削除された時の処理
         /// </summary>
         /// <param name="entity">持ち主のEntity</param>
-        public void Detach(Entity entity)
-        {
-            if (Entity == null || entity == null)
-            {
+        public void Detach(Entity entity) {
+            if (Entity == null || entity == null) {
                 return;
             }
-            
-            if (entity == Entity)
-            {
+
+            if (entity == Entity) {
                 DetachInternal();
                 _attachScope.Dispose();
                 _attachScope = null;
@@ -52,16 +46,14 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Entityに追加された時の処理
         /// </summary>
-        protected virtual void AttachInternal()
-        {
+        protected virtual void AttachInternal() {
         }
 
         /// <summary>
         /// Entityから削除された時の処理
         /// </summary>
         /// <returns></returns>
-        protected virtual void DetachInternal()
-        {
+        protected virtual void DetachInternal() {
         }
     }
 }

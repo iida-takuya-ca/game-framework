@@ -8,7 +8,7 @@ namespace GameFramework.EntitySystems {
     public class BodyEntityComponent : EntityComponent {
         // 現在のBody
         public Body Body { get; private set; } = null;
-        
+
         /// <summary>
         /// Bodyの設定
         /// </summary>
@@ -18,6 +18,7 @@ namespace GameFramework.EntitySystems {
             if (prevDispose) {
                 Body?.Dispose();
             }
+
             Body = body;
             if (Body != null) {
                 Body.IsActive = Entity.IsActive;
@@ -25,7 +26,7 @@ namespace GameFramework.EntitySystems {
 
             return Entity;
         }
-        
+
         /// <summary>
         /// Bodyの削除
         /// </summary>
@@ -42,7 +43,7 @@ namespace GameFramework.EntitySystems {
                 Body.IsActive = true;
             }
         }
-        
+
         /// <summary>
         /// 非アクティブ時処理
         /// </summary>

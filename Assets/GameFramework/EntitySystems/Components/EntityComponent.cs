@@ -14,10 +14,10 @@ namespace GameFramework.EntitySystems {
 
         // Scope終了通知
         public event Action OnExpired;
-        
+
         // AttachされているEntity
         public Entity Entity { get; private set; } = null;
-        
+
         /// <summary>
         /// 廃棄時処理
         /// </summary>
@@ -40,6 +40,7 @@ namespace GameFramework.EntitySystems {
                 Debug.LogError($"Already attached component. {GetType().Name}");
                 return;
             }
+
             Entity = entity;
             AttachedInternal(_attachScope);
         }
@@ -68,6 +69,7 @@ namespace GameFramework.EntitySystems {
                 Debug.LogError($"Invalid detached entity. {GetType().Name}");
                 return;
             }
+
             DetachedInternal();
             _attachScope.Clear();
             Entity = null;
@@ -76,26 +78,31 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// 廃棄処理(override用)
         /// </summary>
-        protected virtual void DisposeInternal() {}
+        protected virtual void DisposeInternal() {
+        }
 
         /// <summary>
         /// Entityに登録された時の処理
         /// </summary>
-        protected virtual void AttachedInternal(IScope scope) {}
+        protected virtual void AttachedInternal(IScope scope) {
+        }
 
         /// <summary>
         /// アクティブ化時の処理
         /// </summary>
-        protected virtual void ActivateInternal(IScope scope) {}
-        
+        protected virtual void ActivateInternal(IScope scope) {
+        }
+
         /// <summary>
         /// 非アクティブ化時の処理
         /// </summary>
-        protected virtual void DeactivateInternal() {}
+        protected virtual void DeactivateInternal() {
+        }
 
         /// <summary>
         /// Entityから登録解除された時の処理
         /// </summary>
-        protected virtual void DetachedInternal() {}
+        protected virtual void DetachedInternal() {
+        }
     }
 }

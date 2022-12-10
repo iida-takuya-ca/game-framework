@@ -15,7 +15,7 @@ namespace GameFramework.EntitySystems {
         /// アクティブ時処理
         /// </summary>
         void Activate();
-        
+
         /// <summary>
         /// 非アクティブ時処理
         /// </summary>

@@ -33,21 +33,21 @@ namespace GameFramework.EntitySystems {
                 Debug.LogError($"Already exists model. type:{type.Name}");
                 return Entity;
             }
-            
+
             _models[type] = model;
             return Entity;
         }
-        
+
         /// <summary>
         /// モデルの設定クリア（削除はされない）
         /// </summary>
         public Entity ClearModel<TModel>()
-        where TModel : IModel {
+            where TModel : IModel {
             var type = typeof(TModel);
             if (!_models.TryGetValue(type, out var model)) {
                 return Entity;
             }
-            
+
             _models.Remove(typeof(TModel));
             return Entity;
         }

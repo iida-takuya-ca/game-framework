@@ -14,7 +14,8 @@ namespace GameFramework.CoroutineSystems {
     /// </summary>
     public static class CoroutineExtensions {
         // WaitForSeconds.m_Seconds
-        private static readonly FieldInfo WaitForSecondsAccessor = typeof(WaitForSeconds).GetField("m_Seconds", BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
+        private static readonly FieldInfo WaitForSecondsAccessor = typeof(WaitForSeconds).GetField("m_Seconds",
+            BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
 
         /// <summary>
         /// WaitForSecondsのIEnumerator変換
@@ -38,21 +39,18 @@ namespace GameFramework.CoroutineSystems {
         /// <param name="source"></param>
         /// <param name="enumerator"></param>
         /// <param name="cancellationToken"></param>
-        public static UniTask StartCoroutineAsync(this CoroutineRunner source, IEnumerator enumerator, CancellationToken cancellationToken) {
+        public static UniTask StartCoroutineAsync(this CoroutineRunner source, IEnumerator enumerator,
+            CancellationToken cancellationToken) {
             var completionSource = new UniTaskCompletionSource();
             if (cancellationToken.IsCancellationRequested) {
                 completionSource.TrySetCanceled(cancellationToken);
                 return completionSource.Task;
             }
-            
-            source.StartCoroutine(enumerator, () => {
-                completionSource.TrySetResult();
-            }, () => {
-                completionSource.TrySetCanceled();
-            }, exception => {
-                completionSource.TrySetException(exception);
-            }, cancellationToken);
-            
+
+            source.StartCoroutine(enumerator, () => { completionSource.TrySetResult(); },
+                () => { completionSource.TrySetCanceled(); },
+                exception => { completionSource.TrySetException(exception); }, cancellationToken);
+
             return completionSource.Task;
         }
 #endif

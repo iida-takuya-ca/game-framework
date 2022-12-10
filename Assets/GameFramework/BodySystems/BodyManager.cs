@@ -43,8 +43,10 @@ namespace GameFramework.BodySystems {
                 if (bodyInfo.disposed) {
                     continue;
                 }
+
                 bodyInfo.body.Dispose();
             }
+
             _bodyInfos.Clear();
         }
 
@@ -53,13 +55,13 @@ namespace GameFramework.BodySystems {
         /// </summary>
         public Body CreateFromGameObject(GameObject gameObject) {
             var body = new Body(gameObject);
-            
+
             // 構築処理
             BuildDefault(body, gameObject);
             if (_builder != null) {
                 _builder.Build(body, gameObject);
             }
-            
+
             // Dispatcherの生成
             var dispatcher = gameObject.AddComponent<BodyDispatcher>();
             dispatcher.Initialize(body);
@@ -69,11 +71,9 @@ namespace GameFramework.BodySystems {
                 body = body,
                 disposed = false
             };
-            bodyInfo.body.OnExpired += () => {
-                bodyInfo.disposed = true;
-            };
+            bodyInfo.body.OnExpired += () => { bodyInfo.disposed = true; };
             _bodyInfos.Add(bodyInfo);
-            
+
             // Bodyの初期化
             bodyInfo.body.Initialize();
 
@@ -94,12 +94,13 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected override void UpdateInternal() {
             var deltaTime = _layeredTime != null ? _layeredTime.DeltaTime : Time.deltaTime;
-            
+
             for (var i = 0; i < _bodyInfos.Count; i++) {
                 var bodyInfo = _bodyInfos[i];
                 if (bodyInfo.disposed) {
                     continue;
                 }
+
                 bodyInfo.body.Update(deltaTime);
             }
         }
@@ -109,15 +110,16 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected override void LateUpdateInternal() {
             var deltaTime = _layeredTime != null ? _layeredTime.DeltaTime : Time.deltaTime;
-            
+
             for (var i = 0; i < _bodyInfos.Count; i++) {
                 var bodyInfo = _bodyInfos[i];
                 if (bodyInfo.disposed) {
                     continue;
                 }
+
                 bodyInfo.body.LateUpdate(deltaTime);
             }
-            
+
             // BodyInfosのリフレッシュ
             RefreshBodyInfos();
         }
@@ -132,7 +134,7 @@ namespace GameFramework.BodySystems {
             body.AddController(new ParentController());
             body.AddController(new MeshController());
             body.AddController(new ConstraintController());
-            
+
             // Componentとして入っている物を抽出
             var controllers = gameObject.GetComponentsInChildren<SerializedBodyController>(true);
             foreach (var controller in controllers) {
@@ -149,6 +151,7 @@ namespace GameFramework.BodySystems {
                 if (!bodyInfo.disposed) {
                     continue;
                 }
+
                 _bodyInfos.RemoveAt(i);
             }
         }

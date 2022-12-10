@@ -6,7 +6,7 @@ namespace GameFramework.Core {
     /// </summary>
     public class DisposableScope : IScope, IDisposable {
         private bool _disposed;
-        
+
         // スコープ終了通知
         public event Action OnExpired;
 
@@ -17,6 +17,7 @@ namespace GameFramework.Core {
             if (_disposed) {
                 return;
             }
+
             OnExpired?.Invoke();
             OnExpired = null;
         }
@@ -28,6 +29,7 @@ namespace GameFramework.Core {
             if (_disposed) {
                 return;
             }
+
             _disposed = true;
             OnExpired?.Invoke();
             OnExpired = null;

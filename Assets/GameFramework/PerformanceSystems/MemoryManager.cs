@@ -18,14 +18,14 @@ namespace GameFramework.PerformanceSystems {
         private int _incrementalFrameMax;
         // Incremental実行中コルーチン
         private Coroutine _coroutine;
-        
+
         // Incremental GCを使うか
 #if UNITY_EDITOR
         private bool UseIncremental => false;
 #else
-        private bool UseIncremental => GarbageCollector.isIncremental; 
+        private bool UseIncremental => GarbageCollector.isIncremental;
 #endif
-        
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -56,7 +56,7 @@ namespace GameFramework.PerformanceSystems {
                     _coroutineRunner.StopCoroutine(_coroutine);
                     _coroutine = null;
                 }
-                
+
                 if (immediate) {
                     // GCの即時実行
                     GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
@@ -92,6 +92,7 @@ namespace GameFramework.PerformanceSystems {
                     StartGC(true);
                     yield break;
                 }
+
                 yield return null;
             }
         }

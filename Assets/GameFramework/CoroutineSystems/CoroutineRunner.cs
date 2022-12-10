@@ -21,7 +21,8 @@ namespace GameFramework.CoroutineSystems {
             public Exception exception;
             public bool isCompleted;
 
-            public bool IsCanceled => isCanceled || (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested);
+            public bool IsCanceled =>
+                isCanceled || (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested);
             public bool IsDone => IsCanceled || exception != null || isCompleted;
         }
 
@@ -95,11 +96,11 @@ namespace GameFramework.CoroutineSystems {
                 if (info.IsDone) {
                     continue;
                 }
-                
+
                 // キャンセル処理
                 CancelCoroutine(info);
             }
-            
+
             _coroutineInfos.Clear();
         }
 

@@ -29,7 +29,7 @@ namespace GameFramework.TaskSystems {
             public List<TaskInfo> taskInfos = new List<TaskInfo>();
             public CustomSampler[] samplers;
         }
-        
+
         // タスク登録予定情報
         private class ScheduledTaskInfo {
             public int executionOrder;
@@ -42,7 +42,7 @@ namespace GameFramework.TaskSystems {
         private Dictionary<ITask, TaskInfo> _taskInfos = new Dictionary<ITask, TaskInfo>();
         // 登録待ちタスク情報
         private Dictionary<ITask, ScheduledTaskInfo> _scheduledTaskInfos = new Dictionary<ITask, ScheduledTaskInfo>();
-        
+
         // タスクの有効状態
         public bool IsActive { get; set; }
 
@@ -55,7 +55,7 @@ namespace GameFramework.TaskSystems {
                     var taskInfo = groupInfo.taskInfos[i];
                     if (taskInfo.status != TaskStatus.Killed) {
                         taskInfo.status = TaskStatus.Killed;
-                        
+
                         // 登録解除通知
                         if (taskInfo.task is ITaskEventHandler handler) {
                             handler.OnUnregistered(this);
@@ -63,13 +63,13 @@ namespace GameFramework.TaskSystems {
                     }
                 }
             }
-            
+
             // 各種リストリセット
             _taskGroupInfos.Clear();
             _taskInfos.Clear();
             _scheduledTaskInfos.Clear();
         }
-        
+
         /// <summary>
         /// タスク登録
         /// </summary>
@@ -86,7 +86,7 @@ namespace GameFramework.TaskSystems {
                 Debug.LogError("Already registered task.");
                 return;
             }
-            
+
             // タスク登録情報に追加
             _scheduledTaskInfos.Add(task, new ScheduledTaskInfo {
                 executionOrder = executionOrder,
@@ -101,7 +101,7 @@ namespace GameFramework.TaskSystems {
         /// <param name="executionOrder">Taskの実行優先度</param>
         /// <typeparam name="T">実行優先度を指定するenum型</typeparam>
         public void Register<T>(ITask task, T executionOrder)
-        where T : Enum {
+            where T : Enum {
             Register(task, Convert.ToInt32(executionOrder));
         }
 
@@ -114,7 +114,7 @@ namespace GameFramework.TaskSystems {
                 if (taskInfo.status != TaskStatus.Killed) {
                     // タスクのステータスをKilledに変更
                     taskInfo.status = TaskStatus.Killed;
-                
+
                     // 除外通知
                     if (task is ITaskEventHandler handler) {
                         handler.OnUnregistered(this);
@@ -126,7 +126,7 @@ namespace GameFramework.TaskSystems {
                 _scheduledTaskInfos.Remove(task);
             }
         }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>
@@ -148,10 +148,10 @@ namespace GameFramework.TaskSystems {
         /// <summary>
         /// 内部用更新処理
         /// </summary>
-        private void UpdateInternal([NotNull]Action<ITask> onUpdate, int samplerIndex) {
+        private void UpdateInternal([NotNull] Action<ITask> onUpdate, int samplerIndex) {
             // Taskリストのリフレッシュ
             RefreshTaskInfos();
-            
+
             foreach (var groupInfo in _taskGroupInfos.Values) {
                 groupInfo.samplers[samplerIndex].Begin();
 
@@ -162,7 +162,7 @@ namespace GameFramework.TaskSystems {
                     if (taskInfo.status != TaskStatus.Active || !taskInfo.task.IsActive) {
                         continue;
                     }
-                    
+
                     // タスク更新
                     try {
                         taskInfo.samplers[samplerIndex].Begin();
@@ -175,7 +175,7 @@ namespace GameFramework.TaskSystems {
                         taskInfo.samplers[samplerIndex].End();
                     }
                 }
-                
+
                 groupInfo.samplers[samplerIndex].End();
             }
         }
@@ -188,8 +188,9 @@ namespace GameFramework.TaskSystems {
             foreach (var info in _scheduledTaskInfos.Values) {
                 RegisterInternal(info);
             }
+
             _scheduledTaskInfos.Clear();
-            
+
             // タスク登録解除を実行
             foreach (var groupInfo in _taskGroupInfos.Values) {
                 for (var i = groupInfo.taskInfos.Count - 1; i >= 0; i--) {
@@ -210,7 +211,7 @@ namespace GameFramework.TaskSystems {
         private void RegisterInternal(ScheduledTaskInfo scheduledTaskInfo) {
             var executionOrder = scheduledTaskInfo.executionOrder;
             var task = scheduledTaskInfo.task;
-            
+
             // TaskGroupInfoの取得/生成
             if (!_taskGroupInfos.TryGetValue(executionOrder, out var groupInfo)) {
                 groupInfo = new TaskGroupInfo();
@@ -220,7 +221,7 @@ namespace GameFramework.TaskSystems {
                 };
                 _taskGroupInfos[executionOrder] = groupInfo;
             }
-            
+
             // 既に存在しているTaskの場合、ステータスを更新
             if (_taskInfos.TryGetValue(task, out var info)) {
                 // Groupが変わっていたら変更
@@ -229,7 +230,7 @@ namespace GameFramework.TaskSystems {
                     groupInfo.taskInfos.Add(info);
                     info.groupInfo = groupInfo;
                 }
-                
+
                 // Killされていた場合、Activeに戻す
                 if (info.status == TaskStatus.Killed) {
                     info.status = TaskStatus.Active;
@@ -253,7 +254,7 @@ namespace GameFramework.TaskSystems {
                 };
                 groupInfo.taskInfos.Add(info);
                 _taskInfos[task] = info;
-                
+
                 // 登録通知
                 if (task is ITaskEventHandler handler) {
                     handler.OnRegistered(this);

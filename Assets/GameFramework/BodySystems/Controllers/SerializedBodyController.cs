@@ -32,7 +32,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected virtual void DisposeInternal() {
         }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -45,7 +45,7 @@ namespace GameFramework.BodySystems {
         void IBodyController.Update(float deltaTime) {
             UpdateInternal(deltaTime);
         }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>
@@ -60,7 +60,7 @@ namespace GameFramework.BodySystems {
         void IBodyController.LateUpdate(float deltaTime) {
             LateUpdateInternal(deltaTime);
         }
-        
+
         /// <summary>
         /// 後更新処理
         /// </summary>

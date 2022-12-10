@@ -31,20 +31,21 @@ namespace GameFramework.SituationSystems {
         public Situation Owner { get; private set; }
         // 現在のシチュエーション
         public Situation Current => _stack.Count > 0 ? _stack[_stack.Count - 1] : null;
-        
+
         /// <summary>
         /// 遷移実行
         /// </summary>
         /// <param name="situation">遷移先のシチュエーション(nullの場合、全部閉じる)</param>
         /// <param name="overrideTransition">上書き用の遷移処理</param>
         /// <param name="effects">遷移演出</param>
-        public TransitionHandle Transition(Situation situation, ITransition overrideTransition = null, params ITransitionEffect[] effects) {
+        public TransitionHandle Transition(Situation situation, ITransition overrideTransition = null,
+            params ITransitionEffect[] effects) {
             var nextName = situation != null ? situation.GetType().Name : "null";
-            
+
             if (_transitionInfo != null) {
                 return new TransitionHandle(new Exception($"In transit other. Situation:{nextName}"));
             }
-            
+
             // 既に同タイプのシチュエーションが登録されている場合、そこにスタックを戻す
             var backIndex = -1;
             var back = false;
@@ -64,7 +65,7 @@ namespace GameFramework.SituationSystems {
                         if (i == _stack.Count - 1) {
                             return new TransitionHandle(new Exception($"Cancel transit. Situation:{nextName}"));
                         }
-                    
+
                         var old = _stack[i];
                         ((ISituation)old).Release(this);
                         _stack[i] = situation;
@@ -84,16 +85,16 @@ namespace GameFramework.SituationSystems {
             if (prev == next) {
                 return new TransitionHandle(new Exception($"Cancel transit. Situation:{nextName}"));
             }
-            
+
             // 遷移情報の取得
             var transition = overrideTransition ?? GetDefaultTransition();
-            
+
             // 遷移可能チェック
             if (!CheckTransition(next, transition)) {
                 return new TransitionHandle(
                     new Exception($"Cant transition. Situation:{nextName} Transition:{transition}"));
             }
-            
+
             // 戻る場合
             if (back) {
                 // 現在のSituationをStackから除外
@@ -120,23 +121,24 @@ namespace GameFramework.SituationSystems {
                 state = TransitionState.Standby,
                 effects = effects
             };
-            
+
             // コルーチンの登録
             _coroutineRunner.StartCoroutine(transition.TransitRoutine(this), () => {
                 // 戻る時はここでRelease
                 if (back && prev != null) {
                     prev.Release(this);
                 }
+
                 _transitionInfo = null;
             });
-            
+
             // スタンバイ状態
             _transitionInfo.next?.Standby(this);
-            
+
             // ハンドルの返却
             return new TransitionHandle(_transitionInfo);
         }
-        
+
         /// <summary>
         /// 遷移実行
         /// </summary>
@@ -188,7 +190,7 @@ namespace GameFramework.SituationSystems {
             var target = (ISituation)situation;
             if (target.PreLoaded) {
                 target.UnPreLoad();
-                
+
                 // StackになければReleaseする
                 if (!_stack.Contains(situation)) {
                     target.Release(this);
@@ -202,15 +204,17 @@ namespace GameFramework.SituationSystems {
         public void Update() {
             // コルーチン更新
             _coroutineRunner.Update();
-            
+
             if (_transitionInfo != null) {
                 // 遷移中のシチュエーション更新
                 if (_transitionInfo.prev is Situation prev) {
                     prev.Update();
                 }
+
                 if (_transitionInfo.next is Situation next) {
                     next.Update();
                 }
+
                 // エフェクト更新
                 if (_transitionInfo.effectActive) {
                     for (var i = 0; i < _transitionInfo.effects.Length; i++) {
@@ -236,6 +240,7 @@ namespace GameFramework.SituationSystems {
                 if (_transitionInfo.prev is Situation prev) {
                     prev.LateUpdate();
                 }
+
                 if (_transitionInfo.next is Situation next) {
                     next.LateUpdate();
                 }
@@ -271,7 +276,7 @@ namespace GameFramework.SituationSystems {
                 ForceRelease(_stack[_stack.Count - 1]);
                 _stack.RemoveAt(_stack.Count - 1);
             }
-            
+
             _coroutineRunner.Dispose();
             _transitionInfo = null;
         }
@@ -282,7 +287,7 @@ namespace GameFramework.SituationSystems {
         protected virtual ITransition GetDefaultTransition() {
             return new OutInTransition();
         }
-        
+
         /// <summary>
         /// 遷移チェック
         /// </summary>
@@ -339,6 +344,7 @@ namespace GameFramework.SituationSystems {
             if (_transitionInfo.prev == null) {
                 return;
             }
+
             _transitionInfo.prev.Deactivate(new TransitionHandle(_transitionInfo));
         }
 
@@ -349,6 +355,7 @@ namespace GameFramework.SituationSystems {
             if (_transitionInfo.prev == null) {
                 yield break;
             }
+
             yield return _transitionInfo.prev.CloseRoutine(new TransitionHandle(_transitionInfo));
         }
 
@@ -359,6 +366,7 @@ namespace GameFramework.SituationSystems {
             if (_transitionInfo.prev == null) {
                 yield break;
             }
+
             var handle = new TransitionHandle(_transitionInfo);
             _transitionInfo.prev.Cleanup(handle);
             _transitionInfo.prev.Unload(handle);
@@ -373,6 +381,7 @@ namespace GameFramework.SituationSystems {
             if (_transitionInfo.next == null) {
                 yield break;
             }
+
             var handle = new TransitionHandle(_transitionInfo);
             yield return _transitionInfo.next.LoadRoutine(handle);
             _transitionInfo.next.Setup(handle);
@@ -386,6 +395,7 @@ namespace GameFramework.SituationSystems {
             if (_transitionInfo.next == null) {
                 yield break;
             }
+
             yield return _transitionInfo.next.OpenRoutine(new TransitionHandle(_transitionInfo));
         }
 
@@ -396,6 +406,7 @@ namespace GameFramework.SituationSystems {
             if (_transitionInfo.next == null) {
                 return;
             }
+
             _transitionInfo.next.Activate(new TransitionHandle(_transitionInfo));
         }
 

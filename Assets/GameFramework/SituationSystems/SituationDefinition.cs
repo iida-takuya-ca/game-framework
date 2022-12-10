@@ -11,7 +11,7 @@ namespace GameFramework.SituationSystems {
         Completed, // 遷移完了
         Canceled, // 遷移キャンセル
     }
-    
+
     /// <summary>
     /// シチュエーション遷移確認用ハンドル
     /// </summary>
@@ -22,7 +22,8 @@ namespace GameFramework.SituationSystems {
         // 有効なハンドルか
         public bool IsValid => _transitionInfo != null;
         // 遷移完了か
-        public bool IsDone => !IsValid || TransitionState == TransitionState.Completed || TransitionState == TransitionState.Canceled;
+        public bool IsDone => !IsValid || TransitionState == TransitionState.Completed ||
+                              TransitionState == TransitionState.Canceled;
         // 例外
         public Exception Exception { get; private set; }
         // 遷移前のシチュエーション
@@ -54,9 +55,11 @@ namespace GameFramework.SituationSystems {
         /// コルーチン対応用
         /// </summary>
         object IEnumerator.Current => null;
+
         bool IEnumerator.MoveNext() {
             return !IsDone;
         }
+
         void IEnumerator.Reset() {
         }
     }

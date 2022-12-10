@@ -19,25 +19,25 @@ namespace GameFramework.SituationSystems {
     public interface ISituation {
         // プリロードされているか
         bool PreLoaded { get; }
-        
+
         /// <summary>
         /// 待機処理
         /// </summary>
         /// <param name="container">登録されたContainer</param>
         void Standby(SituationContainer container);
-        
+
         /// <summary>
         /// 読み込み処理
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         IEnumerator LoadRoutine(TransitionHandle handle);
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         void Setup(TransitionHandle handle);
-        
+
         /// <summary>
         /// 開く処理
         /// </summary>
@@ -49,12 +49,12 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         void Activate(TransitionHandle handle);
-        
+
         /// <summary>
         /// 更新
         /// </summary>
         void Update();
-        
+
         /// <summary>
         /// 後更新
         /// </summary>
@@ -65,25 +65,25 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         void Deactivate(TransitionHandle handle);
-        
+
         /// <summary>
         /// 閉じる処理
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         IEnumerator CloseRoutine(TransitionHandle handle);
-        
+
         /// <summary>
         /// 終了処理
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         void Cleanup(TransitionHandle handle);
-        
+
         /// <summary>
         /// 解放処理
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         void Unload(TransitionHandle handle);
-        
+
         /// <summary>
         /// 登録解除処理
         /// </summary>

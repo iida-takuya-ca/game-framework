@@ -61,7 +61,7 @@ namespace GameFramework.MotionSystems {
         public int SkipFrame { get; set; } = 0;
         // アニメーションの更新をSkipするかのフレーム数に対するOffset
         public int SkipFrameOffset { get; set; } = 0;
-        
+
         // ルートスケール（座標）
         public Vector3 RootPositionScale {
             get => _rootScaleAnimationJobProvider.PositionScale;
@@ -84,7 +84,7 @@ namespace GameFramework.MotionSystems {
             _graph.SetTimeUpdateMode(updateMode);
             _output.SetSourcePlayable(_mixer);
             _graph.Play();
-            
+
             // RootScaleJobの初期化
             _rootScaleAnimationJobProvider = new RootScaleAnimationJobProvider();
             AddJob(_rootScaleAnimationJobProvider);
@@ -100,12 +100,13 @@ namespace GameFramework.MotionSystems {
             }
 
             RefreshAnimationJobInfos();
-            
+
             // 再生中のPlayableをクリア
             if (_prevMotionPlayableProvider != null && _prevMotionPlayableProvider.AutoDispose) {
                 _prevMotionPlayableProvider.Dispose();
                 _prevMotionPlayableProvider = null;
             }
+
             if (_currentMotionPlayableProvider != null && _currentMotionPlayableProvider.AutoDispose) {
                 _currentMotionPlayableProvider.Dispose();
                 _currentMotionPlayableProvider = null;
@@ -154,6 +155,7 @@ namespace GameFramework.MotionSystems {
                 if (_prevMotionPlayableProvider.AutoDispose) {
                     _prevMotionPlayableProvider.Dispose();
                 }
+
                 _prevMotionPlayableProvider = null;
 
                 // Mixerの接続関係修正
@@ -198,7 +200,7 @@ namespace GameFramework.MotionSystems {
             // Providerの更新
             UpdateProvider(_prevMotionPlayableProvider, _prevTime);
             UpdateProvider(_currentMotionPlayableProvider, _currentTime);
-            
+
             // Manualモードの場合、ここで骨の更新を行う
             if (updateMode == DirectorUpdateMode.Manual) {
                 _graph.Evaluate(deltaTime);
@@ -220,6 +222,7 @@ namespace GameFramework.MotionSystems {
             if (_prevMotionPlayableProvider != null && _prevMotionPlayableProvider.AutoDispose) {
                 _prevMotionPlayableProvider.Dispose();
             }
+
             _prevMotionPlayableProvider = _currentMotionPlayableProvider;
             _prevTime = _currentTime;
 
@@ -260,13 +263,14 @@ namespace GameFramework.MotionSystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public SingleMotionPlayableProvider SetMotion(AnimationClip clip, float blendDuration, bool autoDispose = true) {
+        public SingleMotionPlayableProvider
+            SetMotion(AnimationClip clip, float blendDuration, bool autoDispose = true) {
             if (clip == null) {
                 ResetMotion(blendDuration);
                 return null;
             }
 
-            var provider = new SingleMotionPlayableProvider(clip, autoDispose); 
+            var provider = new SingleMotionPlayableProvider(clip, autoDispose);
             SetMotion(provider, blendDuration);
             return provider;
         }
@@ -274,7 +278,8 @@ namespace GameFramework.MotionSystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public AnimatorControllerMotionPlayableProvider SetMotion(RuntimeAnimatorController controller, float blendDuration, bool autoDispose = true) {
+        public AnimatorControllerMotionPlayableProvider SetMotion(RuntimeAnimatorController controller,
+            float blendDuration, bool autoDispose = true) {
             if (controller == null) {
                 ResetMotion(blendDuration);
                 return null;

@@ -18,7 +18,7 @@ namespace GameFramework.BodySystems {
 #endif
             Object.Destroy(gameObject);
         }
-        
+
         /// <summary>
         /// Componentの廃棄
         /// </summary>
@@ -40,7 +40,7 @@ namespace GameFramework.BodySystems {
             if (!recursive) {
                 return;
             }
-            
+
             var targetTrans = target.transform;
             for (var i = 0; i < targetTrans.childCount; i++) {
                 SetLayer(targetTrans.GetChild(i).gameObject, layer);

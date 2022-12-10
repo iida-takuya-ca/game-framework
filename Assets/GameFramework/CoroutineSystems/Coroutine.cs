@@ -11,7 +11,7 @@ namespace GameFramework.CoroutineSystems {
         private IEnumerator _enumerator;
         private Stack<object> _stack;
         private object _current;
-        
+
         // 完了しているか
         public bool IsDone { get; private set; }
         // 現在の処理位置
@@ -77,6 +77,7 @@ namespace GameFramework.CoroutineSystems {
                 else {
                     _stack.Pop();
                 }
+
                 Update();
             }
             else if (peek is IEnumerable enumerable) {

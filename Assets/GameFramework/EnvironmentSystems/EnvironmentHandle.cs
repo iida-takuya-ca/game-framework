@@ -10,7 +10,7 @@ namespace GameFramework.EnvironmentSystems {
         public bool IsValid => _environmentInfo != null;
         // 完了したか
         public bool IsDone => !IsValid || _environmentInfo.timer <= 0.0f;
-        
+
         /// <summary>
         /// コンストラクタ
         /// </summary>

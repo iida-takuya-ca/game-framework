@@ -26,12 +26,13 @@ namespace GameFramework.LogicSystems {
             if (_disposed) {
                 return;
             }
+
             _disposed = true;
-            
+
             DisposeInternal();
             OnExpired?.Invoke();
             OnExpired = null;
-            
+
             // Taskから登録を除外
             if (_taskRunner != null) {
                 _taskRunner.Unregister(this);
@@ -58,12 +59,12 @@ namespace GameFramework.LogicSystems {
             if (_activeScope == null) {
                 return;
             }
-            
+
             DeactivateInternal();
             _activeScope.Dispose();
             _activeScope = null;
         }
-        
+
         /// <summary>
         /// タスク更新処理
         /// </summary>

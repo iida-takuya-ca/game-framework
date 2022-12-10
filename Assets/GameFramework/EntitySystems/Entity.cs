@@ -6,11 +6,10 @@ namespace GameFramework.EntitySystems {
     /// <summary>
     /// インスタンス管理用クラスのコア
     /// </summary>
-    public class Entity : IDisposable
-    {
+    public class Entity : IDisposable {
         // 次の生成するEntityのID
         private static int _nextId = 1;
-        
+
         // Entity拡張用Component
         private Dictionary<Type, IEntityComponent> _components = new Dictionary<Type, IEntityComponent>();
         // EntityのID
@@ -21,8 +20,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Entity(bool active = true)
-        {
+        public Entity(bool active = true) {
             Id = _nextId++;
             IsActive = active;
         }
@@ -37,7 +35,7 @@ namespace GameFramework.EntitySystems {
             }
 
             IsActive = active;
-            
+
             // ComponentのActive状態変更
             foreach (var pair in _components) {
                 if (active) {
@@ -58,6 +56,7 @@ namespace GameFramework.EntitySystems {
             if (!_components.TryGetValue(type, out var component)) {
                 return null;
             }
+
             return (EntityComponent)component;
         }
 
@@ -68,7 +67,7 @@ namespace GameFramework.EntitySystems {
             where T : EntityComponent {
             return (T)GetComponent(typeof(T));
         }
-        
+
         /// <summary>
         /// Componentの追加(重複はエラー)
         /// </summary>
@@ -78,21 +77,25 @@ namespace GameFramework.EntitySystems {
                 Debug.LogError($"Component is not EntityComponent. [{type.Name}]");
                 return null;
             }
+
             if (_components.ContainsKey(type)) {
                 Debug.LogError($"Already exists entity component. [{type.Name}]");
                 return null;
             }
+
             var constructor = type.GetConstructor(Type.EmptyTypes);
             if (constructor == null) {
                 Debug.LogError($"Not found default constructor. [{type.Name}]");
                 return null;
             }
+
             var component = (IEntityComponent)constructor.Invoke(Array.Empty<object>());
             _components[type] = component;
             component.Attached(this);
             if (IsActive) {
                 component.Activate();
             }
+
             return (EntityComponent)component;
         }
 
@@ -113,6 +116,7 @@ namespace GameFramework.EntitySystems {
             if (component == null) {
                 component = AddComponent(type);
             }
+
             return component;
         }
 
@@ -132,9 +136,11 @@ namespace GameFramework.EntitySystems {
                 if (IsActive) {
                     component.Deactivate();
                 }
+
                 component.Detached(this);
                 component.Dispose();
             }
+
             _components.Clear();
         }
     }

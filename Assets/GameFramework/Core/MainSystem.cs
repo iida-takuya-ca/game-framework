@@ -132,10 +132,10 @@ namespace GameFramework.Core {
             // Starterから引数を取得
             var starter = MainSystemStarter.Current;
             var arguments = starter != null ? starter.GetArguments() : Array.Empty<object>();
-            
+
             // 開始処理
             yield return StartRoutine(arguments);
-            
+
             // Starterを削除
             if (starter != null) {
                 Destroy(starter.gameObject);
@@ -193,7 +193,7 @@ namespace GameFramework.Core {
 
             if (this == Instance) {
                 Instance = null;
-            } 
+            }
         }
     }
 }

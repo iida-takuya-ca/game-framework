@@ -16,7 +16,7 @@ namespace GameFramework.SituationSystems {
             SetupFinished, // 初期化済
             Active, // アクティブ中
         }
-        
+
         // 読み込みスコープ
         private DisposableScope _loadScope;
         // 初期化スコープ
@@ -25,7 +25,7 @@ namespace GameFramework.SituationSystems {
         private DisposableScope _animationScope;
         // アクティブスコープ
         private DisposableScope _activeScope;
-        
+
         // 親のSituation
         public Situation Parent => ParentContainer?.Owner;
         // 登録されているContainer
@@ -51,7 +51,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState == State.Active) {
                 ((ISituation)this).Update();
             }
-            
+
             // コンテナの更新
             if (Container != null) {
                 Container.Update();
@@ -70,7 +70,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState == State.Active) {
                 ((ISituation)this).LateUpdate();
             }
-            
+
             // コンテナの更新
             if (Container != null) {
                 Container.LateUpdate();
@@ -95,7 +95,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState >= State.Standby) {
                 return;
             }
-            
+
             CurrentState = State.Standby;
             ParentContainer = container;
             // Containerの生成
@@ -118,9 +118,10 @@ namespace GameFramework.SituationSystems {
                 while (CurrentState < State.Loaded) {
                     yield return null;
                 }
+
                 yield break;
             }
-            
+
             _loadScope = new DisposableScope();
             yield return LoadRoutineInternal(handle, _loadScope);
             CurrentState = State.Loaded;
@@ -133,7 +134,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState >= State.SetupFinished) {
                 return;
             }
-            
+
             _setupScope = new DisposableScope();
             SetupInternal(handle, _setupScope);
             CurrentState = State.SetupFinished;
@@ -156,7 +157,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState >= State.Active) {
                 return;
             }
-            
+
             _activeScope = new DisposableScope();
             ActiveInternal(handle, _activeScope);
             CurrentState = State.Active;
@@ -183,7 +184,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState <= State.SetupFinished) {
                 return;
             }
-            
+
             CurrentState = State.SetupFinished;
             DeactiveInternal(handle);
             _activeScope.Dispose();
@@ -207,7 +208,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState <= State.Loaded) {
                 return;
             }
-            
+
             CurrentState = State.Loaded;
             CleanupInternal(handle);
             _setupScope.Dispose();
@@ -221,7 +222,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState <= State.Standby) {
                 return;
             }
-            
+
             CurrentState = State.Standby;
             UnloadInternal(handle);
             _loadScope.Dispose();
@@ -254,6 +255,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState == State.Active) {
                 situation.Deactivate(handle);
             }
+
             if (CurrentState == State.SetupFinished) {
                 situation.Cleanup(handle);
             }
@@ -262,13 +264,13 @@ namespace GameFramework.SituationSystems {
             if (PreLoaded) {
                 return;
             }
-            
+
             if (CurrentState == State.Loaded) {
                 situation.Unload(handle);
             }
-            
+
             ReleaseInternal(container);
-            
+
             ParentContainer = null;
             Container.Dispose();
             ServiceContainer.Dispose();
@@ -282,10 +284,10 @@ namespace GameFramework.SituationSystems {
             if (PreLoaded) {
                 yield break;
             }
-            
+
             var situation = (ISituation)this;
             PreLoaded = true;
-            
+
             yield return situation.LoadRoutine(new TransitionHandle());
         }
 
@@ -296,7 +298,7 @@ namespace GameFramework.SituationSystems {
             if (!PreLoaded) {
                 return;
             }
-            
+
             var situation = (ISituation)this;
             PreLoaded = false;
 
@@ -304,7 +306,7 @@ namespace GameFramework.SituationSystems {
             if (CurrentState >= State.SetupFinished) {
                 return;
             }
-            
+
             situation.Unload(new TransitionHandle());
         }
 

@@ -178,7 +178,7 @@ namespace GameFramework.EnvironmentSystems.Editor {
 
             if (_foldout) {
                 EditorGUI.indentLevel++;
-                
+
                 // Sky
                 EditorGUI.LabelField(rect, Styles.SkyTitle, EditorStyles.boldLabel);
                 rect.y += lineOffsetUnit;
@@ -403,7 +403,7 @@ namespace GameFramework.EnvironmentSystems.Editor {
                 rect.y += lineOffsetUnit;
 
                 EditorGUI.showMixedValue = false;
-                
+
                 EditorGUI.indentLevel--;
             }
         }
@@ -421,7 +421,7 @@ namespace GameFramework.EnvironmentSystems.Editor {
             var totalHeight = 0.0f;
 
             totalHeight += lineOffsetUnit;
-            
+
             if (!_foldout) {
                 return totalHeight;
             }

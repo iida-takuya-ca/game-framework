@@ -14,7 +14,7 @@ namespace GameFramework.BodySystems {
         private Dictionary<Type, IBodyController> _bodyControllers = new Dictionary<Type, IBodyController>();
         // 並び順に並べられたControllerリスト
         private List<IBodyController> _orderedBodyControllers = new List<IBodyController>();
-        
+
         // 基本Scale
         private float _baseScale = 1.0f;
         // 変形用Scale
@@ -26,7 +26,7 @@ namespace GameFramework.BodySystems {
 
         // 解放スコープ
         public event Action OnExpired;
-        
+
         // 有効なBodyか
         public bool IsValid => GameObject != null;
         // 有効状態
@@ -44,7 +44,7 @@ namespace GameFramework.BodySystems {
         public Transform Transform { get; private set; }
         // 時間管理クラス
         public LayeredTime LayeredTime { get; } = new LayeredTime();
-        
+
         // 座標
         public Vector3 Position {
             get => Transform.position;
@@ -89,10 +89,10 @@ namespace GameFramework.BodySystems {
                 BaseScale = 1.0f;
             }
         }
-        
+
         // ロケーター取得
         public LocatorController Locators => _locatorController;
-        
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -100,7 +100,7 @@ namespace GameFramework.BodySystems {
             GameObject = gameObject;
             Transform = gameObject != null ? gameObject.transform : null;
         }
-        
+
         /// <summary>
         /// 廃棄時処理
         /// </summary>
@@ -108,25 +108,28 @@ namespace GameFramework.BodySystems {
             if (_disposed) {
                 return;
             }
+
             _disposed = true;
-            
+
             OnExpired?.Invoke();
             OnExpired = null;
-            
+
             LayeredTime.Dispose();
-            
+
             // Controllerの削除
             for (var i = _orderedBodyControllers.Count - 1; i >= 0; i--) {
                 var controller = _orderedBodyControllers[i];
                 controller.Dispose();
             }
+
             _orderedBodyControllers.Clear();
             _bodyControllers.Clear();
-            
+
             // GameObjectの削除
             if (GameObject != null) {
                 BodyUtility.Destroy(GameObject);
             }
+
             GameObject = null;
             Transform = null;
         }
@@ -139,6 +142,7 @@ namespace GameFramework.BodySystems {
             if (_bodyControllers.TryGetValue(typeof(T), out var controller)) {
                 return (T)controller;
             }
+
             return default;
         }
 
@@ -214,15 +218,19 @@ namespace GameFramework.BodySystems {
         /// <param name="offsetPosition">オフセット座標(Local)</param>
         /// <param name="offsetRotation">オフセット回転(Local)</param>
         /// <param name="scaleType">スケール反映タイプ</param>
-        public void SetParent(Body parentBody, Transform targetTransform, Vector3 offsetPosition, Quaternion offsetRotation,
+        public void SetParent(Body parentBody, Transform targetTransform, Vector3 offsetPosition,
+            Quaternion offsetRotation,
             ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
             _parentController.SetParent(parentBody, targetTransform, offsetPosition, offsetRotation, scaleType);
         }
+
         public void SetParent(Body parentBody, Vector3 offsetPosition, Quaternion offsetRotation,
             ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
             SetParent(parentBody, null, offsetPosition, offsetRotation, scaleType);
         }
-        public void SetParent(Body parentBody, ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
+
+        public void SetParent(Body parentBody,
+            ParentController.ScaleType scaleType = ParentController.ScaleType.ParentTransform) {
             SetParent(parentBody, null, Vector3.zero, Quaternion.identity, scaleType);
         }
 
@@ -231,7 +239,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         void IBody.Initialize() {
             _orderedBodyControllers.Sort((a, b) => a.ExecutionOrder.CompareTo(b.ExecutionOrder));
-            
+
             // Controller初期化
             for (var i = 0; i < _orderedBodyControllers.Count; i++) {
                 var controller = _orderedBodyControllers[i];
@@ -248,7 +256,7 @@ namespace GameFramework.BodySystems {
         /// <param name="deltaTime">変位時間</param>
         void IBody.Update(float deltaTime) {
             deltaTime *= LayeredTime.TimeScale;
-            
+
             // Controller更新
             for (var i = 0; i < _orderedBodyControllers.Count; i++) {
                 var controller = _orderedBodyControllers[i];
@@ -262,7 +270,7 @@ namespace GameFramework.BodySystems {
         /// <param name="deltaTime">変位時間</param>
         void IBody.LateUpdate(float deltaTime) {
             deltaTime *= LayeredTime.TimeScale;
-            
+
             // Controller更新
             for (var i = 0; i < _orderedBodyControllers.Count; i++) {
                 var controller = _orderedBodyControllers[i];
@@ -278,7 +286,7 @@ namespace GameFramework.BodySystems {
             if (controller == null) {
                 return;
             }
-            
+
             var type = controller.GetType();
             if (_bodyControllers.ContainsKey(type)) {
                 Debug.LogError($"Already added body controller type. [{GameObject.name}] > [{type}]");

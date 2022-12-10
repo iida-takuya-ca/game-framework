@@ -8,12 +8,12 @@ namespace GameFramework.SituationSystems {
     public class ServiceLocatorInstaller : MonoBehaviour {
         [SerializeField, Tooltip("LocatorにインストールするServiceリスト")]
         private Component[] _installServices = new Component[0];
-        
+
         /// <summary>
         /// インストール処理
         /// </summary>
         public void Install(IServiceContainer container) {
-            foreach (var component in _installServices){
+            foreach (var component in _installServices) {
                 container.Set(component);
             }
         }

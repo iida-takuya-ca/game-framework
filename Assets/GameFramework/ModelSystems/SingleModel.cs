@@ -6,7 +6,7 @@ namespace GameFramework.ModelSystems {
     /// 自動割り当てId管理によるモデル
     /// </summary>
     public abstract class SingleModel<TModel> : IModel
-    where TModel : SingleModel<TModel>, new() {
+        where TModel : SingleModel<TModel>, new() {
         /// <summary>
         /// モデル格納用ストレージ
         /// </summary>
@@ -35,13 +35,13 @@ namespace GameFramework.ModelSystems {
                     Debug.LogError($"Already exists {typeof(TModel).Name}.");
                     return null;
                 }
-                
+
                 var model = new TModel();
                 model.OnCreated();
                 _model = model;
                 return model;
             }
-        
+
             /// <summary>
             /// モデルの取得
             /// </summary>
@@ -57,15 +57,15 @@ namespace GameFramework.ModelSystems {
                 if (model == null) {
                     return;
                 }
-                
+
                 _model = null;
                 model.OnDeleted();
             }
         }
-        
+
         // インスタンス管理用クラス
         private static Storage s_storage = new Storage();
-        
+
         // スコープ通知用
         public event Action OnExpired;
 
@@ -87,14 +87,14 @@ namespace GameFramework.ModelSystems {
         public static TModel Get() {
             return s_storage.Get();
         }
-        
+
         /// <summary>
         /// 生成処理
         /// </summary>
         public static TModel Create() {
             return s_storage.Create();
         }
-        
+
         /// <summary>
         /// 削除処理
         /// </summary>
@@ -127,7 +127,7 @@ namespace GameFramework.ModelSystems {
         /// </summary>
         protected virtual void OnDeletedInternal() {
         }
-        
+
         /// <summary>
         /// 生成時処理
         /// </summary>

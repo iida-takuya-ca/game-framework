@@ -2,13 +2,11 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace GameFramework.MotionSystems
-{
+namespace GameFramework.MotionSystems {
     /// <summary>
     /// 1つのClipを再生するPlayable用のProvider
     /// </summary>
-    public class SingleMotionPlayableProvider : MotionPlayableProvider
-    {
+    public class SingleMotionPlayableProvider : MotionPlayableProvider {
         private AnimationClipPlayable _playable;
         private AnimationClip _clip;
 
@@ -18,16 +16,14 @@ namespace GameFramework.MotionSystems
         /// 初期化処理
         /// </summary>
         public SingleMotionPlayableProvider(AnimationClip clip, bool autoDispose)
-            : base(autoDispose)
-        {
+            : base(autoDispose) {
             _clip = clip;
         }
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected override void InitializeInternal(PlayableGraph graph)
-        {
+        protected override void InitializeInternal(PlayableGraph graph) {
             _playable = AnimationClipPlayable.Create(graph, _clip);
         }
 

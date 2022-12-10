@@ -33,7 +33,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// ロジックの追加(Remove時に自動削除)
         /// </summary>
-        public Entity AddLogic<TLogic>(TLogic logic) 
+        public Entity AddLogic<TLogic>(TLogic logic)
             where TLogic : EntityLogic {
             var type = typeof(TLogic);
             if (_logics.ContainsKey(type)) {
@@ -41,20 +41,20 @@ namespace GameFramework.EntitySystems {
                 return Entity;
             }
 
-            if (logic.Entity != null)
-            {
+            if (logic.Entity != null) {
                 Debug.LogError($"Entity is not null. type:{type.Name}");
                 return Entity;
             }
-            
+
             _logics[type] = logic;
             logic.Attach(Entity);
             if (Entity.IsActive) {
                 logic.Activate();
             }
+
             return Entity;
         }
-        
+
         /// <summary>
         /// ロジックの削除
         /// </summary>
@@ -64,7 +64,7 @@ namespace GameFramework.EntitySystems {
             if (!_logics.TryGetValue(type, out var logic)) {
                 return Entity;
             }
-            
+
             _logics.Remove(typeof(TLogic));
             logic.Deactivate();
             logic.Detach(Entity);
@@ -76,10 +76,10 @@ namespace GameFramework.EntitySystems {
         /// 廃棄処理(override用)
         /// </summary>
         protected override void DisposeInternal() {
-            foreach (var logic in _logics.Values)
-            {
+            foreach (var logic in _logics.Values) {
                 logic.Dispose();
             }
+
             _logics.Clear();
         }
     }
