@@ -102,6 +102,16 @@ namespace GameFramework.EnvironmentSystems.Editor
         /// </summary>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             GetProperties(property);
+
+            void ColorField(Rect r, SerializedProperty p, GUIContent l) {
+                EditorGUI.BeginChangeCheck();
+                EditorGUI.showMixedValue = p.hasMultipleDifferentValues;
+                var n = EditorGUI.ColorField(r, l, p.colorValue, true, false, true);
+                if (EditorGUI.EndChangeCheck()) {
+                    p.colorValue = n;
+                }
+                EditorGUI.showMixedValue = false;
+            }
             
             var skyboxMaterial = _skyboxMaterial.objectReferenceValue as Material;
             var lineHeight = EditorGUIUtility.singleLineHeight;
@@ -114,7 +124,8 @@ namespace GameFramework.EnvironmentSystems.Editor
             EditorGUI.LabelField(rect, Styles.SkyTitle, EditorStyles.boldLabel);
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel++;
-            
+
+            EditorGUI.showMixedValue = _skyboxMaterial.hasMultipleDifferentValues;
             EditorGUI.PropertyField(rect, _skyboxMaterial, Styles.SkyboxMaterial);
             rect.y += lineOffsetUnit;
             if (skyboxMaterial != null && !EditorMaterialUtility.IsBackgroundMaterial(skyboxMaterial)) {
@@ -123,9 +134,11 @@ namespace GameFramework.EnvironmentSystems.Editor
                 rect.y += lineOffsetUnit + lineHeight;
                 rect.height = lineHeight;
             }
-            
+
+            EditorGUI.showMixedValue = _sun.hasMultipleDifferentValues;
             EditorGUI.PropertyField(rect, _sun, Styles.Sun);
             rect.y += lineOffsetUnit;
+            EditorGUI.showMixedValue = _subtractiveShadowColor.hasMultipleDifferentValues;
             EditorGUI.PropertyField(rect, _subtractiveShadowColor, Styles.SubtractiveShadowColor);
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel--;
@@ -137,51 +150,38 @@ namespace GameFramework.EnvironmentSystems.Editor
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel++;
 
+            EditorGUI.showMixedValue = _ambientMode.hasMultipleDifferentValues;
             EditorGUI.IntPopup(rect, _ambientMode, Styles.AmbientSourceLabels, Styles.AmbientSourceValues, Styles.AmbientSource);
             rect.y += lineOffsetUnit;
             switch ((AmbientMode)_ambientMode.intValue)
             {
                 case AmbientMode.Trilight:
                 {
-                    EditorGUI.BeginChangeCheck();
-                    var newSkyColor = EditorGUI.ColorField(rect, Styles.AmbientSkyColor, _ambientSkyColor.colorValue, true, false, true);
+                    ColorField(rect, _ambientSkyColor, Styles.AmbientSkyColor);
                     rect.y += lineOffsetUnit;
-                    var newEquatorColor = EditorGUI.ColorField(rect, Styles.AmbientEquatorColor, _ambientEquatorColor.colorValue, true, false, true);
+                    ColorField(rect, _ambientEquatorColor, Styles.AmbientEquatorColor);
                     rect.y += lineOffsetUnit;
-                    var newGroundColor = EditorGUI.ColorField(rect, Styles.AmbientGroundColor, _ambientGroundColor.colorValue, true, false, true);
+                    ColorField(rect, _ambientGroundColor, Styles.AmbientGroundColor);
                     rect.y += lineOffsetUnit;
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        _ambientSkyColor.colorValue = newSkyColor;
-                        _ambientEquatorColor.colorValue = newEquatorColor;
-                        _ambientGroundColor.colorValue = newGroundColor;
-                    }
                 }
                 break;
 
                 case AmbientMode.Flat:
                 {
-                    EditorGUI.BeginChangeCheck();
-                    var newColor = EditorGUI.ColorField(rect, Styles.AmbientColor, _ambientSkyColor.colorValue, true, false, true);
+                    ColorField(rect, _ambientSkyColor, Styles.AmbientColor);
                     rect.y += lineOffsetUnit;
-                    if (EditorGUI.EndChangeCheck()) {
-                        _ambientSkyColor.colorValue = newColor;
-                    }
                 }
                 break;
 
                 case AmbientMode.Skybox:
                     if (skyboxMaterial == null)
                     {
-                        EditorGUI.BeginChangeCheck();
-                        var newColor = EditorGUI.ColorField(rect, Styles.AmbientColor, _ambientSkyColor.colorValue, true, false, true);
+                        ColorField(rect, _ambientSkyColor, Styles.AmbientColor);
                         rect.y += lineOffsetUnit;
-                        if (EditorGUI.EndChangeCheck()) {
-                            _ambientSkyColor.colorValue = newColor;
-                        }
                     }
                     else
                     {
+                        EditorGUI.showMixedValue = _ambientIntensity.hasMultipleDifferentValues;
                         EditorGUI.Slider(rect, _ambientIntensity, 0.0f, 8.0f, Styles.AmbientIntensity);
                         rect.y += lineOffsetUnit;
                     }
@@ -197,6 +197,7 @@ namespace GameFramework.EnvironmentSystems.Editor
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel++;
 
+            EditorGUI.showMixedValue = _defaultReflectionMode.hasMultipleDifferentValues;
             EditorGUI.PropertyField(rect, _defaultReflectionMode, Styles.ReflectionMode);
             rect.y += lineOffsetUnit;
 
@@ -204,18 +205,22 @@ namespace GameFramework.EnvironmentSystems.Editor
             switch (defReflectionMode)
             {
                 case DefaultReflectionMode.Skybox:
+                    EditorGUI.showMixedValue = _defaultReflectionResolution.hasMultipleDifferentValues;
                     EditorGUI.IntPopup(rect, _defaultReflectionResolution, Styles.ReflectionResolutionLabels, Styles.ReflectionResolutionValues, Styles.ReflectionResolution);
                     rect.y += lineOffsetUnit;
                     break;
                 
                 case DefaultReflectionMode.Custom:
+                    EditorGUI.showMixedValue = _customReflection.hasMultipleDifferentValues;
                     EditorGUI.PropertyField(rect, _customReflection, Styles.CustomReflection);
                     rect.y += lineOffsetUnit;
                     break;
             }
 
+            EditorGUI.showMixedValue = _reflectionIntensity.hasMultipleDifferentValues;
             EditorGUI.Slider(rect, _reflectionIntensity, 0.0f, 1.0f, Styles.ReflectionIntensity);
             rect.y += lineOffsetUnit;
+            EditorGUI.showMixedValue = _reflectionBounces.hasMultipleDifferentValues;
             EditorGUI.IntSlider(rect, _reflectionBounces, 1, 5, Styles.ReflectionBounces);
             rect.y += lineOffsetUnit;
 
@@ -228,25 +233,32 @@ namespace GameFramework.EnvironmentSystems.Editor
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel++;
 
+            EditorGUI.showMixedValue = _fog.hasMultipleDifferentValues;
             EditorGUI.PropertyField(rect, _fog, Styles.Fog);
             rect.y += lineOffsetUnit;
             if (_fog.boolValue)
             {
                 EditorGUI.indentLevel++;
+                
+                EditorGUI.showMixedValue = _fogColor.hasMultipleDifferentValues;
                 EditorGUI.PropertyField(rect, _fogColor, Styles.FogColor);
                 rect.y += lineOffsetUnit;
+                EditorGUI.showMixedValue = _fogMode.hasMultipleDifferentValues;
                 EditorGUI.PropertyField(rect, _fogMode, Styles.FogMode);
                 rect.y += lineOffsetUnit;
 
                 if ((FogMode)_fogMode.intValue != FogMode.Linear)
                 {
+                    EditorGUI.showMixedValue = _fogDensity.hasMultipleDifferentValues;
                     EditorGUI.PropertyField(rect, _fogDensity, Styles.FogDensity);
                     rect.y += lineOffsetUnit;
                 }
                 else
                 {
+                    EditorGUI.showMixedValue = _fogStartDistance.hasMultipleDifferentValues;
                     EditorGUI.PropertyField(rect, _fogStartDistance, Styles.FogStartDistance);
                     rect.y += lineOffsetUnit;
+                    EditorGUI.showMixedValue = _fogEndDistance.hasMultipleDifferentValues;
                     EditorGUI.PropertyField(rect, _fogEndDistance, Styles.FogEndDistance);
                     rect.y += lineOffsetUnit;
                 }
@@ -262,10 +274,13 @@ namespace GameFramework.EnvironmentSystems.Editor
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel++;
             
+            EditorGUI.showMixedValue = _haloStrength.hasMultipleDifferentValues;
             EditorGUI.Slider(rect, _haloStrength, 0.0f, 1.0f, Styles.HaloStrength);
             rect.y += lineOffsetUnit;
+            EditorGUI.showMixedValue = _flareFadeSpeed.hasMultipleDifferentValues;
             EditorGUI.PropertyField(rect, _flareFadeSpeed, Styles.FlareFadeSpeed);
             rect.y += lineOffsetUnit;
+            EditorGUI.showMixedValue = _flareStrength.hasMultipleDifferentValues;
             EditorGUI.Slider(rect, _flareStrength, 0.0f, 1.0f, Styles.FlareStrength);
             rect.y += lineOffsetUnit;
             
@@ -329,6 +344,8 @@ namespace GameFramework.EnvironmentSystems.Editor
             rect.x = position.x;
             rect.width = position.width;
             rect.y += lineOffsetUnit;
+
+            EditorGUI.showMixedValue = false;
         }
 
         /// <summary>
