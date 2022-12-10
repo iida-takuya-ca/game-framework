@@ -1,7 +1,7 @@
+#if USE_UNI_RX
+
 using System;
 using UniRx;
-
-#if USE_UNI_RX
 
 namespace GameFramework.TaskSystems {
     /// <summary>
