@@ -34,6 +34,17 @@ namespace GameFramework.EnvironmentSystems.Editor
             public static readonly GUIContent CustomReflection = EditorGUIUtility.TrTextContent("Cubemap", "Specifies the custom cube map used for reflection effects in the Scene.");
             public static readonly GUIContent ReflectionIntensity = EditorGUIUtility.TrTextContent("Intensity Multiplier", "Controls how much the skybox or custom cubemap affects reflections in the Scene. A value of 1 produces physically correct results.");
             public static readonly GUIContent ReflectionBounces = EditorGUIUtility.TrTextContent("Bounces", "Controls how many times a reflection includes other reflections. A value of 1 results in the Scene being rendered once so mirrored reflections will be black. A value of 2 results in mirrored reflections being visible in the Scene.");
+            public static readonly GUIContent FogTitle = EditorGUIUtility.TrTextContent("Fog");
+            public static readonly GUIContent Fog = EditorGUIUtility.TrTextContent("Enabled", "Specifies whether fog is used in the Scene or not.");
+            public static readonly GUIContent FogColor = EditorGUIUtility.TrTextContent("Color", "Controls the color of the fog drawn in the Scene.");
+            public static readonly GUIContent FogMode = EditorGUIUtility.TrTextContent("Mode", "Controls the mathematical function determining the way fog accumulates with distance from the camera. Options are Linear, Exponential, and Exponential Squared.");
+            public static readonly GUIContent FogDensity = EditorGUIUtility.TrTextContent("Density", "Controls the density of the fog effect in the Scene when using Exponential or Exponential Squared modes.");
+            public static readonly GUIContent FogStartDistance = EditorGUIUtility.TrTextContent("Start", "Controls the distance from the camera where the fog will start in the Scene.");
+            public static readonly GUIContent FogEndDistance = EditorGUIUtility.TrTextContent("End", "Controls the distance from the camera where the fog will completely obscure objects in the Scene.");
+            public static readonly GUIContent OtherTitle = EditorGUIUtility.TrTextContent("Other Settings");
+            public static readonly GUIContent HaloStrength = EditorGUIUtility.TrTextContent("Halo Strength", "Controls the visibility of the halo effect around lights in the Scene.");
+            public static readonly GUIContent FlareStrength = EditorGUIUtility.TrTextContent("Flare Strength", "Controls the visibility of lens flares from lights in the Scene.");
+            public static readonly GUIContent FlareFadeSpeed = EditorGUIUtility.TrTextContent("Flare Fade Speed", "Controls the time over which lens flares fade from view after initially appearing.");
 
             public static readonly int[] AmbientSourceValues = {
                 (int)AmbientMode.Skybox,
@@ -76,6 +87,15 @@ namespace GameFramework.EnvironmentSystems.Editor
         private SerializedProperty _customReflection;
         private SerializedProperty _reflectionIntensity;
         private SerializedProperty _reflectionBounces;
+        private SerializedProperty _fog;
+        private SerializedProperty _fogColor;
+        private SerializedProperty _fogMode;
+        private SerializedProperty _fogDensity;
+        private SerializedProperty _fogStartDistance;
+        private SerializedProperty _fogEndDistance;
+        private SerializedProperty _haloStrength;
+        private SerializedProperty _flareStrength;
+        private SerializedProperty _flareFadeSpeed;
         
         /// <summary>
         /// GUI描画
@@ -86,15 +106,15 @@ namespace GameFramework.EnvironmentSystems.Editor
             var skyboxMaterial = _skyboxMaterial.objectReferenceValue as Material;
             var lineHeight = EditorGUIUtility.singleLineHeight;
             var lineOffsetUnit = lineHeight + EditorGUIUtility.standardVerticalSpacing;
+            var space = 10;
             var rect = position;
             rect.height = lineHeight;
 
-            // Title
+            // Sky
             EditorGUI.LabelField(rect, Styles.SkyTitle, EditorStyles.boldLabel);
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel++;
             
-            // Skybox
             EditorGUI.PropertyField(rect, _skyboxMaterial, Styles.SkyboxMaterial);
             rect.y += lineOffsetUnit;
             if (skyboxMaterial != null && !EditorMaterialUtility.IsBackgroundMaterial(skyboxMaterial)) {
@@ -104,12 +124,13 @@ namespace GameFramework.EnvironmentSystems.Editor
                 rect.height = lineHeight;
             }
             
-            // Sun
             EditorGUI.PropertyField(rect, _sun, Styles.Sun);
             rect.y += lineOffsetUnit;
             EditorGUI.PropertyField(rect, _subtractiveShadowColor, Styles.SubtractiveShadowColor);
             rect.y += lineOffsetUnit;
             EditorGUI.indentLevel--;
+
+            rect.y += space;
 
             // Ambient
             EditorGUI.LabelField(rect, Styles.AmbientTitle, EditorStyles.boldLabel);
@@ -169,6 +190,8 @@ namespace GameFramework.EnvironmentSystems.Editor
 
             EditorGUI.indentLevel--;
             
+            rect.y += space;
+            
             // Reflection
             EditorGUI.LabelField(rect, Styles.ReflectionTitle, EditorStyles.boldLabel);
             rect.y += lineOffsetUnit;
@@ -198,6 +221,58 @@ namespace GameFramework.EnvironmentSystems.Editor
 
             EditorGUI.indentLevel--;
             
+            rect.y += space;
+            
+            // Fog
+            EditorGUI.LabelField(rect, Styles.FogTitle, EditorStyles.boldLabel);
+            rect.y += lineOffsetUnit;
+            EditorGUI.indentLevel++;
+
+            EditorGUI.PropertyField(rect, _fog, Styles.Fog);
+            rect.y += lineOffsetUnit;
+            if (_fog.boolValue)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUI.PropertyField(rect, _fogColor, Styles.FogColor);
+                rect.y += lineOffsetUnit;
+                EditorGUI.PropertyField(rect, _fogMode, Styles.FogMode);
+                rect.y += lineOffsetUnit;
+
+                if ((FogMode)_fogMode.intValue != FogMode.Linear)
+                {
+                    EditorGUI.PropertyField(rect, _fogDensity, Styles.FogDensity);
+                    rect.y += lineOffsetUnit;
+                }
+                else
+                {
+                    EditorGUI.PropertyField(rect, _fogStartDistance, Styles.FogStartDistance);
+                    rect.y += lineOffsetUnit;
+                    EditorGUI.PropertyField(rect, _fogEndDistance, Styles.FogEndDistance);
+                    rect.y += lineOffsetUnit;
+                }
+
+                EditorGUI.indentLevel--;
+            }
+            EditorGUI.indentLevel--;
+            
+            rect.y += space;
+            
+            // Other
+            EditorGUI.LabelField(rect, Styles.OtherTitle, EditorStyles.boldLabel);
+            rect.y += lineOffsetUnit;
+            EditorGUI.indentLevel++;
+            
+            EditorGUI.Slider(rect, _haloStrength, 0.0f, 1.0f, Styles.HaloStrength);
+            rect.y += lineOffsetUnit;
+            EditorGUI.PropertyField(rect, _flareFadeSpeed, Styles.FlareFadeSpeed);
+            rect.y += lineOffsetUnit;
+            EditorGUI.Slider(rect, _flareStrength, 0.0f, 1.0f, Styles.FlareStrength);
+            rect.y += lineOffsetUnit;
+            
+            EditorGUI.indentLevel--;
+            
+            rect.y += space;
+            
             // 値の取得/反映ボタン
             rect.width = position.width * 0.5f;
             if (GUI.Button(rect, "Get Settings")) {
@@ -214,6 +289,15 @@ namespace GameFramework.EnvironmentSystems.Editor
                 _customReflection.objectReferenceValue = RenderSettings.customReflection;
                 _reflectionIntensity.floatValue = RenderSettings.reflectionIntensity;
                 _reflectionBounces.intValue = RenderSettings.reflectionBounces;
+                _fog.boolValue = RenderSettings.fog;
+                _fogColor.colorValue = RenderSettings.fogColor;
+                _fogMode.intValue = (int)RenderSettings.fogMode;
+                _fogDensity.floatValue = RenderSettings.fogDensity;
+                _fogStartDistance.floatValue = RenderSettings.fogStartDistance;
+                _fogEndDistance.floatValue = RenderSettings.fogEndDistance;
+                _haloStrength.floatValue = RenderSettings.haloStrength;
+                _flareStrength.floatValue = RenderSettings.flareStrength;
+                _flareFadeSpeed.floatValue = RenderSettings.flareFadeSpeed;
             }
 
             rect.x += rect.width;
@@ -231,6 +315,15 @@ namespace GameFramework.EnvironmentSystems.Editor
                 RenderSettings.customReflection = _customReflection.objectReferenceValue as Texture;
                 RenderSettings.reflectionIntensity = _reflectionIntensity.floatValue;
                 RenderSettings.reflectionBounces = _reflectionBounces.intValue;
+                RenderSettings.fog = _fog.boolValue;
+                RenderSettings.fogColor = _fogColor.colorValue;
+                RenderSettings.fogMode = (FogMode)_fogMode.intValue;
+                RenderSettings.fogDensity = _fogDensity.floatValue;
+                RenderSettings.fogStartDistance = _fogStartDistance.floatValue;
+                RenderSettings.fogEndDistance = _fogEndDistance.floatValue;
+                RenderSettings.haloStrength = _haloStrength.floatValue;
+                RenderSettings.flareStrength = _flareStrength.floatValue;
+                RenderSettings.flareFadeSpeed = _flareFadeSpeed.floatValue;
             }
 
             rect.x = position.x;
@@ -247,19 +340,19 @@ namespace GameFramework.EnvironmentSystems.Editor
             var skyboxMaterial = _skyboxMaterial.objectReferenceValue as Material;
             var lineHeight = EditorGUIUtility.singleLineHeight;
             var lineOffsetUnit = lineHeight + EditorGUIUtility.standardVerticalSpacing;
+            var space = 10;
             var totalHeight = 0.0f;
 
             // Sky
-            totalHeight += lineOffsetUnit;
+            totalHeight += lineOffsetUnit * 2;
             
-            // Skybox
-            totalHeight += lineOffsetUnit;
             if (skyboxMaterial != null && !EditorMaterialUtility.IsBackgroundMaterial(skyboxMaterial)) {
                 totalHeight += lineOffsetUnit + lineHeight;
             }
             
-            // Sun
             totalHeight += lineOffsetUnit * 2;
+            
+            totalHeight += space;
             
             // Ambient
             totalHeight += lineOffsetUnit * 2;
@@ -277,8 +370,36 @@ namespace GameFramework.EnvironmentSystems.Editor
                     break;
             }
             
+            totalHeight += space;
+            
             // Reflection
             totalHeight += lineOffsetUnit * 5;
+            
+            totalHeight += space;
+            
+            // Fog
+            totalHeight += lineOffsetUnit * 2;
+            
+            if (_fog.boolValue)
+            {
+                totalHeight += lineOffsetUnit * 2;
+
+                if ((FogMode)_fogMode.intValue != FogMode.Linear)
+                {
+                    totalHeight += lineOffsetUnit;
+                }
+                else
+                {
+                    totalHeight += lineOffsetUnit * 2;
+                }
+            }
+            
+            totalHeight += space;
+            
+            // Other
+            totalHeight += lineOffsetUnit * 4;
+            
+            totalHeight += space;
             
             // Button
             totalHeight += lineOffsetUnit;
@@ -303,6 +424,15 @@ namespace GameFramework.EnvironmentSystems.Editor
             _customReflection = property.FindPropertyRelative("customReflection");
             _reflectionIntensity = property.FindPropertyRelative("reflectionIntensity");
             _reflectionBounces = property.FindPropertyRelative("reflectionBounces");
+            _fog = property.FindPropertyRelative("fog");
+            _fogColor = property.FindPropertyRelative("fogColor");
+            _fogMode = property.FindPropertyRelative("fogMode");
+            _fogDensity = property.FindPropertyRelative("fogDensity");
+            _fogStartDistance = property.FindPropertyRelative("fogStartDistance");
+            _fogEndDistance = property.FindPropertyRelative("fogEndDistance");
+            _haloStrength = property.FindPropertyRelative("haloStrength");
+            _flareStrength = property.FindPropertyRelative("flareStrength");
+            _flareFadeSpeed = property.FindPropertyRelative("flareFadeSpeed");
         }
     }
 }

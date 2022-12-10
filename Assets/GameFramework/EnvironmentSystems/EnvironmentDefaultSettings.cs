@@ -22,6 +22,16 @@ namespace GameFramework.EnvironmentSystems {
         public float reflectionIntensity;
         public int reflectionBounces;
 
+        public bool fog;
+        public Color fogColor;
+        public FogMode fogMode;
+        public float fogDensity;
+        public float fogStartDistance;
+        public float fogEndDistance;
+        public float haloStrength;
+        public float flareStrength;
+        public float flareFadeSpeed;
+
         /// <summary>
         /// 現在の値を取得
         /// </summary>
@@ -40,7 +50,17 @@ namespace GameFramework.EnvironmentSystems {
                 defaultReflectionResolution = RenderSettings.defaultReflectionResolution,
                 customReflection = RenderSettings.customReflection,
                 reflectionIntensity = RenderSettings.reflectionIntensity,
-                reflectionBounces = RenderSettings.reflectionBounces
+                reflectionBounces = RenderSettings.reflectionBounces,
+                
+                fog = RenderSettings.fog,
+                fogColor = RenderSettings.fogColor,
+                fogMode = RenderSettings.fogMode,
+                fogDensity = RenderSettings.fogDensity,
+                fogStartDistance = RenderSettings.fogStartDistance,
+                fogEndDistance = RenderSettings.fogEndDistance,
+                haloStrength = RenderSettings.haloStrength,
+                flareStrength = RenderSettings.flareStrength,
+                flareFadeSpeed = RenderSettings.flareFadeSpeed
             };
         }
 
@@ -61,6 +81,16 @@ namespace GameFramework.EnvironmentSystems {
             RenderSettings.customReflection = customReflection;
             RenderSettings.reflectionIntensity = reflectionIntensity;
             RenderSettings.reflectionBounces = reflectionBounces;
+
+            RenderSettings.fog = fog;
+            RenderSettings.fogColor = fogColor;
+            RenderSettings.fogMode = fogMode;
+            RenderSettings.fogDensity = fogDensity;
+            RenderSettings.fogStartDistance = fogStartDistance;
+            RenderSettings.fogEndDistance = fogEndDistance;
+            RenderSettings.haloStrength = haloStrength;
+            RenderSettings.flareStrength = flareStrength;
+            RenderSettings.flareFadeSpeed = flareFadeSpeed;
         }
 
         /// <summary>
@@ -76,6 +106,14 @@ namespace GameFramework.EnvironmentSystems {
             newSettings.ambientGroundColor = Color.Lerp(ambientGroundColor, target.ambientGroundColor, ratio);
             newSettings.ambientIntensity = Mathf.Lerp(ambientIntensity, target.ambientIntensity, ratio);
             newSettings.reflectionIntensity = Mathf.Lerp(reflectionIntensity, target.reflectionIntensity, ratio);
+
+            newSettings.fogColor = Color.Lerp(fogColor, target.fogColor, ratio);
+            newSettings.fogDensity = Mathf.Lerp(fogDensity, target.fogDensity, ratio);
+            newSettings.fogStartDistance = Mathf.Lerp(fogStartDistance, target.fogStartDistance, ratio);
+            newSettings.fogEndDistance = Mathf.Lerp(fogEndDistance, target.fogEndDistance, ratio);
+            newSettings.haloStrength = Mathf.Lerp(haloStrength, target.haloStrength, ratio);
+            newSettings.flareStrength = Mathf.Lerp(flareStrength, target.flareStrength, ratio);
+            newSettings.flareFadeSpeed = Mathf.Lerp(flareFadeSpeed, target.flareFadeSpeed, ratio);
             return newSettings;
         }
     }

@@ -12,10 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b85b23ea6b2a4b4469708a5226219cbd, type: 3}
   m_Name: dat_env_battle
   m_EditorClassIdentifier: 
-  _skybox: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
-  _ambientMode: 1
-  _ambientIntensity: 1
-  _ambientSkyColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
-  _ambientEquatorColor: {r: 0.6737718, g: 0.7470428, b: 0.9716981, a: 1}
-  _ambientGroundColor: {r: 1, g: 0.966144, b: 0.8820755, a: 1}
-  _ambientLight: {r: 1, g: 1, b: 1, a: 1}
+  defaultSettings:
+    sun: {fileID: 0}
+    subtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+    ambientMode: 1
+    ambientSkyColor: {r: 0.05271268, g: 1, b: 0, a: 1}
+    ambientEquatorColor: {r: 1, g: 0.04171858, b: 0, a: 1}
+    ambientGroundColor: {r: 0.6698113, g: 0, b: 0.13523331, a: 1}
+    ambientIntensity: 1
+    skyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+    defaultReflectionMode: 0
+    defaultReflectionResolution: 128
+    customReflection: {fileID: 0}
+    reflectionIntensity: 1
+    reflectionBounces: 1
+    fog: 1
+    fogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    fogMode: 3
+    fogDensity: 0.01
+    fogStartDistance: 0
+    fogEndDistance: 300
+    haloStrength: 0.5
+    flareStrength: 1
+    flareFadeSpeed: 3
