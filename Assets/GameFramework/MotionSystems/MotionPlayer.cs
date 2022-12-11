@@ -175,7 +175,7 @@ namespace GameFramework.MotionSystems {
                 playableSpeed = deltaTime / baseDeltaTime;
             }
 
-            void UpdateProvider(IMotionPlayableProvider provider, float time) {
+            void UpdateMotionPlayableProvider(IMotionPlayableProvider provider, float time) {
                 if (provider == null) {
                     return;
                 }
@@ -184,9 +184,17 @@ namespace GameFramework.MotionSystems {
                 provider.Playable.SetSpeed(playableSpeed);
             }
 
-            // Providerの更新
-            UpdateProvider(_prevMotionPlayableProvider, _prevTime);
-            UpdateProvider(_currentMotionPlayableProvider, _currentTime);
+            // MotionPlayableProviderの更新
+            UpdateMotionPlayableProvider(_prevMotionPlayableProvider, _prevTime);
+            UpdateMotionPlayableProvider(_currentMotionPlayableProvider, _currentTime);
+            
+            // JobProviderの更新
+            foreach (var info in _animationJobInfos) {
+                if (info.dispose) {
+                    continue;
+                }
+                info.provider.Update(info.playable, deltaTime);
+            }
 
             // Manualモードの場合、ここで骨の更新を行う
             if (updateMode == DirectorUpdateMode.Manual) {

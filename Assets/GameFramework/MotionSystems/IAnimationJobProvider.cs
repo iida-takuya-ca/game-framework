@@ -10,6 +10,13 @@ namespace GameFramework.MotionSystems {
         /// 実行順
         /// </summary>
         int ExecutionOrder { get; }
+
+        /// <summary>
+        /// 更新処理
+        /// </summary>
+        /// <param name="playable">Jobを保持しているPlayable</param>
+        /// <param name="deltaTime">変位時間</param>
+        void Update(AnimationScriptPlayable playable, float deltaTime);
     }
 
     /// <summary>

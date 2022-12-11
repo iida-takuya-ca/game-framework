@@ -112,6 +112,14 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
+        /// 更新処理
+        /// </summary>
+        /// <param name="playable">Jobを保持しているPlayable</param>
+        /// <param name="deltaTime">変位時間</param>
+        void IAnimationJobProvider.Update(AnimationScriptPlayable playable, float deltaTime) {
+        }
+
+        /// <summary>
         /// 廃棄時処理
         /// </summary>
         void IDisposable.Dispose() {
