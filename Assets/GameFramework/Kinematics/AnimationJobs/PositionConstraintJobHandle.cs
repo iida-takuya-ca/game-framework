@@ -17,13 +17,13 @@ namespace GameFramework.Kinematics {
         [ReadOnly]
         public float3 offsetPosition;
         [ReadOnly]
-        public ConstraintAnimationJobParameter constraintAnimationJobParameter;
+        public ConstraintTargetHandle constraintTargetHandle;
 
         /// <summary>
         /// 廃棄処理
         /// </summary>
         public void Dispose() {
-            constraintAnimationJobParameter.Dispose();
+            constraintTargetHandle.Dispose();
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace GameFramework.Kinematics {
                 offset = math.mul(rot, offset);
             }
 
-            ownerHandle.SetPosition(stream, constraintAnimationJobParameter.GetPosition(stream) + offset);
+            ownerHandle.SetPosition(stream, constraintTargetHandle.GetPosition(stream) + offset);
         }
     }
 }

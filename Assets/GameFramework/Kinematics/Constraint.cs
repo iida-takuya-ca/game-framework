@@ -64,6 +64,7 @@ namespace GameFramework.Kinematics {
                 _sources = value;
                 _targetInfos = value.Select(x => new TargetInfo {
                         source = x,
+                        target = x.target
                     })
                     .ToArray();
                 _normalized = false;
@@ -83,17 +84,8 @@ namespace GameFramework.Kinematics {
 
         /// <summary>
         /// ターゲットのTransform参照をリフレッシュ
-        /// ※Transformの組み替えなどを行った場合に使用(相対Path解決)
         /// </summary>
         public void RefreshTargets(Transform root) {
-            foreach (var source in _sources) {
-                if (source.target != null) {
-                    continue;
-                }
-
-                source.target = transform.Find(source.targetPath);
-            }
-
             _active = false;
 
             for (var i = 0; i < _targetInfos.Length; i++) {
@@ -127,28 +119,26 @@ namespace GameFramework.Kinematics {
         public abstract void ApplyTransform();
 
         /// <summary>
-        /// Constraintの共通ジョブパラメータ取得
+        /// ジョブ用ConstraintのTargetハンドルを生成
         /// </summary>
-        protected unsafe ConstraintAnimationJobParameter CreateJobParameter(Animator animator) {
+        protected ConstraintTargetHandle CreateJobParameter(Animator animator) {
+            NormalizeWeights();
+            
             var infos = _targetInfos.Where(x => x.target != null)
                 .ToArray();
 
-            // Job用パラメータ構築
-            var parameter = new ConstraintAnimationJobParameter();
-            var targetInfos =
-                new NativeArray<ConstraintAnimationJobParameter.TargetInfo>(infos.Length, Allocator.Persistent);
+            // Job用ターゲットハンドル構築
+            var handle = new ConstraintTargetHandle();
+            handle.CreateTargetInfos(infos.Length);
 
             for (var i = 0; i < infos.Length; i++) {
-                targetInfos[i] = new ConstraintAnimationJobParameter.TargetInfo {
+                handle.SetTargetInfo(i, new ConstraintTargetHandle.TargetInfo {
                     normalizedWeight = infos[i].normalizedWeight,
                     targetHandle = animator.BindSceneTransform(infos[i].target)
-                };
+                });
             }
 
-            parameter.targetInfosPtr = (IntPtr)targetInfos.GetUnsafePtr();
-            parameter.targetInfoCount = targetInfos.Length;
-
-            return parameter;
+            return handle;
         }
 
         /// <summary>
@@ -157,7 +147,6 @@ namespace GameFramework.Kinematics {
         protected Vector3 GetTargetPosition() {
             if (!(_normalized && Application.isPlaying)) {
                 NormalizeWeights();
-                _normalized = true;
             }
 
             var position = Vector3.zero;
@@ -179,7 +168,6 @@ namespace GameFramework.Kinematics {
         protected Quaternion GetTargetRotation() {
             if (!(_normalized && Application.isPlaying)) {
                 NormalizeWeights();
-                _normalized = true;
             }
 
             var rotation = Quaternion.identity;
@@ -202,7 +190,6 @@ namespace GameFramework.Kinematics {
         protected Vector3 GetTargetLocalScale() {
             if (!(_normalized && Application.isPlaying)) {
                 NormalizeWeights();
-                _normalized = true;
             }
 
             var scale = Vector3.zero;
@@ -231,6 +218,8 @@ namespace GameFramework.Kinematics {
             foreach (var info in _targetInfos) {
                 info.normalizedWeight = info.source.weight / totalWeight;
             }
+
+            _normalized = true;
         }
 
         /// <summary>
@@ -248,6 +237,13 @@ namespace GameFramework.Kinematics {
 #endif
 
             ApplyTransform();
+        }
+
+        /// <summary>
+        /// 生成時処理
+        /// </summary>
+        private void Awake() {
+            Sources = _sources;
         }
 
         /// <summary>
@@ -270,6 +266,13 @@ namespace GameFramework.Kinematics {
             }
 
             UpdateInternal();
+        }
+
+        /// <summary>
+        /// 値変更時の処理
+        /// </summary>
+        private void OnValidate() {
+            Sources = _sources;
         }
     }
 }

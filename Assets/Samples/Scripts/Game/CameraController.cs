@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
-using GameFramework.Core;
 using GameFramework.Kinematics;
 using GameFramework.TaskSystems;
 using UnityEngine;
@@ -10,7 +9,7 @@ namespace SampleGame {
     /// <summary>
     /// カメラ制御クラス
     /// </summary>
-    public class CameraController : MonoBehaviour, ITask {
+    public class CameraController : MonoBehaviour, ILateUpdatableTask {
         [SerializeField, Tooltip("メインカメラ")]
         private Camera _camera;
         [SerializeField, Tooltip("VirtualCameraのRoot")]
@@ -62,6 +61,12 @@ namespace SampleGame {
         /// 更新処理
         /// </summary>
         void ITask.Update() {
+        }
+
+        /// <summary>
+        /// 更新処理
+        /// </summary>
+        void ILateUpdatableTask.LateUpdate() {
             // Constraint更新
             foreach (var constraint in _constraints) {
                 constraint.ManualUpdate();

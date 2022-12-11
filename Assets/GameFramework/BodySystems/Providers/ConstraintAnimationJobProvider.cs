@@ -12,12 +12,22 @@ namespace GameFramework.BodySystems {
     /// </summary>
     public class ConstraintAnimationJobProvider : IAnimationJobProvider<ConstraintAnimationJobProvider.AnimationJob> {
         /// <summary>
+        /// Countsアクセスする際のIndex
+        /// </summary>
+        private enum CountIndex {
+            Position,
+            Rotation,
+            Parent,
+        }
+        
+        /// <summary>
         /// Job本体
         /// </summary>
-        [BurstCompile]
+        //[BurstCompile]
         public struct AnimationJob : IAnimationJob {
             public NativeSlice<int> handleCounts;
             public NativeSlice<PositionConstraintJobHandle> positionConstraintJobHandles;
+            public NativeSlice<ParentConstraintJobHandle> parentConstraintJobHandles;
 
             /// <summary>
             /// RootMotion更新用
@@ -29,9 +39,13 @@ namespace GameFramework.BodySystems {
             /// 通常のBone更新用
             /// </summary>
             void IAnimationJob.ProcessAnimation(AnimationStream stream) {
-                var positionCount = handleCounts[0];
+                var positionCount = handleCounts[(int)CountIndex.Position];
                 for (var i = 0; i < positionCount; i++) {
                     positionConstraintJobHandles[i].ProcessAnimation(stream);
+                }
+                var parentCount = handleCounts[(int)CountIndex.Parent];
+                for (var i = 0; i < parentCount; i++) {
+                    parentConstraintJobHandles[i].ProcessAnimation(stream);
                 }
             }
         }
@@ -40,6 +54,7 @@ namespace GameFramework.BodySystems {
         private int _handleCountMax;
         private NativeArray<int> _handleCounts;
         private NativeArray<PositionConstraintJobHandle> _positionConstraintJobHandles;
+        private NativeArray<ParentConstraintJobHandle> _parentConstraintJobHandles;
 
         // 実行優先度
         int IAnimationJobProvider.ExecutionOrder => 5;
@@ -51,9 +66,22 @@ namespace GameFramework.BodySystems {
             ClearPositionHandles();
 
             var count = Mathf.Min(_handleCountMax, constraints.Length);
-            _handleCounts[0] = count;
+            _handleCounts[(int)CountIndex.Position] = count;
             for (var i = 0; i < count; i++) {
                 _positionConstraintJobHandles[i] = constraints[i].CreateJobHandle(_animator);
+            }
+        }
+
+        /// <summary>
+        /// JobHandle生成に対応したParentConstraintを設定
+        /// </summary>
+        public void SetConstraint(IJobParentConstraint[] constraints) {
+            ClearParentHandles();
+
+            var count = Mathf.Min(_handleCountMax, constraints.Length);
+            _handleCounts[(int)CountIndex.Parent] = count;
+            for (var i = 0; i < count; i++) {
+                _parentConstraintJobHandles[i] = constraints[i].CreateJobHandle(_animator);
             }
         }
 
@@ -70,13 +98,16 @@ namespace GameFramework.BodySystems {
         /// </summary>
         AnimationJob IAnimationJobProvider<AnimationJob>.Initialize(MotionPlayer player) {
             _animator = player.Animator;
-            _handleCounts = new NativeArray<int>(1, Allocator.Persistent);
+            _handleCounts = new NativeArray<int>(3, Allocator.Persistent);
             _positionConstraintJobHandles =
                 new NativeArray<PositionConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
+            _parentConstraintJobHandles =
+                new NativeArray<ParentConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
 
             return new AnimationJob {
                 handleCounts = _handleCounts,
                 positionConstraintJobHandles = _positionConstraintJobHandles,
+                parentConstraintJobHandles = _parentConstraintJobHandles,
             };
         }
 
@@ -85,9 +116,13 @@ namespace GameFramework.BodySystems {
         /// </summary>
         void IDisposable.Dispose() {
             ClearPositionHandles();
+            ClearParentHandles();
 
             if (_positionConstraintJobHandles.IsCreated) {
                 _positionConstraintJobHandles.Dispose();
+            }
+            if (_parentConstraintJobHandles.IsCreated) {
+                _parentConstraintJobHandles.Dispose();
             }
 
             if (_handleCounts.IsCreated) {
@@ -103,12 +138,28 @@ namespace GameFramework.BodySystems {
                 return;
             }
 
-            var count = _handleCounts[0];
+            var count = _handleCounts[(int)CountIndex.Position];
             for (var i = 0; i < count; i++) {
-                _positionConstraintJobHandles[i].constraintAnimationJobParameter.Dispose();
+                _positionConstraintJobHandles[i].constraintTargetHandle.Dispose();
             }
 
-            _handleCounts[0] = 0;
+            _handleCounts[(int)CountIndex.Position] = 0;
+        }
+
+        /// <summary>
+        /// ParentConstraintHandleの解放(配列は消さない)
+        /// </summary>
+        private void ClearParentHandles() {
+            if (!_handleCounts.IsCreated || !_parentConstraintJobHandles.IsCreated) {
+                return;
+            }
+
+            var count = _handleCounts[(int)CountIndex.Parent];
+            for (var i = 0; i < count; i++) {
+                _parentConstraintJobHandles[i].constraintTargetHandle.Dispose();
+            }
+
+            _handleCounts[(int)CountIndex.Parent] = 0;
         }
     }
 }

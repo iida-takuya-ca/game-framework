@@ -54,7 +54,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// 更新処理
         /// </summary>
-        protected override void UpdateInternal(float deltaTime) {
+        protected override void LateUpdateInternal(float deltaTime) {
             // Jobで更新する場合はここでは更新しない
             if (_jobProvider != null) {
                 return;
@@ -81,6 +81,7 @@ namespace GameFramework.BodySystems {
                 .ToList();
             
             var positionJobHandles = new List<IJobPositionConstraint>();
+            var parentJobHandles = new List<IJobParentConstraint>();
             
             // JobConstraintの列挙
             void AddJobConstraints(IConstraint constraint) {
@@ -89,6 +90,9 @@ namespace GameFramework.BodySystems {
                 }
                 if (constraint is IJobPositionConstraint jobPositionConstraint) {
                     positionJobHandles.Add(jobPositionConstraint);
+                }
+                else if (constraint is IJobParentConstraint jobParentConstraint) {
+                    parentJobHandles.Add(jobParentConstraint);
                 }
             }
             
@@ -110,6 +114,7 @@ namespace GameFramework.BodySystems {
             // JobHandleの登録
             if (_jobProvider != null) {
                 _jobProvider.SetConstraint(positionJobHandles.ToArray());
+                _jobProvider.SetConstraint(parentJobHandles.ToArray());
             }
         }
     }

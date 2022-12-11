@@ -34,7 +34,7 @@ namespace GameFramework.Kinematics {
             handle.space = Settings.space;
             handle.offsetPosition = Settings.offsetPosition;
             handle.ownerHandle = animator.BindStreamTransform(Owner);
-            handle.constraintAnimationJobParameter = CreateJobParameter(animator);
+            handle.constraintTargetHandle = CreateTargetHandle(animator);
             return handle;
         }
 

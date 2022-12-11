@@ -129,28 +129,26 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
-        /// Constraintの共通ジョブパラメータ取得
+        /// ジョブ用ConstraintのTargetハンドルを生成
         /// </summary>
-        protected unsafe ConstraintAnimationJobParameter CreateJobParameter(Animator animator) {
+        protected ConstraintTargetHandle CreateTargetHandle(Animator animator) {
+            NormalizeWeights();
+            
             var infos = _targetInfos.Where(x => x.target != null)
                 .ToArray();
 
-            // Job用パラメータ構築
-            var parameter = new ConstraintAnimationJobParameter();
-            var targetInfos =
-                new NativeArray<ConstraintAnimationJobParameter.TargetInfo>(infos.Length, Allocator.Persistent);
+            // Job用ターゲットハンドル構築
+            var handle = new ConstraintTargetHandle();
+            handle.CreateTargetInfos(infos.Length);
             
             for (var i = 0; i < infos.Length; i++) {
-                targetInfos[i] = new ConstraintAnimationJobParameter.TargetInfo {
+                handle.SetTargetInfo(i, new ConstraintTargetHandle.TargetInfo {
                     normalizedWeight = infos[i].normalizedWeight,
                     targetHandle = animator.BindSceneTransform(infos[i].target)
-                };
+                });
             }
 
-            parameter.targetInfosPtr = (IntPtr)targetInfos.GetUnsafePtr();
-            parameter.targetInfoCount = targetInfos.Length;
-
-            return parameter;
+            return handle;
         }
 
         /// <summary>
@@ -164,7 +162,6 @@ namespace GameFramework.Kinematics {
         protected Vector3 GetTargetPosition() {
             if (!(_normalized && Application.isPlaying)) {
                 NormalizeWeights();
-                _normalized = true;
             }
 
             var position = Vector3.zero;
@@ -186,7 +183,6 @@ namespace GameFramework.Kinematics {
         protected Quaternion GetTargetRotation() {
             if (!(_normalized && Application.isPlaying)) {
                 NormalizeWeights();
-                _normalized = true;
             }
 
             var rotation = Quaternion.identity;
@@ -209,7 +205,6 @@ namespace GameFramework.Kinematics {
         protected Vector3 GetTargetLocalScale() {
             if (!(_normalized && Application.isPlaying)) {
                 NormalizeWeights();
-                _normalized = true;
             }
 
             var scale = Vector3.zero;
@@ -238,6 +233,8 @@ namespace GameFramework.Kinematics {
             foreach (var info in _targetInfos) {
                 info.normalizedWeight = info.source.weight / totalWeight;
             }
+
+            _normalized = true;
         }
     }
 }

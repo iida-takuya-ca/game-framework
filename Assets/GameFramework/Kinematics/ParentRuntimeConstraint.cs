@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
     /// <summary>
     /// 追従コンストレイント
     /// </summary>
-    public class ParentRuntimeConstraint : RuntimeConstraint {
+    public class ParentRuntimeConstraint : RuntimeConstraint, IJobParentConstraint {
         // コンストレイント設定
         public class ConstraintSettings {
             public Space space = Space.Self;
@@ -65,6 +67,21 @@ namespace GameFramework.Kinematics {
                 var offsetScale = Settings.offsetScale;
                 Owner.localScale = Vector3.Scale(GetTargetLocalScale(), offsetScale);
             }
+        }
+
+        /// <summary>
+        /// ジョブハンドルの生成
+        /// </summary>
+        ParentConstraintJobHandle IJobParentConstraint.CreateJobHandle(Animator animator) {
+            var handle = new ParentConstraintJobHandle();
+            handle.space = Settings.space;
+            handle.offsetPosition = Settings.offsetPosition;
+            handle.offsetRotation = quaternion.EulerZXY(Settings.offsetAngles.z, Settings.offsetAngles.x,
+                Settings.offsetAngles.y);
+            handle.offsetScale = Settings.offsetScale;
+            handle.ownerHandle = animator.BindStreamTransform(Owner);
+            handle.constraintTargetHandle = CreateTargetHandle(animator);
+            return handle;
         }
     }
 }
