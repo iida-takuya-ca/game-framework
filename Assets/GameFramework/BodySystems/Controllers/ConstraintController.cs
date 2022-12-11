@@ -43,7 +43,7 @@ namespace GameFramework.BodySystems {
                 meshController.OnRefreshed += RefreshConstraints;
             }
 
-            if (motionController != null) {
+            if (motionController != null && motionController.UseAnimationJob) {
                 _jobProvider = new ConstraintAnimationJobProvider();
                 motionController.Player.AddJob(_jobProvider);
             }

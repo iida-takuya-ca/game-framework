@@ -23,7 +23,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// Job本体
         /// </summary>
-        //[BurstCompile]
+        [BurstCompile]
         public struct AnimationJob : IAnimationJob {
             public NativeSlice<int> handleCounts;
             public NativeSlice<PositionConstraintJobHandle> positionConstraintJobHandles;
@@ -57,7 +57,7 @@ namespace GameFramework.BodySystems {
         private NativeArray<ParentConstraintJobHandle> _parentConstraintJobHandles;
 
         // 実行優先度
-        int IAnimationJobProvider.ExecutionOrder => 5;
+        int IAnimationJobProvider.ExecutionOrder => -5;
 
         /// <summary>
         /// JobHandle生成に対応したPositionConstraintを設定

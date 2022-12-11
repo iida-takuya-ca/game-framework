@@ -262,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _updateMode: 1
+  _useAnimationJob: 0
 --- !u!4 &6163698259360903727 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400056, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
