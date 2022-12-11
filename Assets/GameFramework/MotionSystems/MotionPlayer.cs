@@ -187,12 +187,13 @@ namespace GameFramework.MotionSystems {
             // MotionPlayableProviderの更新
             UpdateMotionPlayableProvider(_prevMotionPlayableProvider, _prevTime);
             UpdateMotionPlayableProvider(_currentMotionPlayableProvider, _currentTime);
-            
+
             // JobProviderの更新
             foreach (var info in _animationJobInfos) {
                 if (info.dispose) {
                     continue;
                 }
+
                 info.provider.Update(info.playable, deltaTime);
             }
 

@@ -82,7 +82,8 @@ namespace GameFramework.Kinematics {
         /// TargetInfo配列情報の構築
         /// </summary>
         public void CreateTargetInfos(int length) {
-            targetInfosPtr = (TargetInfo*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<TargetInfo>() * length, UnsafeUtility.AlignOf<TargetInfo>(), Allocator.Persistent);
+            targetInfosPtr = (TargetInfo*)UnsafeUtility.Malloc(UnsafeUtility.SizeOf<TargetInfo>() * length,
+                UnsafeUtility.AlignOf<TargetInfo>(), Allocator.Persistent);
             targetInfosCount = length;
         }
 

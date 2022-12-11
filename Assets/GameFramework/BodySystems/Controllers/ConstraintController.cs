@@ -59,7 +59,7 @@ namespace GameFramework.BodySystems {
             if (_jobProvider != null) {
                 return;
             }
-            
+
             // 各種Transform更新
             foreach (var constraint in _constraints) {
                 constraint.ManualUpdate();
@@ -79,37 +79,42 @@ namespace GameFramework.BodySystems {
             _constraints = bodyTransform.GetComponentsInChildren<IConstraint>(true)
                 .Where(x => x != null)
                 .ToList();
-            
+
             var positionJobHandles = new List<IJobPositionConstraint>();
             var rotationJobHandles = new List<IJobRotationConstraint>();
+            var scaleJobHandles = new List<IJobScaleConstraint>();
             var parentJobHandles = new List<IJobParentConstraint>();
-            
+
             // JobConstraintの列挙
             void AddJobConstraints(IConstraint constraint) {
                 if (_jobProvider == null) {
                     return;
                 }
+
                 if (constraint is IJobPositionConstraint jobPositionConstraint) {
                     positionJobHandles.Add(jobPositionConstraint);
                 }
                 else if (constraint is IJobRotationConstraint jobRotationConstraint) {
                     rotationJobHandles.Add(jobRotationConstraint);
                 }
+                else if (constraint is IJobScaleConstraint jobScaleConstraint) {
+                    scaleJobHandles.Add(jobScaleConstraint);
+                }
                 else if (constraint is IJobParentConstraint jobParentConstraint) {
                     parentJobHandles.Add(jobParentConstraint);
                 }
             }
-            
+
             // ターゲット情報の更新＆JobHandleの列挙
             foreach (var constraint in _constraints) {
                 if (constraint is Constraint c) {
                     c.UpdateMode = Constraint.Mode.Manual;
                 }
-            
+
                 constraint.RefreshTargets(bodyTransform);
                 AddJobConstraints(constraint);
             }
-            
+
             foreach (var constraint in _customConstraints) {
                 constraint.RefreshTargets(bodyTransform);
                 AddJobConstraints(constraint);
@@ -119,6 +124,7 @@ namespace GameFramework.BodySystems {
             if (_jobProvider != null) {
                 _jobProvider.SetConstraint(positionJobHandles.ToArray());
                 _jobProvider.SetConstraint(rotationJobHandles.ToArray());
+                _jobProvider.SetConstraint(scaleJobHandles.ToArray());
                 _jobProvider.SetConstraint(parentJobHandles.ToArray());
             }
         }

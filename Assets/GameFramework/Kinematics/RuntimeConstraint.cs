@@ -133,14 +133,14 @@ namespace GameFramework.Kinematics {
         /// </summary>
         protected ConstraintTargetHandle CreateTargetHandle(Animator animator) {
             NormalizeWeights();
-            
+
             var infos = _targetInfos.Where(x => x.target != null)
                 .ToArray();
 
             // Job用ターゲットハンドル構築
             var handle = new ConstraintTargetHandle();
             handle.CreateTargetInfos(infos.Length);
-            
+
             for (var i = 0; i < infos.Length; i++) {
                 handle.SetTargetInfo(i, new ConstraintTargetHandle.TargetInfo {
                     normalizedWeight = infos[i].normalizedWeight,

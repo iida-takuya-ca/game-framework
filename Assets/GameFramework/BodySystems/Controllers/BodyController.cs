@@ -8,7 +8,7 @@ namespace GameFramework.BodySystems {
     public abstract class BodyController : IBodyController {
         private CustomSampler _updateSampler;
         private CustomSampler _lateUpdateSampler;
-        
+
         // 実行優先度
         public virtual int ExecutionOrder => 0;
         // 制御対象のBody
@@ -20,7 +20,7 @@ namespace GameFramework.BodySystems {
         void IBodyController.Initialize(Body body) {
             _updateSampler = CustomSampler.Create($"BodyController.{GetType().Name}.Update()");
             _lateUpdateSampler = CustomSampler.Create($"BodyController.{GetType().Name}.LateUpdate()");
-            
+
             Body = body;
             InitializeInternal();
         }

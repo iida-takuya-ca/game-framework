@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
     /// <summary>
     /// 拡大縮小コンストレイント
     /// </summary>
-    public class ScaleRuntimeConstraint : RuntimeConstraint {
+    public class ScaleRuntimeConstraint : RuntimeConstraint, IJobScaleConstraint {
         // コンストレイント設定
         public class ConstraintSettings {
             public Vector3 offsetScale = Vector3.one;
@@ -22,6 +23,17 @@ namespace GameFramework.Kinematics {
 
         public ScaleRuntimeConstraint(Transform owner, Transform target)
             : base(owner, target) {
+        }
+
+        /// <summary>
+        /// ジョブ要素の生成
+        /// </summary>
+        ScaleConstraintJobHandle IJobScaleConstraint.CreateJobHandle(Animator animator) {
+            var handle = new ScaleConstraintJobHandle();
+            handle.offsetScale = Settings.offsetScale;
+            handle.ownerHandle = animator.BindStreamTransform(Owner);
+            handle.constraintTargetHandle = CreateTargetHandle(animator);
+            return handle;
         }
 
         /// <summary>

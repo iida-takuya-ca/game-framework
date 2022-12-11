@@ -17,9 +17,10 @@ namespace GameFramework.BodySystems {
         private enum CountIndex {
             Position,
             Rotation,
+            Scale,
             Parent,
         }
-        
+
         /// <summary>
         /// Job本体
         /// </summary>
@@ -28,6 +29,7 @@ namespace GameFramework.BodySystems {
             public NativeSlice<int> handleCounts;
             public NativeSlice<PositionConstraintJobHandle> positionConstraintJobHandles;
             public NativeSlice<RotationConstraintJobHandle> rotationConstraintJobHandles;
+            public NativeSlice<ScaleConstraintJobHandle> scaleConstraintJobHandles;
             public NativeSlice<ParentConstraintJobHandle> parentConstraintJobHandles;
 
             /// <summary>
@@ -49,7 +51,12 @@ namespace GameFramework.BodySystems {
                 for (var i = 0; i < rotationCount; i++) {
                     rotationConstraintJobHandles[i].ProcessAnimation(stream);
                 }
-                
+
+                var scaleCount = handleCounts[(int)CountIndex.Scale];
+                for (var i = 0; i < scaleCount; i++) {
+                    scaleConstraintJobHandles[i].ProcessAnimation(stream);
+                }
+
                 var parentCount = handleCounts[(int)CountIndex.Parent];
                 for (var i = 0; i < parentCount; i++) {
                     parentConstraintJobHandles[i].ProcessAnimation(stream);
@@ -62,6 +69,7 @@ namespace GameFramework.BodySystems {
         private NativeArray<int> _handleCounts;
         private NativeArray<PositionConstraintJobHandle> _positionConstraintJobHandles;
         private NativeArray<RotationConstraintJobHandle> _rotationConstraintJobHandles;
+        private NativeArray<ScaleConstraintJobHandle> _scaleConstraintJobHandles;
         private NativeArray<ParentConstraintJobHandle> _parentConstraintJobHandles;
 
         // 実行優先度
@@ -90,6 +98,19 @@ namespace GameFramework.BodySystems {
             _handleCounts[(int)CountIndex.Rotation] = count;
             for (var i = 0; i < count; i++) {
                 _rotationConstraintJobHandles[i] = constraints[i].CreateJobHandle(_animator);
+            }
+        }
+
+        /// <summary>
+        /// JobHandle生成に対応したScaleConstraintを設定
+        /// </summary>
+        public void SetConstraint(IJobScaleConstraint[] constraints) {
+            ClearScaleHandles();
+
+            var count = Mathf.Min(_handleCountMax, constraints.Length);
+            _handleCounts[(int)CountIndex.Scale] = count;
+            for (var i = 0; i < count; i++) {
+                _scaleConstraintJobHandles[i] = constraints[i].CreateJobHandle(_animator);
             }
         }
 
@@ -124,6 +145,8 @@ namespace GameFramework.BodySystems {
                 new NativeArray<PositionConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
             _rotationConstraintJobHandles =
                 new NativeArray<RotationConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
+            _scaleConstraintJobHandles =
+                new NativeArray<ScaleConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
             _parentConstraintJobHandles =
                 new NativeArray<ParentConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
 
@@ -131,6 +154,7 @@ namespace GameFramework.BodySystems {
                 handleCounts = _handleCounts,
                 positionConstraintJobHandles = _positionConstraintJobHandles,
                 rotationConstraintJobHandles = _rotationConstraintJobHandles,
+                scaleConstraintJobHandles = _scaleConstraintJobHandles,
                 parentConstraintJobHandles = _parentConstraintJobHandles,
             };
         }
@@ -149,14 +173,21 @@ namespace GameFramework.BodySystems {
         void IDisposable.Dispose() {
             ClearPositionHandles();
             ClearRotationHandles();
+            ClearScaleHandles();
             ClearParentHandles();
 
             if (_positionConstraintJobHandles.IsCreated) {
                 _positionConstraintJobHandles.Dispose();
             }
+
             if (_rotationConstraintJobHandles.IsCreated) {
                 _rotationConstraintJobHandles.Dispose();
             }
+
+            if (_scaleConstraintJobHandles.IsCreated) {
+                _scaleConstraintJobHandles.Dispose();
+            }
+
             if (_parentConstraintJobHandles.IsCreated) {
                 _parentConstraintJobHandles.Dispose();
             }
@@ -196,6 +227,22 @@ namespace GameFramework.BodySystems {
             }
 
             _handleCounts[(int)CountIndex.Rotation] = 0;
+        }
+
+        /// <summary>
+        /// ScaleConstraintHandleの解放(配列は消さない)
+        /// </summary>
+        private void ClearScaleHandles() {
+            if (!_handleCounts.IsCreated || !_scaleConstraintJobHandles.IsCreated) {
+                return;
+            }
+
+            var count = _handleCounts[(int)CountIndex.Scale];
+            for (var i = 0; i < count; i++) {
+                _scaleConstraintJobHandles[i].constraintTargetHandle.Dispose();
+            }
+
+            _handleCounts[(int)CountIndex.Scale] = 0;
         }
 
         /// <summary>

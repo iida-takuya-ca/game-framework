@@ -123,7 +123,7 @@ namespace GameFramework.Kinematics {
         /// </summary>
         protected ConstraintTargetHandle CreateTargetHandle(Animator animator) {
             NormalizeWeights();
-            
+
             var infos = _targetInfos.Where(x => x.target != null)
                 .ToArray();
 
