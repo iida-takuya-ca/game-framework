@@ -81,6 +81,7 @@ namespace GameFramework.BodySystems {
                 .ToList();
             
             var positionJobHandles = new List<IJobPositionConstraint>();
+            var rotationJobHandles = new List<IJobRotationConstraint>();
             var parentJobHandles = new List<IJobParentConstraint>();
             
             // JobConstraintの列挙
@@ -90,6 +91,9 @@ namespace GameFramework.BodySystems {
                 }
                 if (constraint is IJobPositionConstraint jobPositionConstraint) {
                     positionJobHandles.Add(jobPositionConstraint);
+                }
+                else if (constraint is IJobRotationConstraint jobRotationConstraint) {
+                    rotationJobHandles.Add(jobRotationConstraint);
                 }
                 else if (constraint is IJobParentConstraint jobParentConstraint) {
                     parentJobHandles.Add(jobParentConstraint);
@@ -114,6 +118,7 @@ namespace GameFramework.BodySystems {
             // JobHandleの登録
             if (_jobProvider != null) {
                 _jobProvider.SetConstraint(positionJobHandles.ToArray());
+                _jobProvider.SetConstraint(rotationJobHandles.ToArray());
                 _jobProvider.SetConstraint(parentJobHandles.ToArray());
             }
         }

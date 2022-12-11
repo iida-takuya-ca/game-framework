@@ -1,11 +1,13 @@
 ﻿using System;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
     /// <summary>
     /// 姿勢コンストレイント
     /// </summary>
-    public class RotationConstraint : Constraint {
+    public class RotationConstraint : Constraint, IJobRotationConstraint {
         // コンストレイント設定
         [Serializable]
         public class ConstraintSettings {
@@ -61,6 +63,18 @@ namespace GameFramework.Kinematics {
             else {
                 transform.rotation = offset * GetTargetRotation();
             }
+        }
+
+        /// <summary>
+        /// ジョブ要素の生成
+        /// </summary>
+        RotationConstraintJobHandle IJobRotationConstraint.CreateJobHandle(Animator animator) {
+            var handle = new RotationConstraintJobHandle();
+            handle.space = Settings.space;
+            handle.offsetRotation = quaternion.Euler(Settings.offsetAngles);
+            handle.ownerHandle = animator.BindStreamTransform(transform);
+            handle.constraintTargetHandle = CreateTargetHandle(animator);
+            return handle;
         }
     }
 }

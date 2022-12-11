@@ -103,7 +103,7 @@ namespace GameFramework.Kinematics {
                 _settings.offsetAngles.y);
             handle.offsetScale = _settings.offsetScale;
             handle.ownerHandle = animator.BindStreamTransform(transform);
-            handle.constraintTargetHandle = CreateJobParameter(animator);
+            handle.constraintTargetHandle = CreateTargetHandle(animator);
             return handle;
         }
     }

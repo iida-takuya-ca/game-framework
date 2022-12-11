@@ -27,6 +27,7 @@ namespace GameFramework.BodySystems {
         public struct AnimationJob : IAnimationJob {
             public NativeSlice<int> handleCounts;
             public NativeSlice<PositionConstraintJobHandle> positionConstraintJobHandles;
+            public NativeSlice<RotationConstraintJobHandle> rotationConstraintJobHandles;
             public NativeSlice<ParentConstraintJobHandle> parentConstraintJobHandles;
 
             /// <summary>
@@ -43,6 +44,12 @@ namespace GameFramework.BodySystems {
                 for (var i = 0; i < positionCount; i++) {
                     positionConstraintJobHandles[i].ProcessAnimation(stream);
                 }
+
+                var rotationCount = handleCounts[(int)CountIndex.Rotation];
+                for (var i = 0; i < rotationCount; i++) {
+                    rotationConstraintJobHandles[i].ProcessAnimation(stream);
+                }
+                
                 var parentCount = handleCounts[(int)CountIndex.Parent];
                 for (var i = 0; i < parentCount; i++) {
                     parentConstraintJobHandles[i].ProcessAnimation(stream);
@@ -54,6 +61,7 @@ namespace GameFramework.BodySystems {
         private int _handleCountMax;
         private NativeArray<int> _handleCounts;
         private NativeArray<PositionConstraintJobHandle> _positionConstraintJobHandles;
+        private NativeArray<RotationConstraintJobHandle> _rotationConstraintJobHandles;
         private NativeArray<ParentConstraintJobHandle> _parentConstraintJobHandles;
 
         // 実行優先度
@@ -69,6 +77,19 @@ namespace GameFramework.BodySystems {
             _handleCounts[(int)CountIndex.Position] = count;
             for (var i = 0; i < count; i++) {
                 _positionConstraintJobHandles[i] = constraints[i].CreateJobHandle(_animator);
+            }
+        }
+
+        /// <summary>
+        /// JobHandle生成に対応したRotationConstraintを設定
+        /// </summary>
+        public void SetConstraint(IJobRotationConstraint[] constraints) {
+            ClearRotationHandles();
+
+            var count = Mathf.Min(_handleCountMax, constraints.Length);
+            _handleCounts[(int)CountIndex.Rotation] = count;
+            for (var i = 0; i < count; i++) {
+                _rotationConstraintJobHandles[i] = constraints[i].CreateJobHandle(_animator);
             }
         }
 
@@ -101,12 +122,15 @@ namespace GameFramework.BodySystems {
             _handleCounts = new NativeArray<int>(3, Allocator.Persistent);
             _positionConstraintJobHandles =
                 new NativeArray<PositionConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
+            _rotationConstraintJobHandles =
+                new NativeArray<RotationConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
             _parentConstraintJobHandles =
                 new NativeArray<ParentConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
 
             return new AnimationJob {
                 handleCounts = _handleCounts,
                 positionConstraintJobHandles = _positionConstraintJobHandles,
+                rotationConstraintJobHandles = _rotationConstraintJobHandles,
                 parentConstraintJobHandles = _parentConstraintJobHandles,
             };
         }
@@ -124,10 +148,14 @@ namespace GameFramework.BodySystems {
         /// </summary>
         void IDisposable.Dispose() {
             ClearPositionHandles();
+            ClearRotationHandles();
             ClearParentHandles();
 
             if (_positionConstraintJobHandles.IsCreated) {
                 _positionConstraintJobHandles.Dispose();
+            }
+            if (_rotationConstraintJobHandles.IsCreated) {
+                _rotationConstraintJobHandles.Dispose();
             }
             if (_parentConstraintJobHandles.IsCreated) {
                 _parentConstraintJobHandles.Dispose();
@@ -152,6 +180,22 @@ namespace GameFramework.BodySystems {
             }
 
             _handleCounts[(int)CountIndex.Position] = 0;
+        }
+
+        /// <summary>
+        /// RotationConstraintHandleの解放(配列は消さない)
+        /// </summary>
+        private void ClearRotationHandles() {
+            if (!_handleCounts.IsCreated || !_rotationConstraintJobHandles.IsCreated) {
+                return;
+            }
+
+            var count = _handleCounts[(int)CountIndex.Rotation];
+            for (var i = 0; i < count; i++) {
+                _rotationConstraintJobHandles[i].constraintTargetHandle.Dispose();
+            }
+
+            _handleCounts[(int)CountIndex.Rotation] = 0;
         }
 
         /// <summary>

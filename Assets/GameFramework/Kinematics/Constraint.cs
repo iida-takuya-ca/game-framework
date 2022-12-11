@@ -121,7 +121,7 @@ namespace GameFramework.Kinematics {
         /// <summary>
         /// ジョブ用ConstraintのTargetハンドルを生成
         /// </summary>
-        protected ConstraintTargetHandle CreateJobParameter(Animator animator) {
+        protected ConstraintTargetHandle CreateTargetHandle(Animator animator) {
             NormalizeWeights();
             
             var infos = _targetInfos.Where(x => x.target != null)
