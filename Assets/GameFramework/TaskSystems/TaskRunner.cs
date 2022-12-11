@@ -216,8 +216,8 @@ namespace GameFramework.TaskSystems {
             if (!_taskGroupInfos.TryGetValue(executionOrder, out var groupInfo)) {
                 groupInfo = new TaskGroupInfo();
                 groupInfo.samplers = new[] {
-                    CustomSampler.Create($"Task Update[{executionOrder}]"),
-                    CustomSampler.Create($"Task LateUpdate[{executionOrder}]"),
+                    CustomSampler.Create($"Task Update()[{executionOrder}]"),
+                    CustomSampler.Create($"Task LateUpdate()[{executionOrder}]"),
                 };
                 _taskGroupInfos[executionOrder] = groupInfo;
             }
@@ -248,8 +248,8 @@ namespace GameFramework.TaskSystems {
                     status = TaskStatus.Active,
                     task = task,
                     samplers = new[] {
-                        CustomSampler.Create($"{taskType}.Update"),
-                        CustomSampler.Create($"{taskType}.LateUpdate")
+                        CustomSampler.Create($"{taskType}.Update()"),
+                        CustomSampler.Create($"{taskType}.LateUpdate()")
                     }
                 };
                 groupInfo.taskInfos.Add(info);
