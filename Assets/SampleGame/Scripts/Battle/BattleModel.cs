@@ -69,21 +69,21 @@ namespace SampleGame {
             // 必要なアセット読み込み
             var masterData = default(BattlePlayerMasterData);
             yield return new BattlePlayerMasterDataAssetRequest("pl001")
-                .LoadAsync()
+                .LoadAsync(scope)
                 .Do(x => masterData = x)
                 .StartAsEnumerator(scope);
             PlayerModel.Update(masterData.name, masterData.assetKey, masterData.healthMax);
 
             var setupData = default(PlayerActorSetupData);
             yield return new PlayerActorSetupDataAssetRequest(masterData.playerActorSetupDataId)
-                .LoadAsync()
+                .LoadAsync(scope)
                 .Do(x => setupData = x)
                 .StartAsEnumerator(scope);
 
             var actionDataList = new PlayerActorActionData[masterData.playerActorActionDataIds.Length];
             yield return masterData.playerActorActionDataIds
                 .Select((x, i) => new PlayerActorActionDataAssetRequest(x)
-                    .LoadAsync()
+                    .LoadAsync(scope)
                     .Do(y => actionDataList[i] = y))
                 .WhenAll()
                 .StartAsEnumerator(scope);

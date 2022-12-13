@@ -13,6 +13,14 @@ namespace SampleGame {
         UI,
         PostSystem,
     }
+    
+    /// <summary>
+    /// AssetProviderのタイプ
+    /// </summary>
+    public enum AssetProviderType {
+        AssetDatabase,
+        Resources,
+    }
 
     /// <summary>
     /// ゲーム用の定義処理

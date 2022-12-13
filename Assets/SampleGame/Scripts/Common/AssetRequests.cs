@@ -1,0 +1,112 @@
+using System;
+using System.Collections.Generic;
+using GameFramework.AssetSystems;
+using GameFramework.Core;
+using UniRx;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace SampleGame {
+    /// <summary>
+    /// Sample用のAssetRequest基底
+    /// </summary>
+    public abstract class AssetRequest<T> : GameFramework.AssetSystems.AssetRequest<T>
+        where T : Object {
+        public override int[] ProviderIndices => new[] { (int)AssetProviderType.AssetDatabase };
+
+        /// <summary>
+        /// アセットの読み込み
+        /// </summary>
+        /// <param name="unloadScope">解放スコープ</param>
+        public IObservable<T> LoadAsync(IScope unloadScope) {
+            return Observable.Create<T>(observer => {
+                var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
+                if (!handle.IsValid) {
+                    observer.OnError(new KeyNotFoundException($"Load failed. {Address}"));
+                    return Disposable.Empty;
+                }
+
+                if (handle.IsDone) {
+                    observer.OnNext(handle.Asset);
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+                
+                // 読み込みを待つ
+                return Observable.EveryUpdate()
+                    .Subscribe(_ => {
+                        if (handle.IsDone) {
+                            observer.OnNext(handle.Asset);
+                            observer.OnCompleted();
+                        }
+                    });
+            });
+        }
+
+        /// <summary>
+        /// Projectフォルダ相対パスを絶対パスにする
+        /// </summary>
+        protected string GetPath(string relativePath) {
+            return $"Assets/SampleGame/{relativePath}";
+        }
+    }
+
+    /// <summary>
+    /// BodyPrefabのAssetRequest基底
+    /// </summary>
+    public abstract class BodyPrefabAssetRequest : AssetRequest<GameObject> {
+        public override string Address { get; }
+
+        public BodyPrefabAssetRequest(string relativePath) {
+            Address = GetPath($"BodyAssets/{relativePath}");
+        }
+    }
+
+    /// <summary>
+    /// DataのAssetRequest基底
+    /// </summary>
+    public abstract class DataAssetRequest<T> : AssetRequest<T>
+        where T : Object {
+        public override string Address { get; }
+
+        public DataAssetRequest(string relativePath) {
+            Address = GetPath($"Data/{relativePath}");
+        }
+    }
+
+    /// <summary>
+    /// PlayerPrefabのAssetRequest
+    /// </summary>
+    public class PlayerPrefabAssetRequest : BodyPrefabAssetRequest {
+        public PlayerPrefabAssetRequest(string assetKey)
+            : base($"Player/{assetKey}/Models/prfb_{assetKey}.prefab") {
+        }
+    }
+
+    /// <summary>
+    /// PlayerActorSetupDataのAssetRequest
+    /// </summary>
+    public class PlayerActorSetupDataAssetRequest : DataAssetRequest<PlayerActorSetupData> {
+        public PlayerActorSetupDataAssetRequest(string assetKey)
+            : base($"PlayerActorSetup/dat_player_actor_setup_{assetKey}.asset") {
+        }
+    }
+
+    /// <summary>
+    /// PlayerActorActionDataのAssetRequest
+    /// </summary>
+    public class PlayerActorActionDataAssetRequest : DataAssetRequest<PlayerActorActionData> {
+        public PlayerActorActionDataAssetRequest(string assetKey)
+            : base($"PlayerActorAction/dat_player_actor_action_{assetKey}.asset") {
+        }
+    }
+
+    /// <summary>
+    /// BattlePlayerMasterDataのAssetRequest
+    /// </summary>
+    public class BattlePlayerMasterDataAssetRequest : DataAssetRequest<BattlePlayerMasterData> {
+        public BattlePlayerMasterDataAssetRequest(string assetKey)
+            : base($"Battle/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset") {
+        }
+    }
+}

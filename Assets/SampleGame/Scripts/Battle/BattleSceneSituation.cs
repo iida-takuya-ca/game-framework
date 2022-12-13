@@ -87,7 +87,7 @@ namespace SampleGame {
 
             // PlayerEntityの生成
             _playerEntity = new Entity();
-            _playerEntity.SetupPlayerAsync(battleModel.PlayerModel)
+            _playerEntity.SetupPlayerAsync(battleModel.PlayerModel, scope)
                 .Subscribe(entity => {
                     // CameraのConstraint設定
                     var playerConstraint = cameraController.GetConstraint<ParentConstraint>("Player");

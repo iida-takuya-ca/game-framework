@@ -1,4 +1,5 @@
 using System.Collections;
+using GameFramework.AssetSystems;
 using GameFramework.Core;
 using GameFramework.EnvironmentSystems;
 using GameFramework.SituationSystems;
@@ -50,10 +51,15 @@ namespace SampleGame {
             DontDestroyOnLoad(_globalObject.gameObject);
             // RootのServiceにインスタンスを登録
             _globalObject.Install(Services.Instance);
-
+            
             // 各種システム初期化
             _taskRunner = new TaskRunner();
             Services.Instance.Set(_taskRunner);
+            var assetManager = new AssetManager();
+            assetManager.Initialize(
+                new AssetDatabaseAssetProvider(),
+                new ResourcesAssetProvider());
+            Services.Instance.Set(assetManager);
             _sceneSituationContainer = new SceneSituationContainer();
             _taskRunner.Register(_sceneSituationContainer);
             var environmentManager = new EnvironmentManager(new EnvironmentResolver());

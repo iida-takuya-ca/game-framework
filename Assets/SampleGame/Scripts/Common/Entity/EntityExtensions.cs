@@ -50,10 +50,10 @@ namespace SampleGame {
         /// <summary>
         /// プレイヤーエンティティの初期化処理
         /// </summary>
-        public static IObservable<Entity> SetupPlayerAsync(this Entity source, BattlePlayerModel model) {
+        public static IObservable<Entity> SetupPlayerAsync(this Entity source, BattlePlayerModel model, IScope scope) {
             return source.SetupAsync(() => {
                 return new PlayerPrefabAssetRequest(model.AssetKey)
-                    .LoadAsync()
+                    .LoadAsync(scope)
                     .Select(prefab => Services.Get<BodyManager>().CreateFromPrefab(prefab));
             }, entity => {
                 var actor = new PlayerActor(entity.GetBody(), model.ActorModel.Setup);
