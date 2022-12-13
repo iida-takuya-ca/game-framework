@@ -1,5 +1,3 @@
-using UnityEngine.SceneManagement;
-
 namespace GameFramework.AssetSystems {
     /// <summary>
     /// シーンアセットリクエスト用ハンドル
@@ -13,8 +11,10 @@ namespace GameFramework.AssetSystems {
 
         // 読み込み完了しているか
         public bool IsDone => _info == null || _info.IsDone;
-        // 読み込んだアセット
-        public Scene Scene => _info?.Scene ?? new Scene();
+        // 読み込んだシーンパス
+        public string ScenePath => _info?.ScenePath ?? "";
+        // エラーメッセージ
+        public string Error => _info?.Error ?? "";
         // 有効なハンドルか
         public bool IsValid => _info != null;
 

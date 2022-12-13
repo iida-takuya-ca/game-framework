@@ -17,5 +17,10 @@ namespace GameFramework.AssetSystems {
         /// 読み込み済みアセット
         /// </summary>
         T Asset { get; }
+        
+        /// <summary>
+        /// エラーメッセージ
+        /// </summary>
+        string Error { get; }
     }
 }

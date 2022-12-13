@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -20,7 +19,7 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// シーンアセットの読み込み
         /// </summary>
-        SceneAssetHandle LoadSceneAsync(string address, LoadSceneMode sceneMode);
+        SceneAssetHandle LoadSceneAsync(string address);
 
         /// <summary>
         /// シーンアセットが含まれているか

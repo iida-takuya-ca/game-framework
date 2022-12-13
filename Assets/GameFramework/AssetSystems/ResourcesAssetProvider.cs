@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace GameFramework.AssetSystems {
@@ -18,6 +17,7 @@ namespace GameFramework.AssetSystems {
 
             bool IAssetInfo<T>.IsDone => _request == null || _request.isDone;
             T IAssetInfo<T>.Asset => (T)_request?.asset;
+            string IAssetInfo<T>.Error => "";
 
             public AssetInfo(ResourceRequest request) {
                 _request = request;
@@ -32,8 +32,15 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
+            private string _scenePath;
+            
             bool ISceneAssetInfo.IsDone => true;
-            Scene ISceneAssetInfo.Scene => new Scene();
+            string ISceneAssetInfo.ScenePath => _scenePath;
+            string ISceneAssetInfo.Error => "";
+
+            public SceneAssetInfo(string scenePath) {
+                _scenePath = scenePath;
+            }
             
             public void Dispose() {
                 // Unloadはしない
@@ -62,9 +69,9 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// シーンアセットの読み込み
         /// </summary>
-        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address, LoadSceneMode sceneMode) {
-            // 常に無効
-            return SceneAssetHandle.Empty;
+        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address) {
+            var info = new SceneAssetInfo(address);
+            return new SceneAssetHandle(info);
         }
 
         /// <summary>

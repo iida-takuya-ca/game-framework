@@ -5,36 +5,38 @@ using GameFramework.SituationSystems;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// シーン遷移に使うシチュエーション
-/// </summary>
-public abstract class SceneSituation : Situation {
-    // シーンのアセットパス
-    public abstract string SceneAssetPath { get; }
-
-    // シーン情報
-    protected Scene Scene { get; private set; }
-
+namespace SampleGame {
     /// <summary>
-    /// 読み込み処理
+    /// シーン遷移に使うシチュエーション
     /// </summary>
-    protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
-        // シーンの切り替え
-        yield return SceneManager.LoadSceneAsync(SceneAssetPath, LoadSceneMode.Single);
+    public abstract class SceneSituation : Situation {
+        // シーンのアセットパス
+        public abstract string SceneAssetPath { get; }
 
-        // シーンの取得
-        Scene = SceneManager.GetActiveScene();
+        // シーン情報
+        protected Scene Scene { get; private set; }
 
-        if (Scene.path != SceneAssetPath && Scene.name != SceneAssetPath) {
-            Debug.LogError($"Failed load scene. [{SceneAssetPath}]");
-        }
+        /// <summary>
+        /// 読み込み処理
+        /// </summary>
+        protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
+            // シーンの切り替え
+            yield return SceneManager.LoadSceneAsync(SceneAssetPath, LoadSceneMode.Single);
 
-        // Serviceのインストール
-        var installers = Scene.GetRootGameObjects()
-            .SelectMany(x => x.GetComponentsInChildren<ServiceLocatorInstaller>(true))
-            .ToArray();
-        foreach (var installer in installers) {
-            installer.Install(ServiceContainer);
+            // シーンの取得
+            Scene = SceneManager.GetActiveScene();
+
+            if (Scene.path != SceneAssetPath && Scene.name != SceneAssetPath) {
+                Debug.LogError($"Failed load scene. [{SceneAssetPath}]");
+            }
+
+            // Serviceのインストール
+            var installers = Scene.GetRootGameObjects()
+                .SelectMany(x => x.GetComponentsInChildren<ServiceLocatorInstaller>(true))
+                .ToArray();
+            foreach (var installer in installers) {
+                installer.Install(ServiceContainer);
+            }
         }
     }
 }

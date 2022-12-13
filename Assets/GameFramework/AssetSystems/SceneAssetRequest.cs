@@ -1,5 +1,4 @@
 using GameFramework.Core;
-using UnityEngine.SceneManagement;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -15,9 +14,8 @@ namespace GameFramework.AssetSystems {
         /// アセットの読み込み
         /// </summary>
         /// <param name="assetManager">読み込みに使用するAssetManager</param>
-        /// <param name="loadSceneMode">シーンの読み込みモード</param>
         /// <param name="unloadScope">解放スコープ</param>
-        public SceneAssetHandle LoadAsync(AssetManager assetManager, LoadSceneMode loadSceneMode, IScope unloadScope) {
+        public SceneAssetHandle LoadAsync(AssetManager assetManager, IScope unloadScope) {
             var address = Address;
             var handle = SceneAssetHandle.Empty;
             
@@ -32,7 +30,7 @@ namespace GameFramework.AssetSystems {
                     continue;
                 }
 
-                handle = provider.LoadSceneAsync(address, loadSceneMode);
+                handle = provider.LoadSceneAsync(address);
                 break;
             }
 

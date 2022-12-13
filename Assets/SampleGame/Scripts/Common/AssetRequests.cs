@@ -35,8 +35,68 @@ namespace SampleGame {
                 // 読み込みを待つ
                 return Observable.EveryUpdate()
                     .Subscribe(_ => {
-                        if (handle.IsDone) {
+                        if (!string.IsNullOrEmpty(handle.Error)) {
+                            observer.OnError(new Exception(handle.Error));
+                        }
+                        else if (handle.IsDone) {
                             observer.OnNext(handle.Asset);
+                            observer.OnCompleted();
+                        }
+                    });
+            });
+        }
+
+        /// <summary>
+        /// Projectフォルダ相対パスを絶対パスにする
+        /// </summary>
+        protected string GetPath(string relativePath) {
+            return $"Assets/SampleGame/{relativePath}";
+        }
+    }
+    
+    /// <summary>
+    /// Sample用のSceneAssetRequest基底
+    /// </summary>
+    public class SceneAssetRequest : GameFramework.AssetSystems.SceneAssetRequest {
+        private string _address;
+
+        public override string Address => _address;
+        public override int[] ProviderIndices => new[] { (int)AssetProviderType.AssetDatabase };
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="relativePath">Scenes以下の相対パス</param>
+        public SceneAssetRequest(string relativePath) {
+            _address = $"Assets/SampleGame/Scenes/{relativePath}";
+        }
+
+        /// <summary>
+        /// アセットの読み込み
+        /// </summary>
+        /// <param name="unloadScope">解放スコープ</param>
+        public IObservable<string> LoadAsync(IScope unloadScope) {
+            return Observable.Create<string>(observer => {
+                var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
+                if (!handle.IsValid) {
+                    observer.OnError(new KeyNotFoundException($"Load scene failed. {Address}"));
+                    return Disposable.Empty;
+                }
+
+                if (handle.IsDone) {
+                    observer.OnNext(handle.ScenePath);
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+                
+                // 読み込みを待つ
+                return Observable.EveryUpdate()
+                    .Subscribe(_ => {
+                        if (!string.IsNullOrEmpty(handle.Error)) {
+                            observer.OnError(new Exception(handle.Error));
+                        }
+                        else if (handle.IsDone) {
+                            observer.OnNext(handle.ScenePath);
                             observer.OnCompleted();
                         }
                     });

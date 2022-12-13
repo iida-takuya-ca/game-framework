@@ -16,6 +16,8 @@ namespace GameFramework.AssetSystems {
         public bool IsDone => _info == null || _info.IsDone;
         // 読み込んだアセット
         public T Asset => _info?.Asset;
+        // エラーメッセージ
+        public string Error => _info?.Error ?? "";
         // 有効なハンドルか
         public bool IsValid => _info != null;
 

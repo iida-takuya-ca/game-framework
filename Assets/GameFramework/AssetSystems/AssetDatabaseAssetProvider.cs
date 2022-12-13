@@ -1,9 +1,6 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.SceneManagement;
 #endif
 
 namespace GameFramework.AssetSystems {
@@ -20,6 +17,7 @@ namespace GameFramework.AssetSystems {
 
             bool IAssetInfo<T>.IsDone => true;
             T IAssetInfo<T>.Asset => _asset;
+            string IAssetInfo<T>.Error => "";
 
             public AssetInfo(T asset) {
                 _asset = asset;
@@ -34,25 +32,14 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private AsyncOperation _asyncOperation;
-            private string _path;
-            private Scene? _scene;
+            private string _scenePath;
             
-            bool ISceneAssetInfo.IsDone => _asyncOperation == null || _asyncOperation.isDone;
-            Scene ISceneAssetInfo.Scene {
-                get {
-                    if (_scene.HasValue) {
-                        return _scene.Value;
-                    }
+            bool ISceneAssetInfo.IsDone => true;
+            string ISceneAssetInfo.ScenePath => _scenePath;
+            string ISceneAssetInfo.Error => "";
 
-                    _scene = SceneManager.GetSceneByPath(_path);
-                    return _scene.Value;
-                }
-            }
-
-            public SceneAssetInfo(AsyncOperation asyncOperation, string path) {
-                _asyncOperation = asyncOperation;
-                _path = path;
+            public SceneAssetInfo(string scenePath) {
+                _scenePath = scenePath;
             }
             
             public void Dispose() {
@@ -90,13 +77,9 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// シーンアセットの読み込み
         /// </summary>
-        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address, LoadSceneMode sceneMode) {
+        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address) {
 #if UNITY_EDITOR
-            var asyncOp = EditorSceneManager.LoadSceneAsyncInPlayMode(address, new LoadSceneParameters {
-                loadSceneMode = sceneMode,
-                localPhysicsMode = LocalPhysicsMode.None
-            });
-            var info = new SceneAssetInfo(asyncOp, address);
+            var info = new SceneAssetInfo(address);
             return new SceneAssetHandle(info);
 #else
             return SceneAssetHandle.Empty;
