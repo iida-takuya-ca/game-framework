@@ -146,6 +146,12 @@ namespace GameFramework.ModelSystems {
         }
 
         /// <summary>
+        /// コンストラクタ使用禁止
+        /// </summary>
+        protected IdModel() {
+        }
+
+        /// <summary>
         /// 生成時処理
         /// </summary>
         private void OnCreated(TKey id) {

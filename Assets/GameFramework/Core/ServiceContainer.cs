@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 namespace GameFramework.Core {
@@ -170,6 +171,64 @@ namespace GameFramework.Core {
         /// <param name="index">インデックス</param>
         T IServiceContainer.Get<T>(int index) {
             return (T)((IServiceContainer)this).Get(typeof(T), index);
+        }
+
+        /// <summary>
+        /// サービスの削除
+        /// <param name="type">登録したインスタンスのタイプ</param>
+        /// </summary>
+        void IServiceContainer.Remove(Type type) {
+            if (!_services.TryGetValue(type, out var service)) {
+                return;
+            }
+
+            if (_autoDispose) {
+                if (service is IDisposable disposable) {
+                    disposable.Dispose();
+                    _disposableServices.Remove(disposable);
+                }
+            }
+
+            _services.Remove(type);
+        }
+
+        /// <summary>
+        /// サービスの削除
+        /// </summary>
+        void IServiceContainer.Remove<T>() {
+            ((IServiceContainer)this).Remove(typeof(T));
+        }
+
+        /// <summary>
+        /// サービスの削除
+        /// <param name="type">登録したインスタンスのタイプ</param>
+        /// <param name="index">インデックス</param>
+        /// </summary>
+        void IServiceContainer.Remove(Type type, int index) {
+            if (!_serviceLists.TryGetValue(type, out var list)) {
+                return;
+            }
+
+            if (index < 0 || index >= list.Count) {
+                return;
+            }
+
+            if (_autoDispose) {
+                if (list[index] is IDisposable disposable) {
+                    disposable.Dispose();
+                    _disposableServices.Remove(disposable);
+                }
+            }
+
+            list[index] = null;
+        }
+
+        /// <summary>
+        /// サービスの削除
+        /// <param name="index">インデックス</param>
+        /// </summary>
+        void IServiceContainer.Remove<T>(int index) {
+            ((IServiceContainer)this).Remove(typeof(T), index);
         }
 
         /// <summary>

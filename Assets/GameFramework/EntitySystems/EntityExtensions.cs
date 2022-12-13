@@ -10,11 +10,7 @@ namespace GameFramework.EntitySystems {
         /// Bodyの検索
         /// </summary>
         public static Body GetBody(this Entity source) {
-            var component = source.GetComponent<BodyEntityComponent>();
-            if (component == null) {
-                return null;
-            }
-
+            var component = source.AddOrGetComponent<BodyEntityComponent>();
             return component.Body;
         }
 
@@ -22,24 +18,16 @@ namespace GameFramework.EntitySystems {
         /// Bodyの設定
         /// </summary>
         public static Entity SetBody(this Entity source, Body body, bool prevDispose = true) {
-            var component = source.GetComponent<BodyEntityComponent>();
-            if (component != null) {
-                return component.SetBody(body, prevDispose);
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<BodyEntityComponent>();
+            return component.SetBody(body, prevDispose);
         }
 
         /// <summary>
         /// Bodyの設定
         /// </summary>
         public static Entity RemoveBody(this Entity source, bool dispose = true) {
-            var component = source.GetComponent<BodyEntityComponent>();
-            if (component != null) {
-                return component.RemoveBody(dispose);
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<BodyEntityComponent>();
+            return component.RemoveBody(dispose);
         }
 
         /// <summary>
@@ -47,11 +35,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static TActor GetCurrentActor<TActor>(this Entity source)
             where TActor : Actor {
-            var component = source.GetComponent<ActorEntityComponent>();
-            if (component == null) {
-                return default;
-            }
-
+            var component = source.AddOrGetComponent<ActorEntityComponent>();
             return component.GetCurrentActor<TActor>();
         }
 
@@ -60,11 +44,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static TActor GetActor<TActor>(this Entity source)
             where TActor : Actor {
-            var component = source.GetComponent<ActorEntityComponent>();
-            if (component == null) {
-                return default;
-            }
-
+            var component = source.AddOrGetComponent<ActorEntityComponent>();
             return component.GetActor<TActor>();
         }
 
@@ -72,36 +52,24 @@ namespace GameFramework.EntitySystems {
         /// Actorを追加
         /// </summary>
         public static Entity AddActor(this Entity source, Actor actor) {
-            var component = source.GetComponent<ActorEntityComponent>();
-            if (component != null) {
-                return component.AddActor(actor);
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<ActorEntityComponent>();
+            return component.AddActor(actor);
         }
 
         /// <summary>
         /// Actorの削除
         /// </summary>
         public static Entity RemoveActor(this Entity source, Actor actor) {
-            var component = source.GetComponent<ActorEntityComponent>();
-            if (component != null) {
-                return component.RemoveActor(actor);
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<ActorEntityComponent>();
+            return component.RemoveActor(actor);
         }
 
         /// <summary>
         /// Actorの全削除
         /// </summary>
         public static Entity RemoveActors(this Entity source) {
-            var component = source.GetComponent<ActorEntityComponent>();
-            if (component != null) {
-                return component.RemoveActors();
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<ActorEntityComponent>();
+            return component.RemoveActors();
         }
 
         /// <summary>
@@ -109,11 +77,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static TLogic GetLogic<TLogic>(this Entity source)
             where TLogic : EntityLogic {
-            var component = source.GetComponent<LogicEntityComponent>();
-            if (component == null) {
-                return null;
-            }
-
+            var component = source.AddOrGetComponent<LogicEntityComponent>();
             return component.GetLogic<TLogic>();
         }
 
@@ -121,12 +85,8 @@ namespace GameFramework.EntitySystems {
         /// Logicを追加
         /// </summary>
         public static Entity AddLogic(this Entity source, EntityLogic logic) {
-            var component = source.GetComponent<LogicEntityComponent>();
-            if (component != null) {
-                return component.AddLogic(logic);
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<LogicEntityComponent>();
+            return component.AddLogic(logic);
         }
 
         /// <summary>
@@ -134,12 +94,8 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static Entity RemoveLogic<TLogic>(this Entity source)
             where TLogic : EntityLogic {
-            var component = source.GetComponent<LogicEntityComponent>();
-            if (component != null) {
-                return component.RemoveLogic<TLogic>();
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<LogicEntityComponent>();
+            return component.RemoveLogic<TLogic>();
         }
 
         /// <summary>
@@ -147,11 +103,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static TModel GetModel<TModel>(this Entity source)
             where TModel : IModel {
-            var component = source.GetComponent<ModelEntityComponent>();
-            if (component == null) {
-                return default;
-            }
-
+            var component = source.AddOrGetComponent<ModelEntityComponent>();
             return component.GetModel<TModel>();
         }
 
@@ -160,12 +112,8 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static Entity SetModel<TModel>(this Entity source, TModel model)
             where TModel : class, IModel {
-            var component = source.GetComponent<ModelEntityComponent>();
-            if (component != null) {
-                return component.SetModel(model);
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<ModelEntityComponent>();
+            return component.SetModel(model);
         }
 
         /// <summary>
@@ -173,12 +121,8 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public static Entity ClearModel<TModel>(this Entity source)
             where TModel : class, IModel {
-            var component = source.GetComponent<ModelEntityComponent>();
-            if (component != null) {
-                return component.ClearModel<TModel>();
-            }
-
-            return source;
+            var component = source.AddOrGetComponent<ModelEntityComponent>();
+            return component.ClearModel<TModel>();
         }
     }
 }

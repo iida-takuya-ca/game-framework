@@ -46,5 +46,29 @@ namespace GameFramework.Core {
         /// </summary>
         /// <param name="index">インデックス</param>
         T Get<T>(int index);
+
+        /// <summary>
+        /// サービスの削除
+        /// <param name="type">登録したインスタンスのタイプ</param>
+        /// </summary>
+        void Remove(Type type);
+
+        /// <summary>
+        /// サービスの削除
+        /// </summary>
+        void Remove<T>();
+
+        /// <summary>
+        /// サービスの削除
+        /// <param name="type">登録したインスタンスのタイプ</param>
+        /// <param name="index">インデックス</param>
+        /// </summary>
+        void Remove(Type type, int index);
+
+        /// <summary>
+        /// サービスの削除
+        /// <param name="index">インデックス</param>
+        /// </summary>
+        void Remove<T>(int index);
     }
 }

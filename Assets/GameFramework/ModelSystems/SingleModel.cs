@@ -129,6 +129,12 @@ namespace GameFramework.ModelSystems {
         }
 
         /// <summary>
+        /// コンストラクタ使用禁止
+        /// </summary>
+        protected SingleModel() {
+        }
+
+        /// <summary>
         /// 生成時処理
         /// </summary>
         private void OnCreated() {

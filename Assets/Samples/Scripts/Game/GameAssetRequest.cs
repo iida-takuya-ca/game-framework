@@ -70,7 +70,7 @@ namespace SampleGame {
     /// </summary>
     public class BattlePlayerMasterDataAssetRequest : GameAssetRequest<BattlePlayerMasterData> {
         public BattlePlayerMasterDataAssetRequest(string assetKey)
-            : base($"Assets/Samples/Data/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset") {
+            : base($"Assets/Samples/Data/Battle/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset") {
         }
     }
 }
