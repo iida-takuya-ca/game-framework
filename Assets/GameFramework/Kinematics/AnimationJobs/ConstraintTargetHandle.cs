@@ -1,10 +1,8 @@
 using System;
-using MacFsWatcher;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.Animations;
 
 namespace GameFramework.Kinematics {
