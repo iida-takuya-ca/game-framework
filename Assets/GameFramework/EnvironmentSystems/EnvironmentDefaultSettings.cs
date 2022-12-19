@@ -18,7 +18,7 @@ namespace GameFramework.EnvironmentSystems {
         public Material skyboxMaterial;
         public DefaultReflectionMode defaultReflectionMode;
         public int defaultReflectionResolution;
-        public Texture customReflection;
+        public Cubemap customReflection;
         public float reflectionIntensity;
         public int reflectionBounces;
 
@@ -48,7 +48,7 @@ namespace GameFramework.EnvironmentSystems {
                 skyboxMaterial = RenderSettings.skybox,
                 defaultReflectionMode = RenderSettings.defaultReflectionMode,
                 defaultReflectionResolution = RenderSettings.defaultReflectionResolution,
-                customReflection = RenderSettings.customReflection,
+                customReflection = (Cubemap)RenderSettings.customReflection,
                 reflectionIntensity = RenderSettings.reflectionIntensity,
                 reflectionBounces = RenderSettings.reflectionBounces,
 
