@@ -1,3 +1,4 @@
+using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
 using UniRx;
@@ -12,6 +13,7 @@ namespace SampleGame {
     public class BattlePlayerLogic : EntityLogic {
         private PlayerActor _actor;
         private BattlePlayerModel _model;
+        private GimmickController _gimmickController;
 
         /// <summary>
         /// コンストラクタ
@@ -19,6 +21,8 @@ namespace SampleGame {
         public BattlePlayerLogic(PlayerActor actor, BattlePlayerModel model) {
             _actor = actor;
             _model = model;
+
+            _gimmickController = _actor.Body.GetController<GimmickController>();
         }
 
         /// <summary>
@@ -79,6 +83,19 @@ namespace SampleGame {
             // テスト用にダメージ発生
             if (Keyboard.current.qKey.wasPressedThisFrame) {
                 _model.AddDamage(1);
+            }
+
+            if (Keyboard.current.tKey.wasPressedThisFrame) {
+                _gimmickController.GetAnimationGimmicks("Test").Resume();
+            }
+            if (Keyboard.current.yKey.wasPressedThisFrame) {
+                _gimmickController.GetAnimationGimmicks("Test").Resume(true);
+            }
+            if (Keyboard.current.gKey.wasPressedThisFrame) {
+                _gimmickController.GetActiveGimmicks("Sphere").Activate();
+            }
+            if (Keyboard.current.hKey.wasPressedThisFrame) {
+                _gimmickController.GetActiveGimmicks("Sphere").Deactivate();
             }
         }
     }

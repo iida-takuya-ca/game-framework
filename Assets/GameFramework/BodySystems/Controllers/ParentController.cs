@@ -87,9 +87,9 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
-        /// 更新処理
+        /// 後更新処理
         /// </summary>
-        protected override void UpdateInternal(float deltaTime) {
+        protected override void LateUpdateInternal(float deltaTime) {
             if (_parent != null) {
                 // 親が無効になっていたら外れる
                 if (!_parent.Body.IsValid) {
