@@ -382,7 +382,7 @@ namespace GameFramework.EnvironmentSystems.Editor {
                     RenderSettings.skybox = _skyboxMaterial.objectReferenceValue as Material;
                     RenderSettings.defaultReflectionMode = (DefaultReflectionMode)_defaultReflectionMode.intValue;
                     RenderSettings.defaultReflectionResolution = _defaultReflectionResolution.intValue;
-                    RenderSettings.customReflection = _customReflection.objectReferenceValue as Texture;
+                    RenderSettings.customReflection = _customReflection.objectReferenceValue as Cubemap;
                     RenderSettings.reflectionIntensity = _reflectionIntensity.floatValue;
                     RenderSettings.reflectionBounces = _reflectionBounces.intValue;
                     RenderSettings.fog = _fog.boolValue;
