@@ -88,6 +88,9 @@ namespace GameFramework.BodySystems.Editor {
                     else if (t.IsSubclassOf(typeof(AnimationGimmick))) {
                         basePath = "Animation/";
                     }
+                    else if (t.IsSubclassOf(typeof(InvokeGimmick))) {
+                        basePath = "Invoke/";
+                    }
                     menu.AddItem(new GUIContent($"{basePath}{t.Name}"), false, () => {
                         serializedObject.Update();
                         gimmickInfosProp.InsertArrayElementAtIndex(gimmickInfosProp.arraySize);
