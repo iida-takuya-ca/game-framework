@@ -27,6 +27,7 @@ namespace GameFramework.BodySystems {
                 gimmick.Deactivate();
             }
         }
+        
         /// <summary>
         /// AnimationGimmickを取得
         /// </summary>
@@ -49,6 +50,22 @@ namespace GameFramework.BodySystems {
         public static void Resume(this AnimationGimmick[] source, bool reverse = false) {
             foreach (var gimmick in source) {
                 gimmick.Resume(reverse);
+            }
+        }
+        
+        /// <summary>
+        /// InvokeGimmickを取得
+        /// </summary>
+        public static InvokeGimmick[] GetInvokeGimmicks(this GimmickController source, string key) {
+            return source.GetGimmicks<InvokeGimmick>(key);
+        }
+        
+        /// <summary>
+        /// Invoke操作
+        /// </summary>
+        public static void Invoke(this InvokeGimmick[] source) {
+            foreach (var gimmick in source) {
+                gimmick.Invoke();
             }
         }
     }
