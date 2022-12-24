@@ -6,7 +6,7 @@ namespace GameFramework.SituationSystems {
     ///
     /// Standby
     ///   LoadRoutine
-    ///     Setup
+    ///     SetupRoutine
     ///       OpenRoutine
     ///         Activate
     ///           Update/LateUpdate
@@ -99,5 +99,15 @@ namespace GameFramework.SituationSystems {
         /// プリロード解除処理
         /// </summary>
         void UnPreLoad();
+
+        /// <summary>
+        /// Active中以外でも処理される更新
+        /// </summary>
+        void SystemUpdate();
+        
+        /// <summary>
+        /// Active中以外でも処理される後更新
+        /// </summary>
+        void SystemLateUpdate();
     }
 }

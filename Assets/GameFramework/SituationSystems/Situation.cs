@@ -47,7 +47,10 @@ namespace GameFramework.SituationSystems {
                 return;
             }
 
-            // Active中はInterfaceのUpdateを呼ぶ
+            // Systemの更新
+            ((ISituation)this).SystemUpdate();
+            
+            // UpdateはActive中のみ
             if (CurrentState == State.Active) {
                 ((ISituation)this).Update();
             }
@@ -66,7 +69,10 @@ namespace GameFramework.SituationSystems {
                 return;
             }
 
-            // Active中はInterfaceのLateUpdateを呼ぶ
+            // Systemの更新
+            ((ISituation)this).SystemLateUpdate();
+
+            // LateUpdateはActive中のみ
             if (CurrentState == State.Active) {
                 ((ISituation)this).LateUpdate();
             }
@@ -311,6 +317,20 @@ namespace GameFramework.SituationSystems {
         }
 
         /// <summary>
+        /// 更新処理
+        /// </summary>
+        void ISituation.SystemUpdate() {
+            UpdateInternal();
+        }
+
+        /// <summary>
+        /// 後更新処理
+        /// </summary>
+        void ISituation.SystemLateUpdate() {
+            LateUpdateInternal();
+        }
+
+        /// <summary>
         /// スタンバイ処理
         /// </summary>
         /// <param name="parent">親シチュエーション</param>
@@ -406,6 +426,18 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         protected virtual SituationContainer CreateContainer() {
             return new SituationContainer();
+        }
+
+        /// <summary>
+        /// Active以外も実行される更新処理(内部用)
+        /// </summary>
+        protected virtual void SystemUpdateInternal() {
+        }
+
+        /// <summary>
+        /// Active以外も実行される後更新処理(内部用)
+        /// </summary>
+        protected virtual void SystemLateUpdateInternal() {
         }
     }
 }
