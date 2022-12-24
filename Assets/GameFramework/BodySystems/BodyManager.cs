@@ -132,6 +132,7 @@ namespace GameFramework.BodySystems {
         private void BuildDefault(IBody body, GameObject gameObject) {
             body.AddController(new LocatorController());
             body.AddController(new ParentController());
+            body.AddController(new MaterialController());
             body.AddController(new MeshController());
             body.AddController(new ConstraintController());
             body.AddController(new GimmickController());

@@ -1,4 +1,5 @@
 ﻿using System;
+using GameFramework.RendererSystems;
 using UnityEngine;
 
 namespace GameFramework.BodySystems {
@@ -14,10 +15,12 @@ namespace GameFramework.BodySystems {
         public class Info {
             [Tooltip("Materialを取得する際のキー")]
             public string key;
-            [Tooltip("MaterialがアサインされているRenderer")]
-            public Renderer renderer;
             [Tooltip("対象のMaterial")]
-            public Material material;
+            public RendererMaterial rendererMaterial;
+
+            public bool IsValid => rendererMaterial.IsValid;
+            public Renderer Renderer => rendererMaterial.renderer;
+            public int MaterialIndex => rendererMaterial.materialIndex;
         }
 
         [Tooltip("マテリアル登録情報")]

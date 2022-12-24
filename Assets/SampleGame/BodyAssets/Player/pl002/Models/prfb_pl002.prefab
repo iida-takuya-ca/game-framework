@@ -413,6 +413,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 100158, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
   m_PrefabInstance: {fileID: 6163698259360508055}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1397715446768674017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163698259360608169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19a861091bec66489e17fc49c074b1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  infos:
+  - key: Gimmick
+    rendererMaterial:
+      renderer: {fileID: 5642248764722789200}
+      materialIndex: 0
+  - key: Gimmick
+    rendererMaterial:
+      renderer: {fileID: 3431424606666122629}
+      materialIndex: 0
 --- !u!114 &2647813858364040039
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -459,6 +480,8 @@ MonoBehaviour:
     gimmick: {fileID: 2647813858364040039}
   - key: Test
     gimmick: {fileID: 3973036872367982476}
+  - key: Test
+    gimmick: {fileID: 455630907055195772}
 --- !u!114 &5670930336253130226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,6 +496,81 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateMode: 1
   _useAnimationJob: 0
+--- !u!114 &455630907055195772
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163698259360608169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 903552c717637af44ae57b5fece70db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateMode: 1
+  _propertyName: _BaseColor
+  _targets:
+  - renderer: {fileID: 3431424606666122629}
+    materialIndex: 0
+  - renderer: {fileID: 5642248764722789200}
+    materialIndex: 0
+  _controlType: 2
+  _duration: 1
+  _curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _looping: 0
+  _gradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
 --- !u!4 &6163698259360903711 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400008, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}

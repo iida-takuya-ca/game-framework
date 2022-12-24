@@ -47,9 +47,16 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// Validate処理
         /// </summary>
+        protected virtual void OnValidateInternal() {}
+        
+        /// <summary>
+        /// Validate処理
+        /// </summary>
         private void OnValidate() {
             // Inspectorに表示しない
             hideFlags |= HideFlags.HideInInspector;
+            
+            OnValidateInternal();
         }
 
         /// <summary>

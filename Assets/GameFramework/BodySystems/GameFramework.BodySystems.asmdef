@@ -1,22 +1,23 @@
 {
-  "name": "GameFramework.BodySystems",
-  "rootNamespace": "",
-  "references": [
-    "GUID:afebead123e02784da390b52d3e15019",
-    "GUID:54a1b6bd4302b8449a4bca44b72cfbfb",
-    "GUID:6f86735331082a34db1f5c5a53a37d19",
-    "GUID:c25024a11fbc13b4e80b1f7403ecdfbc",
-    "GUID:e0cd26848372d4e5c891c569017e11f1",
-    "GUID:2665a8d13d1b3f18800f46e256720795",
-    "GUID:d8b63aba1907145bea998dd612889d6b"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "GameFramework.BodySystems",
+    "rootNamespace": "",
+    "references": [
+        "GUID:afebead123e02784da390b52d3e15019",
+        "GUID:54a1b6bd4302b8449a4bca44b72cfbfb",
+        "GUID:6f86735331082a34db1f5c5a53a37d19",
+        "GUID:c25024a11fbc13b4e80b1f7403ecdfbc",
+        "GUID:14368971c13ea3c44895cfadd2a9c1e0",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
