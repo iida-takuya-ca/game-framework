@@ -100,7 +100,7 @@ namespace GameFramework.SituationSystems {
             ParentContainer = container;
             // Containerの生成
             Container = CreateContainer();
-            // ServiceLocatorの生成
+            // ServiceContainerの生成
             ServiceContainer = new ServiceContainer(Parent?.ServiceContainer ?? Services.Instance);
             StandbyInternal(Parent);
         }

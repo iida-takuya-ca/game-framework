@@ -24,7 +24,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         /// <param name="val">設定する値</param>
         /// <param name="duration">反映にかける時間</param>
-        public void Change(T val, float duration) {
+        public void Change(T val, float duration = 0.0f) {
             _target = val;
             _timer = duration;
         }

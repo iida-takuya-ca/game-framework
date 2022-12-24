@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace GameFramework.SituationSystems {
     /// <summary>
-    /// ServiceLocatorにServiceをインストールするクラス
+    /// ServiceContainerにServiceをインストールするクラス
     /// </summary>
-    public class ServiceLocatorInstaller : MonoBehaviour {
+    public class ServiceContainerInstaller : MonoBehaviour {
         [SerializeField, Tooltip("LocatorにインストールするServiceリスト")]
         private Component[] _installServices = new Component[0];
 

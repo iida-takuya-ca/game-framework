@@ -32,7 +32,7 @@ namespace SampleGame {
 
             // Serviceのインストール
             var installers = Scene.GetRootGameObjects()
-                .SelectMany(x => x.GetComponentsInChildren<ServiceLocatorInstaller>(true))
+                .SelectMany(x => x.GetComponentsInChildren<ServiceContainerInstaller>(true))
                 .ToArray();
             foreach (var installer in installers) {
                 installer.Install(ServiceContainer);

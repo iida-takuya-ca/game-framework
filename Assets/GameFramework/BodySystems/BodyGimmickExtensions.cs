@@ -68,5 +68,21 @@ namespace GameFramework.BodySystems {
                 gimmick.Invoke();
             }
         }
+        
+        /// <summary>
+        /// ChangeGimmickを取得
+        /// </summary>
+        public static ChangeGimmick<T>[] GetChangeGimmicks<T>(this GimmickController source, string key) {
+            return source.GetGimmicks<ChangeGimmick<T>>(key);
+        }
+        
+        /// <summary>
+        /// Change操作
+        /// </summary>
+        public static void Change<T>(this ChangeGimmick<T>[] source, T val, float duration = 0.0f) {
+            foreach (var gimmick in source) {
+                gimmick.Change(val, duration);
+            }
+        }
     }
 }

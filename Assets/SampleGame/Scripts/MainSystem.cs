@@ -12,7 +12,7 @@ namespace SampleGame {
     /// </summary>
     public class MainSystem : MainSystem<MainSystem> {
         [SerializeField]
-        private ServiceLocatorInstaller _globalObject;
+        private ServiceContainerInstaller _globalObject;
 
         private TaskRunner _taskRunner;
         private SceneSituationContainer _sceneSituationContainer;
