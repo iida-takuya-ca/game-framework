@@ -1,0 +1,114 @@
+#if USE_ADDRESSABLES
+
+using System;
+using System.Linq;
+using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
+
+namespace GameFramework.AssetSystems {
+    /// <summary>
+    /// Addressablesを使ったアセット提供用クラス
+    /// </summary>
+    public sealed class AddressablesAssetProvider : IAssetProvider {
+        /// <summary>
+        /// アセット情報
+        /// </summary>
+        private class AssetInfo<T> : IAssetInfo<T>
+            where T : Object {
+            private AsyncOperationHandle<T> _handle;
+
+            bool IAssetInfo<T>.IsDone => _handle.IsDone;
+            T IAssetInfo<T>.Asset => _handle.Result;
+            Exception IAssetInfo<T>.Exception => _handle.OperationException;
+
+            public AssetInfo(AsyncOperationHandle<T> handle) {
+                _handle = handle;
+            }
+
+            public void Dispose() {
+                if (!_handle.IsValid()) {
+                    return;
+                }
+                Addressables.Release(_handle);
+            }
+        }
+
+        /// <summary>
+        /// シーンアセット情報
+        /// </summary>
+        private class SceneAssetInfo : ISceneAssetInfo {
+            private AsyncOperationHandle<SceneInstance> _handle;
+            
+            bool ISceneAssetInfo.IsDone => _handle.IsDone;
+            SceneInstance ISceneAssetInfo.SceneInstance => _handle.Result;
+            Exception ISceneAssetInfo.Exception => _handle.OperationException;
+
+            public SceneAssetInfo(AsyncOperationHandle<SceneInstance> handle) {
+                _handle = handle;
+            }
+            
+            public void Dispose() {
+                if (!_handle.IsValid()) {
+                    return;
+                }
+                Addressables.Release(_handle);
+            }
+        }
+
+        /// <summary>
+        /// 読み込み処理
+        /// </summary>
+        AssetHandle<T> IAssetProvider.LoadAsync<T>(string address) {
+            var operationHandle = Addressables.LoadAssetAsync<T>(address);
+            var assetInfo = new AssetInfo<T>(operationHandle);
+            return new AssetHandle<T>(assetInfo);
+        }
+
+        /// <summary>
+        /// アセットが含まれているか
+        /// </summary>
+        bool IAssetProvider.Contains<T>(string address) {
+            var maps = Addressables.ResourceLocators.OfType<ResourceLocationMap>();
+            
+            // LocationMapにAddressが入っているかチェック
+            foreach (var map in maps) {
+                if (map.Locations.ContainsKey(address)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// シーンアセットの読み込み
+        /// </summary>
+        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address, LoadSceneMode mode) {
+            var operationHandle = Addressables.LoadSceneAsync(address, mode, false);
+            var assetInfo = new SceneAssetInfo(operationHandle);
+            return new SceneAssetHandle(assetInfo);
+        }
+
+        /// <summary>
+        /// シーンアセットが含まれているか
+        /// </summary>
+        bool IAssetProvider.ContainsScene(string address) {
+            var maps = Addressables.ResourceLocators.OfType<ResourceLocationMap>();
+            
+            // LocationMapにAddressが入っているかチェック
+            foreach (var map in maps) {
+                if (map.Locations.ContainsKey(address)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+}
+
+#endif

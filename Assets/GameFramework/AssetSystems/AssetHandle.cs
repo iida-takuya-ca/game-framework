@@ -1,4 +1,5 @@
-using UnityEngine;
+using System;
+using Object = UnityEngine.Object;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -16,8 +17,8 @@ namespace GameFramework.AssetSystems {
         public bool IsDone => _info == null || _info.IsDone;
         // 読み込んだアセット
         public T Asset => _info?.Asset;
-        // エラーメッセージ
-        public string Error => _info?.Error ?? "";
+        // エラー
+        public Exception Exception => _info?.Exception ?? null;
         // 有効なハンドルか
         public bool IsValid => _info != null;
 

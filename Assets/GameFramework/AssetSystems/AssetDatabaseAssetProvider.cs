@@ -1,3 +1,6 @@
+using System;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,7 +20,7 @@ namespace GameFramework.AssetSystems {
 
             bool IAssetInfo<T>.IsDone => true;
             T IAssetInfo<T>.Asset => _asset;
-            string IAssetInfo<T>.Error => "";
+            Exception IAssetInfo<T>.Exception => null;
 
             public AssetInfo(T asset) {
                 _asset = asset;
@@ -32,14 +35,14 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private string _scenePath;
+            private SceneInstance _sceneInstance;
             
             bool ISceneAssetInfo.IsDone => true;
-            string ISceneAssetInfo.ScenePath => _scenePath;
-            string ISceneAssetInfo.Error => "";
+            SceneInstance ISceneAssetInfo.SceneInstance => _sceneInstance;
+            Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
 
-            public SceneAssetInfo(string scenePath) {
-                _scenePath = scenePath;
+            public SceneAssetInfo() {
+                _sceneInstance = new SceneInstance();
             }
             
             public void Dispose() {
@@ -77,9 +80,9 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// シーンアセットの読み込み
         /// </summary>
-        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address) {
+        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address, LoadSceneMode mode) {
 #if UNITY_EDITOR
-            var info = new SceneAssetInfo(address);
+            var info = new SceneAssetInfo();
             return new SceneAssetHandle(info);
 #else
             return SceneAssetHandle.Empty;
@@ -90,13 +93,8 @@ namespace GameFramework.AssetSystems {
         /// シーンアセットが含まれているか
         /// </summary>
         bool IAssetProvider.ContainsScene(string address) {
-#if UNITY_EDITOR
-            // GUIDが存在しなければない扱い
-            var guid = AssetDatabase.AssetPathToGUID(address);
-            return !string.IsNullOrEmpty(guid);
-#else
+            // 常に失敗
             return false;
-#endif
         }
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace GameFramework.AssetSystems {
@@ -17,7 +19,7 @@ namespace GameFramework.AssetSystems {
 
             bool IAssetInfo<T>.IsDone => _request == null || _request.isDone;
             T IAssetInfo<T>.Asset => (T)_request?.asset;
-            string IAssetInfo<T>.Error => "";
+            Exception IAssetInfo<T>.Exception => null;
 
             public AssetInfo(ResourceRequest request) {
                 _request = request;
@@ -32,14 +34,14 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private string _scenePath;
+            private SceneInstance _sceneInstance;
             
             bool ISceneAssetInfo.IsDone => true;
-            string ISceneAssetInfo.ScenePath => _scenePath;
-            string ISceneAssetInfo.Error => "";
+            SceneInstance ISceneAssetInfo.SceneInstance => _sceneInstance;
+            Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
 
-            public SceneAssetInfo(string scenePath) {
-                _scenePath = scenePath;
+            public SceneAssetInfo() {
+                _sceneInstance = new SceneInstance();
             }
             
             public void Dispose() {
@@ -69,8 +71,8 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// シーンアセットの読み込み
         /// </summary>
-        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address) {
-            var info = new SceneAssetInfo(address);
+        SceneAssetHandle IAssetProvider.LoadSceneAsync(string address, LoadSceneMode mode) {
+            var info = new SceneAssetInfo();
             return new SceneAssetHandle(info);
         }
 

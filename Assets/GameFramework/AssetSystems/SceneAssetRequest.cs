@@ -1,10 +1,13 @@
 using GameFramework.Core;
+using UnityEngine.SceneManagement;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
     /// シーンアセット読み込みリクエスト
     /// </summary>
     public abstract class SceneAssetRequest {
+        // 読み込みモード
+        public abstract LoadSceneMode Mode { get; }
         // 読み込み用のAddress
         public abstract string Address { get; }
         // 読み込みに使用するProviderのIndex配列（順番にフォールバック）
@@ -30,7 +33,7 @@ namespace GameFramework.AssetSystems {
                     continue;
                 }
 
-                handle = provider.LoadSceneAsync(address);
+                handle = provider.LoadSceneAsync(address, Mode);
                 break;
             }
 

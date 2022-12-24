@@ -19,8 +19,8 @@ namespace GameFramework.AssetSystems {
         T Asset { get; }
         
         /// <summary>
-        /// エラーメッセージ
+        /// エラー
         /// </summary>
-        string Error { get; }
+        Exception Exception { get; }
     }
 }

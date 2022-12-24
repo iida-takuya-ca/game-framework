@@ -13,14 +13,14 @@ namespace SampleGame {
         /// </summary>
         public static IObservable<Scene> LoadAdditiveSceneAsync(string relativeScenePath, IScope scope) {
             return Observable.Create<Scene>(observer => {
-                var request = new SceneAssetRequest(relativeScenePath);
+                var request = new SceneAssetRequest(relativeScenePath, LoadSceneMode.Additive);
                 return request.LoadAsync(scope)
                     .DoOnError(observer.OnError)
-                    .SelectMany(path => {
-                        var op = SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
+                    .SelectMany(instance => {
+                        var op = instance.ActivateAsync();
                         return op.AsAsyncOperationObservable()
                             .Do(_ => {
-                                var scene = SceneManager.GetSceneByPath(path);
+                                var scene = instance.Scene;
                                 scope.OnExpired += () => SceneManager.UnloadSceneAsync(scene);
                                 observer.OnNext(scene);
                                 observer.OnCompleted();

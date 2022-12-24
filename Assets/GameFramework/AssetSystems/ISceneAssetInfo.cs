@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.ResourceManagement.ResourceProviders;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -11,13 +12,13 @@ namespace GameFramework.AssetSystems {
         bool IsDone { get; }
 
         /// <summary>
-        /// 読み込み済みシーンパス
+        /// シーンの読み込み情報
         /// </summary>
-        string ScenePath { get; }
+        SceneInstance SceneInstance { get; }
         
         /// <summary>
-        /// エラーメッセージ
+        /// エラー
         /// </summary>
-        string Error { get; }
+        Exception Exception { get; }
     }
 }

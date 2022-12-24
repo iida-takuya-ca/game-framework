@@ -4,6 +4,8 @@ using GameFramework.AssetSystems;
 using GameFramework.Core;
 using UniRx;
 using UnityEngine;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace SampleGame {
@@ -35,8 +37,8 @@ namespace SampleGame {
                 // 読み込みを待つ
                 return Observable.EveryUpdate()
                     .Subscribe(_ => {
-                        if (!string.IsNullOrEmpty(handle.Error)) {
-                            observer.OnError(new Exception(handle.Error));
+                        if (handle.Exception != null) {
+                            observer.OnError(handle.Exception);
                         }
                         else if (handle.IsDone) {
                             observer.OnNext(handle.Asset);
@@ -58,8 +60,10 @@ namespace SampleGame {
     /// Sample用のSceneAssetRequest基底
     /// </summary>
     public class SceneAssetRequest : GameFramework.AssetSystems.SceneAssetRequest {
+        private LoadSceneMode _mode;
         private string _address;
 
+        public override LoadSceneMode Mode => _mode;
         public override string Address => _address;
         public override int[] ProviderIndices => new[] { (int)AssetProviderType.AssetDatabase };
 
@@ -67,16 +71,18 @@ namespace SampleGame {
         /// コンストラクタ
         /// </summary>
         /// <param name="relativePath">Scenes以下の相対パス</param>
-        public SceneAssetRequest(string relativePath) {
+        /// <param name="mode">Sceneの読み込みモード</param>
+        public SceneAssetRequest(string relativePath, LoadSceneMode mode) {
             _address = $"Assets/SampleGame/Scenes/{relativePath}";
+            _mode = mode;
         }
 
         /// <summary>
         /// アセットの読み込み
         /// </summary>
         /// <param name="unloadScope">解放スコープ</param>
-        public IObservable<string> LoadAsync(IScope unloadScope) {
-            return Observable.Create<string>(observer => {
+        public IObservable<SceneInstance> LoadAsync(IScope unloadScope) {
+            return Observable.Create<SceneInstance>(observer => {
                 var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
                 if (!handle.IsValid) {
                     observer.OnError(new KeyNotFoundException($"Load scene failed. {Address}"));
@@ -84,7 +90,7 @@ namespace SampleGame {
                 }
 
                 if (handle.IsDone) {
-                    observer.OnNext(handle.ScenePath);
+                    observer.OnNext(handle.SceneInstance);
                     observer.OnCompleted();
                     return Disposable.Empty;
                 }
@@ -92,11 +98,11 @@ namespace SampleGame {
                 // 読み込みを待つ
                 return Observable.EveryUpdate()
                     .Subscribe(_ => {
-                        if (!string.IsNullOrEmpty(handle.Error)) {
-                            observer.OnError(new Exception(handle.Error));
+                        if (handle.Exception != null) {
+                            observer.OnError(handle.Exception);
                         }
                         else if (handle.IsDone) {
-                            observer.OnNext(handle.ScenePath);
+                            observer.OnNext(handle.SceneInstance);
                             observer.OnCompleted();
                         }
                     });
