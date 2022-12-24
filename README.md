@@ -9,6 +9,27 @@ Unityでゲーム制作する際のアーキテクチャ設計に関わるフレ
 - レイヤーを作りすぎず、実装に対してのクラス量を抑えたい
 - 仕様の変化になるべく強くしたい
 
+## セットアップ
+#### インストール
+1. Window > Package ManagerからPackage Managerを開く
+2. 「+」ボタン > Add package from git URL
+3. 以下を入力してインストール
+   * https://github.com/DaitokuAmy/game-framework.git?path=/Assets/GameFramework
+   ![image](https://user-images.githubusercontent.com/6957962/209446846-c9b35922-d8cb-4ba3-961b-52a81515c808.png)
+
+あるいはPackages/manifest.jsonを開き、dependenciesブロックに以下を追記します。
+
+```json
+{
+    "dependencies": {
+        "com.daitokuamy.gameframework": "https://github.com/DaitokuAmy/game-framework.git?path=/Assets/GameFramework"
+    }
+}
+```
+バージョンを指定したい場合には以下のように記述します。
+
+https://github.com/DaitokuAmy/game-framework.git?path=/Assets/GameFramework#1.0.0
+
 ## ライフサイクルについて
 game-frameworkでは、「Unityにおけるシーン管理」だけでは不足しがちな、ライフサイクルの階層的管理をサポートしています
 
