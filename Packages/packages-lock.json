@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "c7eedf85c79e2ce06658c8060ca38a282f2ca7ab"
     },
+    "com.daitokuamy.actionsequencer": {
+      "version": "https://github.com/DaitokuAmy/action-sequencer.git?path=/Assets/ActionSequencer",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f0cd73cca9acfad23a17fca2102111d2de87a807"
+    },
     "com.neuecc.unirx": {
       "version": "https://github.com/neuecc/UniRx.git?path=Assets/Plugins/UniRx/Scripts",
       "depth": 0,
