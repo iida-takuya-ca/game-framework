@@ -21,6 +21,8 @@ namespace GameFramework.Kinematics {
         public class TargetSource {
             [Tooltip("追従先")]
             public Transform target;
+            [Tooltip("追従先のパス")]
+            public string targetPath;
             [Tooltip("影響率")]
             public float weight = 1.0f;
         }

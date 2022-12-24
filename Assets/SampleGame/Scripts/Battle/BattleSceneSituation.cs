@@ -43,27 +43,19 @@ namespace SampleGame {
         public override string SceneAssetPath => "battle";
 
         /// <summary>
-        /// 読み込み処理
+        /// 初期化処理
         /// </summary>
-        protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
-            yield return base.LoadRoutineInternal(handle, scope);
+        protected override IEnumerator SetupRoutineInternal(TransitionHandle handle, IScope scope) {
+            yield return base.SetupRoutineInternal(handle, scope);
+            
+            var taskRunner = Services.Get<TaskRunner>();
+            var cameraController = Services.Get<CameraController>();
 
             // BattleModelの生成
             var battleModel = BattleModel.Create();
             battleModel.RegisterTask(TaskOrder.Logic);
             yield return battleModel.SetupAsync()
                 .StartAsEnumerator(scope);
-        }
-
-        /// <summary>
-        /// 初期化処理
-        /// </summary>
-        protected override void SetupInternal(TransitionHandle handle, IScope scope) {
-            base.SetupInternal(handle, scope);
-
-            var taskRunner = Services.Get<TaskRunner>();
-            var cameraController = Services.Get<CameraController>();
-            var battleModel = BattleModel.Get();
 
             // BodyManagerの生成
             var bodyManager = new BodyManager(new BodyBuilder());

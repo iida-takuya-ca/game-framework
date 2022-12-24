@@ -384,7 +384,7 @@ namespace GameFramework.SituationSystems {
 
             var handle = new TransitionHandle(_transitionInfo);
             yield return _transitionInfo.next.LoadRoutine(handle);
-            _transitionInfo.next.Setup(handle);
+            yield return _transitionInfo.next.SetupRoutine(handle);
         }
 
         /// <summary>

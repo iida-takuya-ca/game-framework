@@ -93,10 +93,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4693691037638167521}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2975ec78553fe4a25a40aeb68146a691, type: 3}
+  m_Script: {fileID: 11500000, guid: bdb948ba0569976469f31808234bfc51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateMode: 2
+  _updateMode: 1
   _active: 1
   _sources:
   - target: {fileID: 6163698259360903727}
@@ -131,8 +131,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5417120840220398082}
-  m_LocalRotation: {x: 0.7070863, y: -0.7070866, z: 0.0053676334, w: 0.005367219}
-  m_LocalPosition: {x: 0.00000057010953, y: 1.7582109, z: 0.0443511}
+  m_LocalRotation: {x: 0.70419073, y: -0.704191, z: 0.06415046, w: 0.06415025}
+  m_LocalPosition: {x: 0.00000057190834, y: 1.6576395, z: 0.06282818}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -149,19 +149,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5417120840220398082}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2975ec78553fe4a25a40aeb68146a691, type: 3}
+  m_Script: {fileID: 11500000, guid: bdb948ba0569976469f31808234bfc51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _updateMode: 1
   _active: 1
   _sources:
-  - target: {fileID: 6163698259360903711}
-    targetPath: ../UMA_Male_Rig_001/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head
+  - target: {fileID: 6163698259360904113}
+    targetPath: ../UMA_Male_Rig_001/Global/Position/Hips/LowerBack/Spine/Spine1/Neck
     weight: 1
   _settings:
     space: 1
     offsetPosition: {x: 0, y: 0, z: 0}
-    offsetAngles: {x: -0, y: 0, z: 0}
+    offsetAngles: {x: 0, y: 0, z: 0}
     offsetScale: {x: 1, y: 1, z: 1}
 --- !u!1 &7682411841916163371
 GameObject:
@@ -504,56 +504,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _targets:
   - {fileID: 4693691037638167521}
---- !u!114 &3973036872367982476
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6163698259360608169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e052484cdd798194b96971fdb701d944, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateMode: 1
-  _animator: {fileID: 6109040841920041422}
-  _animationClip: {fileID: 7400000, guid: 4f121a5e58e1058488fdf593badf9f87, type: 2}
---- !u!114 &5340397702303298274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6163698259360608169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8780d1a1a0ef1e4f9d41983a56a911d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gimmickInfos:
-  - key: Sphere
-    gimmick: {fileID: 2647813858364040039}
-  - key: Test
-    gimmick: {fileID: 3973036872367982476}
-  - key: Test
-    gimmick: {fileID: 455630907055195772}
-  - key: Damage
-    gimmick: {fileID: 3254368334144999223}
---- !u!114 &5670930336253130226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6163698259360608169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b7a0bca2faa5646ac4edc894b51270, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateMode: 1
-  _useAnimationJob: 0
 --- !u!114 &3254368334144999223
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -605,11 +555,56 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
---- !u!4 &6163698259360903711 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 400008, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
-  m_PrefabInstance: {fileID: 6163698259360508055}
+--- !u!114 &3973036872367982476
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163698259360608169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e052484cdd798194b96971fdb701d944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateMode: 1
+  _animator: {fileID: 6109040841920041422}
+  _animationClip: {fileID: 7400000, guid: 4f121a5e58e1058488fdf593badf9f87, type: 2}
+--- !u!114 &5340397702303298274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163698259360608169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8780d1a1a0ef1e4f9d41983a56a911d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gimmickInfos:
+  - key: Sphere
+    gimmick: {fileID: 2647813858364040039}
+  - key: Test
+    gimmick: {fileID: 3973036872367982476}
+  - key: Test
+    gimmick: {fileID: 455630907055195772}
+  - key: Damage
+    gimmick: {fileID: 3254368334144999223}
+--- !u!114 &5670930336253130226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163698259360608169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b7a0bca2faa5646ac4edc894b51270, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateMode: 1
+  _useAnimationJob: 0
 --- !u!4 &6163698259360903727 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400056, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
@@ -618,5 +613,10 @@ Transform:
 --- !u!4 &6163698259360904073 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400158, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
+  m_PrefabInstance: {fileID: 6163698259360508055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6163698259360904113 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400166, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
   m_PrefabInstance: {fileID: 6163698259360508055}
   m_PrefabAsset: {fileID: 0}

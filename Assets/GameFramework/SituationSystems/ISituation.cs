@@ -36,7 +36,7 @@ namespace GameFramework.SituationSystems {
         /// 初期化処理
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
-        void Setup(TransitionHandle handle);
+        IEnumerator SetupRoutine(TransitionHandle handle);
 
         /// <summary>
         /// 開く処理

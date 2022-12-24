@@ -34,9 +34,9 @@ namespace SampleGame {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected override void SetupInternal(TransitionHandle handle, IScope scope) {
-            base.SetupInternal(handle, scope);
-
+        protected override IEnumerator SetupRoutineInternal(TransitionHandle handle, IScope scope) {
+            yield return base.SetupRoutineInternal(handle, scope);
+            
             _timer = 1.5f;
         }
 

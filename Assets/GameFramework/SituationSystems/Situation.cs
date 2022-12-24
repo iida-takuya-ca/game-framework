@@ -130,13 +130,13 @@ namespace GameFramework.SituationSystems {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void ISituation.Setup(TransitionHandle handle) {
+        IEnumerator ISituation.SetupRoutine(TransitionHandle handle) {
             if (CurrentState >= State.SetupFinished) {
-                return;
+                yield break;
             }
 
             _setupScope = new DisposableScope();
-            SetupInternal(handle, _setupScope);
+            yield return SetupRoutineInternal(handle, _setupScope);
             CurrentState = State.SetupFinished;
         }
 
@@ -331,7 +331,8 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         /// <param name="scope">スコープ(Setup～Cleanupまで)</param>
-        protected virtual void SetupInternal(TransitionHandle handle, IScope scope) {
+        protected virtual IEnumerator SetupRoutineInternal(TransitionHandle handle, IScope scope) {
+            yield break;
         }
 
         /// <summary>
