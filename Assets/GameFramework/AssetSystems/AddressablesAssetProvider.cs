@@ -72,12 +72,16 @@ namespace GameFramework.AssetSystems {
         /// アセットが含まれているか
         /// </summary>
         bool IAssetProvider.Contains<T>(string address) {
-            var maps = Addressables.ResourceLocators.OfType<ResourceLocationMap>();
-            
-            // LocationMapにAddressが入っているかチェック
-            foreach (var map in maps) {
-                if (map.Locations.ContainsKey(address)) {
-                    return true;
+            foreach (var locator in Addressables.ResourceLocators) {
+                if (locator is ResourceLocationMap map) {
+                    if (map.Locations.ContainsKey(address)) {
+                        return true;
+                    }
+                }
+                else {
+                    if (locator.Locate(address, typeof(T), out var _)) {
+                        return true;
+                    }
                 }
             }
 
@@ -97,12 +101,16 @@ namespace GameFramework.AssetSystems {
         /// シーンアセットが含まれているか
         /// </summary>
         bool IAssetProvider.ContainsScene(string address) {
-            var maps = Addressables.ResourceLocators.OfType<ResourceLocationMap>();
-            
-            // LocationMapにAddressが入っているかチェック
-            foreach (var map in maps) {
-                if (map.Locations.ContainsKey(address)) {
-                    return true;
+            foreach (var locator in Addressables.ResourceLocators) {
+                if (locator is ResourceLocationMap map) {
+                    if (map.Locations.ContainsKey(address)) {
+                        return true;
+                    }
+                }
+                else {
+                    if (locator.Locate(address, typeof(SceneInstance), out var _)) {
+                        return true;
+                    }
                 }
             }
 

@@ -1,11 +1,12 @@
 using System;
+using GameFramework.Core;
 using UnityEngine.ResourceManagement.ResourceProviders;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
     /// シーンアセットリクエスト用ハンドル
     /// </summary>
-    public struct SceneAssetHandle {
+    public struct SceneAssetHandle : IProcess {
         // 無効なSceneAssetHandle
         public static readonly SceneAssetHandle Empty = new SceneAssetHandle();
 
