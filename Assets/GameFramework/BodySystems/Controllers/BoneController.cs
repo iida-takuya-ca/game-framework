@@ -8,7 +8,7 @@ namespace GameFramework.BodySystems {
     /// </summary>
     public class BoneController : SerializedBodyController {
         private class ConstraintInfo {
-            public List<IConstraint> constraints = new List<IConstraint>();
+            public List<IExpression> constraints = new List<IExpression>();
         }
 
         [SerializeField, Tooltip("ルート骨")]
@@ -45,7 +45,7 @@ namespace GameFramework.BodySystems {
 
                     foreach (var bone in info.targetBones) {
                         var targetBoneName = meshController.GetOriginalBoneName(bone);
-                        var constraint = new ParentRuntimeConstraint(bone, targetBoneName);
+                        var constraint = new ParentRuntimeConstraintExpression(bone, targetBoneName);
                         constraint.DisablePosition =
                             (info.constraintMask & MeshParts.ConstraintMasks.Position) == 0;
                         constraint.DisableRotation =

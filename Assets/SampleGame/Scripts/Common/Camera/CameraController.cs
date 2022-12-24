@@ -19,7 +19,7 @@ namespace SampleGame {
 
         private CinemachineBrain _brain;
         private CinemachineVirtualCameraBase[] _virtualCameras;
-        private Constraint[] _constraints;
+        private ConstraintExpression[] _constraints;
 
         public bool IsActive => isActiveAndEnabled;
         public Camera MainCamera => _camera;
@@ -52,7 +52,7 @@ namespace SampleGame {
         /// Constraintの取得
         /// </summary>
         public T GetConstraint<T>(string constraintName)
-            where T : Constraint {
+            where T : ConstraintExpression {
             var constraint = _constraints.FirstOrDefault(x => x.name == constraintName);
             return constraint as T;
         }
@@ -95,7 +95,7 @@ namespace SampleGame {
             }
 
             _virtualCameras = virtualCameraList.ToArray();
-            _constraints = _constraintRoot.GetComponentsInChildren<Constraint>();
+            _constraints = _constraintRoot.GetComponentsInChildren<ConstraintExpression>();
         }
     }
 }

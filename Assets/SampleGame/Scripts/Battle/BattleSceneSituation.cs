@@ -7,7 +7,6 @@ using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
 using UniRx;
 using UnityEngine;
-using ParentConstraint = GameFramework.Kinematics.ParentConstraint;
 
 namespace SampleGame {
     /// <summary>
@@ -77,9 +76,9 @@ namespace SampleGame {
 
             // RootAngle作成
             _rootAngle = new GameObject("RootAngle").transform;
-            var rootAngleConstraint = cameraController.GetConstraint<ParentConstraint>("RootAngle");
+            var rootAngleConstraint = cameraController.GetConstraint<ParentConstraintExpression>("RootAngle");
             rootAngleConstraint.Sources = new[] {
-                new Constraint.TargetSource {
+                new ConstraintExpression.TargetSource {
                     target = _rootAngle,
                     weight = 1.0f
                 }
@@ -90,9 +89,9 @@ namespace SampleGame {
             _playerEntity.SetupPlayerAsync(battleModel.PlayerModel, scope)
                 .Subscribe(entity => {
                     // CameraのConstraint設定
-                    var playerConstraint = cameraController.GetConstraint<ParentConstraint>("Player");
+                    var playerConstraint = cameraController.GetConstraint<ParentConstraintExpression>("Player");
                     playerConstraint.Sources = new[] {
-                        new Constraint.TargetSource {
+                        new ConstraintExpression.TargetSource {
                             target = entity.GetBody().Transform,
                             weight = 1.0f
                         }

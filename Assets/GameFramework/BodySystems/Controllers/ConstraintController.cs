@@ -8,9 +8,9 @@ namespace GameFramework.BodySystems {
     /// </summary>
     public class ConstraintController : BodyController {
         // コンストレイントリスト
-        private List<IConstraint> _constraints = new List<IConstraint>();
+        private List<IExpression> _constraints = new List<IExpression>();
         // 外部から追加されたコンストレイントリスト
-        private readonly List<IConstraint> _customConstraints = new List<IConstraint>();
+        private readonly List<IExpression> _customConstraints = new List<IExpression>();
         // ジョブ制御用JobProvider
         private ConstraintAnimationJobProvider _jobProvider;
 
@@ -20,7 +20,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// コンストレイントの追加
         /// </summary>
-        public void RegisterConstraint(IConstraint constraint) {
+        public void RegisterConstraint(IExpression constraint) {
             _customConstraints.Add(constraint);
             constraint.RefreshTargets(Body.Transform);
         }
@@ -28,7 +28,7 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// コンストレイントの解除
         /// </summary>
-        public void UnregisterConstraint(IConstraint constraint) {
+        public void UnregisterConstraint(IExpression constraint) {
             _customConstraints.Remove(constraint);
         }
 
@@ -76,7 +76,7 @@ namespace GameFramework.BodySystems {
         private void RefreshConstraints() {
             // 階層に含まれているConstraintを探す
             var bodyTransform = Body.Transform;
-            _constraints = bodyTransform.GetComponentsInChildren<IConstraint>(true)
+            _constraints = bodyTransform.GetComponentsInChildren<IExpression>(true)
                 .Where(x => x != null)
                 .ToList();
 
@@ -86,7 +86,7 @@ namespace GameFramework.BodySystems {
             var parentJobHandles = new List<IJobParentConstraint>();
 
             // JobConstraintの列挙
-            void AddJobConstraints(IConstraint constraint) {
+            void AddJobConstraints(IExpression constraint) {
                 if (_jobProvider == null) {
                     return;
                 }
@@ -107,8 +107,8 @@ namespace GameFramework.BodySystems {
 
             // ターゲット情報の更新＆JobHandleの列挙
             foreach (var constraint in _constraints) {
-                if (constraint is Constraint c) {
-                    c.UpdateMode = Constraint.Mode.Manual;
+                if (constraint is ConstraintExpression c) {
+                    c.UpdateMode = ConstraintExpression.Mode.Manual;
                 }
 
                 constraint.RefreshTargets(bodyTransform);
