@@ -97,6 +97,9 @@ namespace SampleGame {
             if (Keyboard.current.hKey.wasPressedThisFrame) {
                 _gimmickController.GetActiveGimmicks("Sphere").Deactivate();
             }
+            if (Keyboard.current.fKey.wasPressedThisFrame) {
+                _gimmickController.GetAnimationGimmicks("Damage").Play();
+            }
         }
     }
 }

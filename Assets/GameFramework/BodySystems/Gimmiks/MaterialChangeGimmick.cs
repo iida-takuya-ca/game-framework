@@ -4,43 +4,26 @@ using UnityEngine;
 
 namespace GameFramework.BodySystems {
     /// <summary>
-    /// Materialの値をアニメーションさせるギミック基底
+    /// Materialの値を設定できるギミック基底
     /// </summary>
-    public abstract class MaterialAnimationGimmick : AnimationGimmick {
+    public abstract class MaterialChangeGimmick<T> : ChangeGimmick<T> {
         [SerializeField, Tooltip("制御プロパティ名")]
         private string _propertyName = "";
         [SerializeField, Tooltip("対象のMaterial")]
         private RendererMaterial[] _targets;
         [SerializeField, Tooltip("Materialの制御タイプ")]
         private MaterialInstance.ControlType _controlType = MaterialInstance.ControlType.PropertyBlock;
-        [SerializeField, Tooltip("再生時間")]
-        private float _duration = 1.0f;
-        [SerializeField, Tooltip("ループ再生するか")]
-        private bool _looping;
         
         // マテリアル制御ハンドル
         private MaterialHandle _materialHandle;
         // プロパティのID
         private int _propertyId;
-        
-        // トータル時間
-        public override float Duration => _duration;
-        // ループ再生するか
-        public override bool IsLooping => _looping;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
         protected override void InitializeInternal() {
             Refresh();
-        }
-
-        /// <summary>
-        /// 再生状態の反映
-        /// </summary>
-        protected override void Evaluate(float time) {
-            var ratio = Duration > float.Epsilon ? Mathf.Clamp01(time / Duration) : 1.0f;
-            SetValue(_materialHandle, Shader.PropertyToID(_propertyName), ratio);
         }
 
         /// <summary>
@@ -53,7 +36,20 @@ namespace GameFramework.BodySystems {
         /// <summary>
         /// 値の更新
         /// </summary>
-        protected abstract void SetValue(MaterialHandle handle, int propertyId, float ratio);
+        /// <param name="val">反映したい値</param>
+        /// <param name="rate">反映率</param>
+        protected sealed override void SetValue(T val, float rate) {
+            SetValue(_materialHandle, _propertyId, val, rate);
+        }
+
+        /// <summary>
+        /// 値の更新
+        /// </summary>
+        /// <param name="handle">マテリアル変更用ハンドル</param>
+        /// <param name="propertyId">変更対象のプロパティID</param>
+        /// <param name="val">反映したい値</param>
+        /// <param name="rate">反映率</param>
+        protected abstract void SetValue(MaterialHandle handle, int propertyId, T val, float rate);
 
         /// <summary>
         /// Material情報のリフレッシュ

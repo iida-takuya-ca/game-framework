@@ -74,9 +74,6 @@ namespace GameFramework.BodySystems {
                 return;
             }
             
-            // 時間更新
-            _time += _reverse ? -deltaTime : deltaTime;
-            
             // 反映
             Evaluate(Mathf.Clamp(_time, 0.0f, Duration));
             
@@ -106,6 +103,9 @@ namespace GameFramework.BodySystems {
                     _playing = false;
                 }
             }
+            
+            // 時間更新
+            _time += _reverse ? -deltaTime : deltaTime;
         }
     }
 }
