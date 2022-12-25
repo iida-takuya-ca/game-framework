@@ -140,7 +140,7 @@ namespace GameFramework.BodySystems {
         /// </summary>
         AnimationJob IAnimationJobProvider<AnimationJob>.Initialize(MotionPlayer player) {
             _animator = player.Animator;
-            _handleCounts = new NativeArray<int>(3, Allocator.Persistent);
+            _handleCounts = new NativeArray<int>(Enum.GetNames(typeof(CountIndex)).Length, Allocator.Persistent);
             _positionConstraintJobHandles =
                 new NativeArray<PositionConstraintJobHandle>(_handleCountMax, Allocator.Persistent);
             _rotationConstraintJobHandles =

@@ -320,14 +320,14 @@ namespace GameFramework.SituationSystems {
         /// 更新処理
         /// </summary>
         void ISituation.SystemUpdate() {
-            UpdateInternal();
+            SystemUpdateInternal();
         }
 
         /// <summary>
         /// 後更新処理
         /// </summary>
         void ISituation.SystemLateUpdate() {
-            LateUpdateInternal();
+            SystemLateUpdateInternal();
         }
 
         /// <summary>

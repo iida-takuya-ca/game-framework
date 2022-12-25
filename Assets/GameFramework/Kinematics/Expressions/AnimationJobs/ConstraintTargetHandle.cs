@@ -16,7 +16,7 @@ namespace GameFramework.Kinematics {
         /// </summary>
         [BurstCompile]
         public struct TargetInfo {
-            public TransformSceneHandle targetHandle;
+            public TransformStreamHandle targetHandle;
             public float normalizedWeight;
         }
 

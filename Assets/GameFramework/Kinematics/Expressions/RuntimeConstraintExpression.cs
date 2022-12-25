@@ -141,7 +141,7 @@ namespace GameFramework.Kinematics {
             for (var i = 0; i < infos.Length; i++) {
                 handle.SetTargetInfo(i, new ConstraintTargetHandle.TargetInfo {
                     normalizedWeight = infos[i].normalizedWeight,
-                    targetHandle = animator.BindSceneTransform(infos[i].target)
+                    targetHandle = animator.BindStreamTransform(infos[i].target)
                 });
             }
 
