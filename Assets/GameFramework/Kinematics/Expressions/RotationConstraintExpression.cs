@@ -25,47 +25,6 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
-        /// オフセットを初期化
-        /// </summary>
-        public override void ResetOffset() {
-            _settings.offsetAngles = Vector3.zero;
-        }
-
-        /// <summary>
-        /// 自身のTransformからオフセットを設定する
-        /// </summary>
-        public override void TransferOffset() {
-            var space = _settings.space;
-
-            // Rotation
-            Quaternion offsetRotation;
-
-            if (space == Space.Self) {
-                offsetRotation = Quaternion.Inverse(GetTargetRotation()) * transform.rotation;
-            }
-            else {
-                offsetRotation = transform.rotation * Quaternion.Inverse(GetTargetRotation());
-            }
-
-            _settings.offsetAngles = offsetRotation.eulerAngles;
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        public override void ApplyTransform() {
-            var space = _settings.space;
-            var offset = Quaternion.Euler(_settings.offsetAngles);
-
-            if (space == Space.Self) {
-                transform.rotation = GetTargetRotation() * offset;
-            }
-            else {
-                transform.rotation = offset * GetTargetRotation();
-            }
-        }
-
-        /// <summary>
         /// ジョブ要素の生成
         /// </summary>
         RotationConstraintJobHandle IJobRotationConstraint.CreateJobHandle(Animator animator) {

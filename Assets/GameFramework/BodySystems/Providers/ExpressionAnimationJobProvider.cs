@@ -8,9 +8,9 @@ using UnityEngine.Animations;
 
 namespace GameFramework.BodySystems {
     /// <summary>
-    /// Constraint用JobProvider
+    /// Expression用JobProvider
     /// </summary>
-    public class ConstraintAnimationJobProvider : IAnimationJobProvider<ConstraintAnimationJobProvider.AnimationJob> {
+    public class ExpressionAnimationJobProvider : IAnimationJobProvider<ExpressionAnimationJobProvider.AnimationJob> {
         /// <summary>
         /// Countsアクセスする際のIndex
         /// </summary>
@@ -131,7 +131,7 @@ namespace GameFramework.BodySystems {
         /// コンストラクタ
         /// </summary>
         /// <param name="handleCountMax">各種ConstraintHandleの最大数</param>
-        public ConstraintAnimationJobProvider(int handleCountMax = 128) {
+        public ExpressionAnimationJobProvider(int handleCountMax = 128) {
             _handleCountMax = handleCountMax;
         }
 

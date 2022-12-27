@@ -3,35 +3,29 @@ using UnityEngine;
 
 namespace GameFramework.Kinematics {
     /// <summary>
-    /// 注視コンストレイント
+    /// 注視追従コンポーネント
     /// </summary>
-    public class LookAtConstraintExpression : ConstraintExpression {
-        // コンストレイント設定
+    public class LookAtAttachment : Attachment {
+        // 追従設定
         [Serializable]
-        public class ConstraintSettings {
+        public class AttachmentSettings {
+            [Tooltip("制御空間")]
             public Space space = Space.Self;
+            [Tooltip("角度オフセット")]
             public Vector3 offsetAngles = Vector3.zero;
+            [Tooltip("ねじり角度")]
+            public float roll = 0.0f;
+            [Tooltip("UpベクトルをさすTransform(未指定はデフォルト)")]
+            public Transform worldUpObject = null;
         }
 
-        [SerializeField, Tooltip("コンストレイント設定")]
-        private ConstraintSettings _settings = null;
-        [SerializeField, Tooltip("ねじり角度")]
-        private float _roll = 0.0f;
-        [SerializeField, Tooltip("UpベクトルをさすTransform(未指定はデフォルト)")]
-        private Transform _worldUpObject = null;
+        [SerializeField, Tooltip("追従設定")]
+        private AttachmentSettings _settings = null;
 
-        // コンストレイント設定
-        public ConstraintSettings Settings {
+        // 追従設定
+        public AttachmentSettings Settings {
             get => _settings;
             set => _settings = value;
-        }
-        // ねじり角度
-        public float Roll {
-            set { _roll = value; }
-        }
-        // UpベクトルをさすTransform
-        public Transform WorldUpObject {
-            set { _worldUpObject = value; }
         }
 
         /// <summary>
@@ -39,10 +33,10 @@ namespace GameFramework.Kinematics {
         /// </summary>
         public override void TransferOffset() {
             var space = _settings.space;
-            var upVector = _worldUpObject != null ? _worldUpObject.up : Vector3.up;
+            var upVector = _settings.worldUpObject != null ? _settings.worldUpObject.up : Vector3.up;
             var baseRotation =
                 Quaternion.LookRotation(GetTargetPosition() - transform.position, upVector) *
-                Quaternion.Euler(0.0f, 0.0f, _roll);
+                Quaternion.Euler(0.0f, 0.0f, _settings.roll);
 
             Quaternion offsetRotation;
 
@@ -69,10 +63,10 @@ namespace GameFramework.Kinematics {
         public override void ApplyTransform() {
             var space = _settings.space;
             var offsetRotation = Quaternion.Euler(_settings.offsetAngles);
-            var upVector = _worldUpObject != null ? _worldUpObject.up : Vector3.up;
+            var upVector = _settings.worldUpObject != null ? _settings.worldUpObject.up : Vector3.up;
             var baseRotation =
                 Quaternion.LookRotation(GetTargetPosition() - transform.position, upVector) *
-                Quaternion.Euler(0.0f, 0.0f, _roll);
+                Quaternion.Euler(0.0f, 0.0f, _settings.roll);
 
             if (space == Space.Self) {
                 transform.rotation = baseRotation * offsetRotation;

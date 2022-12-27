@@ -73,58 +73,7 @@ namespace GameFramework.Kinematics {
         protected RuntimeConstraintExpression(Transform owner, Transform target)
             : this(owner, target != null ? target.name : "") {
         }
-
-        /// <summary>
-        /// 更新処理
-        /// </summary>
-        public void ManualUpdate() {
-            if (Owner == null || !_active) {
-                return;
-            }
-
-            ApplyTransform();
-        }
-
-        /// <summary>
-        /// ターゲットのTransform参照をリフレッシュ
-        /// ※Transformの組み替えなどを行った場合に使用(相対Path解決)
-        /// </summary>
-        public void RefreshTargets(Transform root) {
-            // 再起的にターゲットを探す
-            Transform FindTarget(Transform parent, string name) {
-                var result = parent.Find(name);
-
-                if (result != null) {
-                    return result;
-                }
-
-                for (var i = 0; i < parent.childCount; i++) {
-                    result = FindTarget(parent.GetChild(i), name);
-
-                    if (result != null) {
-                        return result;
-                    }
-                }
-
-                return null;
-            }
-
-            _active = false;
-
-            foreach (var info in _targetInfos) {
-                if (info.target != null) {
-                    _active = true;
-                    continue;
-                }
-
-                info.target = FindTarget(root, info.source.targetName);
-
-                if (info.target != null) {
-                    _active = true;
-                }
-            }
-        }
-
+        
         /// <summary>
         /// ジョブ用ConstraintのTargetハンドルを生成
         /// </summary>
@@ -146,75 +95,6 @@ namespace GameFramework.Kinematics {
             }
 
             return handle;
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected abstract void ApplyTransform();
-
-        /// <summary>
-        /// ターゲット座標
-        /// </summary>
-        protected Vector3 GetTargetPosition() {
-            if (!(_normalized && Application.isPlaying)) {
-                NormalizeWeights();
-            }
-
-            var position = Vector3.zero;
-
-            foreach (var info in _targetInfos) {
-                if (info.target == null) {
-                    continue;
-                }
-
-                position += info.target.position * info.normalizedWeight;
-            }
-
-            return position;
-        }
-
-        /// <summary>
-        /// ターゲット姿勢
-        /// </summary>
-        protected Quaternion GetTargetRotation() {
-            if (!(_normalized && Application.isPlaying)) {
-                NormalizeWeights();
-            }
-
-            var rotation = Quaternion.identity;
-
-            foreach (var info in _targetInfos) {
-                if (info.target == null) {
-                    continue;
-                }
-
-                rotation *= Quaternion.Slerp(Quaternion.identity, info.target.rotation,
-                    info.normalizedWeight);
-            }
-
-            return rotation;
-        }
-
-        /// <summary>
-        /// ターゲットローカルスケール
-        /// </summary>
-        protected Vector3 GetTargetLocalScale() {
-            if (!(_normalized && Application.isPlaying)) {
-                NormalizeWeights();
-            }
-
-            var scale = Vector3.zero;
-
-            foreach (var info in _targetInfos) {
-                if (info.target == null) {
-                    continue;
-                }
-
-                scale += info.target.localScale * info.normalizedWeight;
-            }
-
-            return scale;
         }
 
         /// <summary>

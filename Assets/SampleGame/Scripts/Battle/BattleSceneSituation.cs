@@ -68,9 +68,9 @@ namespace SampleGame {
 
             // RootAngle作成
             _rootAngle = new GameObject("RootAngle").transform;
-            var rootAngleConstraint = cameraController.GetConstraint<ParentConstraintExpression>("RootAngle");
+            var rootAngleConstraint = cameraController.GetAttachment<ParentAttachment>("RootAngle");
             rootAngleConstraint.Sources = new[] {
-                new ConstraintExpression.TargetSource {
+                new Attachment.TargetSource {
                     target = _rootAngle,
                     weight = 1.0f
                 }
@@ -80,10 +80,10 @@ namespace SampleGame {
             _playerEntity = new Entity();
             _playerEntity.SetupPlayerAsync(battleModel.PlayerModel, scope)
                 .Subscribe(entity => {
-                    // CameraのConstraint設定
-                    var playerConstraint = cameraController.GetConstraint<ParentConstraintExpression>("Player");
+                    // CameraのAttachment設定
+                    var playerConstraint = cameraController.GetAttachment<ParentAttachment>("Player");
                     playerConstraint.Sources = new[] {
-                        new ConstraintExpression.TargetSource {
+                        new Attachment.TargetSource {
                             target = entity.GetBody().Transform,
                             weight = 1.0f
                         }

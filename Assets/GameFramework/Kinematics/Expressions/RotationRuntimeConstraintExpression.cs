@@ -28,21 +28,6 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            var space = Settings.space;
-            var offset = Quaternion.Euler(Settings.offsetAngles);
-
-            if (space == Space.Self) {
-                Owner.rotation = GetTargetRotation() * offset;
-            }
-            else {
-                Owner.rotation = offset * GetTargetRotation();
-            }
-        }
-
-        /// <summary>
         /// ジョブ要素の生成
         /// </summary>
         RotationConstraintJobHandle IJobRotationConstraint.CreateJobHandle(Animator animator) {

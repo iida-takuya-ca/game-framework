@@ -37,19 +37,5 @@ namespace GameFramework.Kinematics {
             handle.constraintTargetHandle = CreateTargetHandle(animator);
             return handle;
         }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            var space = Settings.space;
-            var offset = Settings.offsetPosition;
-
-            if (space == Space.Self) {
-                offset = Owner.TransformVector(offset);
-            }
-
-            Owner.position = GetTargetPosition() + offset;
-        }
     }
 }

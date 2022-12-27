@@ -23,35 +23,6 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
-        /// オフセットを初期化
-        /// </summary>
-        public override void ResetOffset() {
-            _settings.offsetScale = Vector3.one;
-        }
-
-        /// <summary>
-        /// 自身のTransformからオフセットを設定する
-        /// </summary>
-        public override void TransferOffset() {
-            // Scale
-            var targetScale = GetTargetLocalScale();
-            var localScale = transform.localScale;
-            _settings.offsetScale = new Vector3
-            (
-                localScale.x / targetScale.x,
-                localScale.y / targetScale.y,
-                localScale.z / targetScale.z
-            );
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        public override void ApplyTransform() {
-            transform.localScale = Vector3.Scale(GetTargetLocalScale(), _settings.offsetScale);
-        }
-
-        /// <summary>
         /// ジョブ要素の生成
         /// </summary>
         ScaleConstraintJobHandle IJobScaleConstraint.CreateJobHandle(Animator animator) {

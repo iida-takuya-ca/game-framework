@@ -370,7 +370,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 2047344116}
   _virtualCameraRoot: {fileID: 1256933854}
-  _constraintRoot: {fileID: 934566943}
+  _attachmentRoot: {fileID: 934566943}
 --- !u!1 &546088794
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,17 +509,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 678547283}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb948ba0569976469f31808234bfc51, type: 3}
+  m_Script: {fileID: 11500000, guid: 601e1e8da0746f746b551a27e269688c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateMode: 1
   _active: 0
+  _updateMode: 1
   _sources: []
   _settings:
     space: 1
     offsetPosition: {x: 0, y: 0, z: 0}
     offsetAngles: {x: 0, y: 0, z: 0}
     offsetScale: {x: 1, y: 1, z: 1}
+    mask: 7
 --- !u!1 &688581548
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,17 +723,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 794307526}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb948ba0569976469f31808234bfc51, type: 3}
+  m_Script: {fileID: 11500000, guid: 601e1e8da0746f746b551a27e269688c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateMode: 1
   _active: 0
-  _sources: []
+  _updateMode: 1
+  _sources:
+  - target: {fileID: 0}
+    weight: 0
   _settings:
     space: 1
     offsetPosition: {x: 0, y: 0, z: 0}
     offsetAngles: {x: 0, y: 0, z: 0}
     offsetScale: {x: 1, y: 1, z: 1}
+    mask: 7
 --- !u!1 &855809075
 GameObject:
   m_ObjectHideFlags: 0
@@ -873,7 +877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 934566944}
   m_Layer: 0
-  m_Name: Constraints
+  m_Name: Attachments
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -35,12 +35,5 @@ namespace GameFramework.Kinematics {
             handle.constraintTargetHandle = CreateTargetHandle(animator);
             return handle;
         }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            Owner.localScale = Vector3.Scale(GetTargetLocalScale(), Settings.offsetScale);
-        }
     }
 }

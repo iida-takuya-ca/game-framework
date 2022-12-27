@@ -3,41 +3,31 @@ using UnityEngine;
 
 namespace GameFramework.Kinematics {
     /// <summary>
-    /// エイムコンストレイント
+    /// エイム追従コンポーネント
     /// </summary>
-    public class AimConstraintExpression : ConstraintExpression {
-        // コンストレイント設定
+    public class AimAttachment : Attachment {
+        // 追従設定
         [Serializable]
-        public class ConstraintSettings {
+        public class AttachmentSettings {
+            [Tooltip("制御空間")]
             public Space space = Space.Self;
+            [Tooltip("角度オフセット")]
             public Vector3 offsetAngles = Vector3.zero;
+            [Tooltip("正面のベクトル")]
+            public Vector3 forwardVector = Vector3.forward;
+            [Tooltip("上のベクトル")]
+            public Vector3 upVector = Vector3.up;
+            [Tooltip("UpベクトルをさすTransform(未指定はデフォルト)")]
+            public Transform worldUpObject = null;
         }
+        
+        [SerializeField, Tooltip("追従設定")]
+        private AttachmentSettings _settings = null;
 
-        [SerializeField, Tooltip("コンストレイント設定")]
-        private ConstraintSettings _settings = null;
-        [SerializeField, Tooltip("正面のベクトル")]
-        private Vector3 _forwardVector = Vector3.forward;
-        [SerializeField, Tooltip("上のベクトル")]
-        private Vector3 _upVector = Vector3.up;
-        [SerializeField, Tooltip("UpベクトルをさすTransform(未指定はデフォルト)")]
-        private Transform _worldUpObject = null;
-
-        // コンストレイント設定
-        public ConstraintSettings Settings {
+        // 追従設定
+        public AttachmentSettings Settings {
             get => _settings;
             set => _settings = value;
-        }
-        // 正面のベクトル
-        public Vector3 ForwardVector {
-            set => _forwardVector = value;
-        }
-        // 上のベクトル
-        public Vector3 UpVector {
-            set => _upVector = value;
-        }
-        // UpベクトルをさすTransform
-        public Transform WorldUpObject {
-            set => _worldUpObject = value;
         }
 
         /// <summary>
@@ -52,8 +42,8 @@ namespace GameFramework.Kinematics {
         /// </summary>
         public override void TransferOffset() {
             var space = _settings.space;
-            var axisRotation = Quaternion.Inverse(Quaternion.LookRotation(_forwardVector, _upVector));
-            var upVector = _worldUpObject != null ? _worldUpObject.up : Vector3.up;
+            var axisRotation = Quaternion.Inverse(Quaternion.LookRotation(_settings.forwardVector, _settings.upVector));
+            var upVector = _settings.worldUpObject != null ? _settings.worldUpObject.up : Vector3.up;
             var baseRotation =
                 Quaternion.LookRotation(GetTargetPosition() - transform.position, upVector) * axisRotation;
 
@@ -75,8 +65,8 @@ namespace GameFramework.Kinematics {
         public override void ApplyTransform() {
             var space = _settings.space;
             var offsetRotation = Quaternion.Euler(_settings.offsetAngles);
-            var axisRotation = Quaternion.Inverse(Quaternion.LookRotation(_forwardVector, _upVector));
-            var upVector = _worldUpObject != null ? _worldUpObject.up : Vector3.up;
+            var axisRotation = Quaternion.Inverse(Quaternion.LookRotation(_settings.forwardVector, _settings.upVector));
+            var upVector = _settings.worldUpObject != null ? _settings.worldUpObject.up : Vector3.up;
             var baseRotation =
                 Quaternion.LookRotation(GetTargetPosition() - transform.position, upVector) * axisRotation;
 

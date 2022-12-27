@@ -15,6 +15,8 @@ namespace GameFramework.Kinematics {
         [ReadOnly]
         public Space space;
         [ReadOnly]
+        public TransformMasks masks;
+        [ReadOnly]
         public float3 offsetPosition;
         [ReadOnly]
         public quaternion offsetRotation;
@@ -46,9 +48,17 @@ namespace GameFramework.Kinematics {
                 rot = math.mul(rot, constraintTargetHandle.GetRotation(stream));
             }
 
-            ownerHandle.SetPosition(stream, constraintTargetHandle.GetPosition(stream) + ofsPos);
-            ownerHandle.SetRotation(stream, rot);
-            ownerHandle.SetLocalScale(stream, constraintTargetHandle.GetLocalScale(stream) * ofsScale);
+            if ((masks & TransformMasks.Position) != 0) {
+                ownerHandle.SetPosition(stream, constraintTargetHandle.GetPosition(stream) + ofsPos);
+            }
+
+            if ((masks & TransformMasks.Rotation) != 0) {
+                ownerHandle.SetRotation(stream, rot);
+            }
+
+            if ((masks & TransformMasks.Scale) != 0) {
+                ownerHandle.SetLocalScale(stream, constraintTargetHandle.GetLocalScale(stream) * ofsScale);
+            }
         }
     }
 }

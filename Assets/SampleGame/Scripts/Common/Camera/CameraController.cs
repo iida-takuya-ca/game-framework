@@ -14,12 +14,12 @@ namespace SampleGame {
         private Camera _camera;
         [SerializeField, Tooltip("VirtualCameraのRoot")]
         private GameObject _virtualCameraRoot;
-        [SerializeField, Tooltip("ConstraintのRoot")]
-        private GameObject _constraintRoot;
+        [SerializeField, Tooltip("AttachmentのRoot")]
+        private GameObject _attachmentRoot;
 
         private CinemachineBrain _brain;
         private CinemachineVirtualCameraBase[] _virtualCameras;
-        private ConstraintExpression[] _constraints;
+        private Attachment[] _attachments;
 
         public bool IsActive => isActiveAndEnabled;
         public Camera MainCamera => _camera;
@@ -49,12 +49,12 @@ namespace SampleGame {
         }
 
         /// <summary>
-        /// Constraintの取得
+        /// Attachmentの取得
         /// </summary>
-        public T GetConstraint<T>(string constraintName)
-            where T : ConstraintExpression {
-            var constraint = _constraints.FirstOrDefault(x => x.name == constraintName);
-            return constraint as T;
+        public T GetAttachment<T>(string attachmentName)
+            where T : Attachment {
+            var attachment = _attachments.FirstOrDefault(x => x.name == attachmentName);
+            return attachment as T;
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace SampleGame {
         /// 更新処理
         /// </summary>
         void ILateUpdatableTask.LateUpdate() {
-            // Constraint更新
-            foreach (var constraint in _constraints) {
-                constraint.ManualUpdate();
+            // Attachment更新
+            foreach (var attachment in _attachments) {
+                attachment.ManualUpdate();
             }
 
             // Brain更新
@@ -95,7 +95,10 @@ namespace SampleGame {
             }
 
             _virtualCameras = virtualCameraList.ToArray();
-            _constraints = _constraintRoot.GetComponentsInChildren<ConstraintExpression>();
+            _attachments = _attachmentRoot.GetComponentsInChildren<Attachment>();
+            foreach (var attachment in _attachments) { 
+                attachment.UpdateMode = Attachment.Mode.Manual;
+            }
         }
     }
 }

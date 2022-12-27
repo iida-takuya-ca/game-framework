@@ -13,17 +13,11 @@ namespace GameFramework.Kinematics {
             public Vector3 offsetPosition = Vector3.zero;
             public Vector3 offsetAngles = Vector3.zero;
             public Vector3 offsetScale = Vector3.one;
+            public TransformMasks mask = KinematicsDefinitions.TransformMasksAll;
         }
 
         // コンストレイント設定
         public ConstraintSettings Settings { get; set; } = new ConstraintSettings();
-
-        // 座標追従無効
-        public bool DisablePosition { get; set; }
-        // 回転追従無効
-        public bool DisableRotation { get; set; }
-        // 拡縮追従無効
-        public bool DisableLocalScale { get; set; }
 
         /// <summary>
         /// コンストラクタ
@@ -37,44 +31,12 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            var space = Settings.space;
-
-            if (!DisablePosition) {
-                var offsetPosition = Settings.offsetPosition;
-
-                if (space == Space.Self) {
-                    offsetPosition = Owner.TransformVector(offsetPosition);
-                }
-
-                Owner.position = GetTargetPosition() + offsetPosition;
-            }
-
-            if (!DisableRotation) {
-                var offsetRotation = Quaternion.Euler(Settings.offsetAngles);
-
-                if (space == Space.Self) {
-                    Owner.rotation = GetTargetRotation() * offsetRotation;
-                }
-                else {
-                    Owner.rotation = offsetRotation * GetTargetRotation();
-                }
-            }
-
-            if (!DisableLocalScale) {
-                var offsetScale = Settings.offsetScale;
-                Owner.localScale = Vector3.Scale(GetTargetLocalScale(), offsetScale);
-            }
-        }
-
-        /// <summary>
         /// ジョブハンドルの生成
         /// </summary>
         ParentConstraintJobHandle IJobParentConstraint.CreateJobHandle(Animator animator) {
             var handle = new ParentConstraintJobHandle();
             handle.space = Settings.space;
+            handle.masks = Settings.mask;
             handle.offsetPosition = Settings.offsetPosition;
             handle.offsetRotation = quaternion.EulerZXY(Settings.offsetAngles.z, Settings.offsetAngles.x,
                 Settings.offsetAngles.y);

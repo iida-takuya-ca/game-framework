@@ -134,7 +134,7 @@ namespace GameFramework.BodySystems {
             body.AddController(new ParentController());
             body.AddController(new MaterialController());
             body.AddController(new MeshController());
-            body.AddController(new ConstraintController());
+            body.AddController(new AttachmentController());
             body.AddController(new GimmickController());
 
             // Componentとして入っている物を抽出

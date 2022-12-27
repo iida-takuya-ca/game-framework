@@ -10,8 +10,6 @@ namespace GameFramework.BodySystems {
     public class MotionController : SerializedBodyController {
         [SerializeField, Tooltip("モーション更新モード")]
         private DirectorUpdateMode _updateMode = DirectorUpdateMode.GameTime;
-        [SerializeField, Tooltip("Constraint等をAnimationJobで動かすか")]
-        private bool _useAnimationJob = false;
 
         // ルートスケール制御用
         private RootScaleAnimationJobProvider _rootScaleAnimationJobProvider;
@@ -20,8 +18,6 @@ namespace GameFramework.BodySystems {
         public Animator Animator { get; private set; }
         // モーション再生用クラス
         public MotionPlayer Player { get; private set; }
-        // Constraint等をAnimationJobで動かすか
-        public bool UseAnimationJob => _useAnimationJob;
 
         // ルートスケール（座標）
         public Vector3 RootPositionScale {
