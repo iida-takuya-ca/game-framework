@@ -1,7 +1,12 @@
 using System;
-using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+
+#if USE_ADDRESSABLES
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.ResourceProviders;
+#endif
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -55,8 +60,11 @@ namespace GameFramework.AssetSystems {
         /// </summary>
         AssetHandle<T> IAssetProvider.LoadAsync<T>(string address) {
 #if UNITY_EDITOR
+            // Address > Path変換
+            var path = GetAssetPath<T>(address);
+            
             // 読み込み処理
-            var asset = AssetDatabase.LoadAssetAtPath<T>(address);
+            var asset = AssetDatabase.LoadAssetAtPath<T>(path);
             var info = new AssetInfo<T>(asset);
             return new AssetHandle<T>(info);
 #else
@@ -95,6 +103,20 @@ namespace GameFramework.AssetSystems {
         bool IAssetProvider.ContainsScene(string address) {
             // 常に失敗
             return false;
+        }
+
+        /// <summary>
+        /// AddressをPathに変換
+        /// </summary>
+        private string GetAssetPath<T>(string address) {
+#if USE_ADDRESSABLES && UNITY_EDITOR
+            foreach (var locator in Addressables.ResourceLocators) {
+                if (locator.Locate(address, typeof(T), out var list)) {
+                    return list[0].InternalId;
+                }
+            }
+#endif
+            return address;
         }
     }
 }

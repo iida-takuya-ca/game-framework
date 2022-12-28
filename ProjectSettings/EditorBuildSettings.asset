@@ -32,4 +32,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Samples/Scenes/Debug/sample_b.unity
     guid: ca3c3b730d687c9488d961bdc8f496fc
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 41ec11268afa736449f2e82e8de692ef, type: 2}

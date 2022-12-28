@@ -5,6 +5,7 @@ using GameFramework.EnvironmentSystems;
 using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace SampleGame {
     /// <summary>
@@ -53,6 +54,8 @@ namespace SampleGame {
             _globalObject.Install(Services.Instance);
             
             // 各種システム初期化
+            yield return Addressables.InitializeAsync();
+            
             _taskRunner = new TaskRunner();
             Services.Instance.Set(_taskRunner);
             var assetManager = new AssetManager();
