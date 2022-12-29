@@ -1,6 +1,10 @@
 using System;
 using UnityEngine;
 
+#if USE_UNI_RX
+using UniRx;
+#endif
+
 namespace GameFramework.Core {
     /// <summary>
     /// 時間の階層管理用クラス
@@ -15,6 +19,12 @@ namespace GameFramework.Core {
         public event Action<float> OnChangedTimeScale;
         // 内部用TimeScaleの変更通知（通知タイミングを揃えるため）
         private event Action<float> OnChangedTimeScaleInternal;
+
+#if USE_UNI_RX
+        // TimeScaleの変化を監視するためのReactiveProperty
+        private FloatReactiveProperty _timeScaleProp = new FloatReactiveProperty(1.0f);
+        public IReadOnlyReactiveProperty<float> TimeScaleProp => _timeScaleProp;
+#endif
 
         // 自身のTimeScale
         public float LocalTimeScale {
@@ -37,6 +47,11 @@ namespace GameFramework.Core {
         /// <param name="parent">親となるTimeLayer, 未指定の場合UnityEngine.Timeに直接依存</param>
         public LayeredTime(LayeredTime parent = null) {
             SetParent(parent);
+
+#if USE_UNI_RX
+            OnChangedTimeScaleInternal += x => _timeScaleProp.Value = x;
+            _timeScaleProp.Value = TimeScale;
+#endif
         }
 
         /// <summary>
