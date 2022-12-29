@@ -5,30 +5,22 @@ namespace GameFramework.Kinematics {
     /// 拡大縮小追従
     /// </summary>
     public class ScaleRuntimeAttachment : RuntimeAttachment {
-        // 追従設定
-        public class AttachmentSettings {
-            public Vector3 offsetScale = Vector3.one;
-        }
+        private ScaleConstraintResolver _resolver;
 
+        // Transform制御用インスタンス
+        protected override ConstraintResolver Resolver => _resolver;
+        
         // 追従設定
-        public AttachmentSettings Settings { get; set; } = new AttachmentSettings();
+        public ScaleConstraintResolver.ResolverSettings Settings {
+            get => _resolver.Settings;
+            set => _resolver.Settings = value;
+        }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ScaleRuntimeAttachment(Transform owner, string targetName = "")
-            : base(owner, targetName) {
-        }
-
-        public ScaleRuntimeAttachment(Transform owner, Transform target)
-            : base(owner, target) {
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            Owner.localScale = Vector3.Scale(GetTargetLocalScale(), Settings.offsetScale);
+        public ScaleRuntimeAttachment(Transform owner) {
+            _resolver = new ScaleConstraintResolver(owner);
         }
     }
 }

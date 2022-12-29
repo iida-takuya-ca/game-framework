@@ -150,6 +150,10 @@ namespace GameFramework.Core {
                 return;
             }
 
+            if (!IsActive) {
+                return;
+            }
+
             UpdateInternal();
         }
 
@@ -158,6 +162,10 @@ namespace GameFramework.Core {
         /// </summary>
         private void LateUpdate() {
             if (!IsCurrent) {
+                return;
+            }
+
+            if (!IsActive) {
                 return;
             }
 

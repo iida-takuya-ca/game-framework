@@ -32,8 +32,14 @@ namespace GameFramework.Kinematics {
         // ターゲットリスト
         public ConstraintResolver.TargetSource[] Sources {
             set {
+                if (!_initialized) {
+                    Initialize();
+                    _initialized = true;
+                }
                 _sources = value;
-                Resolver.Sources = _sources;
+                if (Resolver != null) {
+                    Resolver.Sources = _sources;
+                }
             }
         }
         // Transform制御用インスタンス
