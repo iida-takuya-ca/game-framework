@@ -34,7 +34,7 @@ namespace GameFramework.AssetSystems {
     /// <summary>
     /// 読み込んだアセットの解放
     /// </summary>
-    internal void Release() {
+    public void Release() {
         if (_info == null) {
             return;
         }

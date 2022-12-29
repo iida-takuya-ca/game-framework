@@ -10,7 +10,7 @@ namespace GameFramework.BodySystems {
     /// <summary>
     /// Rootモーションのスケールコントロール用JobProvider
     /// </summary>
-    public class RootScaleAnimationJobProvider : IAnimationJobProvider<RootScaleAnimationJobProvider.AnimationJob> {
+    public class RootMoveAnimationJobProvider : IAnimationJobProvider<RootMoveAnimationJobProvider.AnimationJob> {
         /// <summary>
         /// Job本体
         /// </summary>
@@ -23,8 +23,8 @@ namespace GameFramework.BodySystems {
             /// RootMotion更新用
             /// </summary>
             void IAnimationJob.ProcessRootMotion(AnimationStream stream) {
-                stream.velocity *= vectorProperties[0];
-                stream.angularVelocity *= vectorProperties[1];
+                stream.velocity = stream.velocity * vectorProperties[0] + vectorProperties[2];
+                stream.angularVelocity = stream.angularVelocity * vectorProperties[1] + vectorProperties[3];
             }
 
             /// <summary>
@@ -49,6 +49,16 @@ namespace GameFramework.BodySystems {
                 }
             }
         }
+        
+        // ルート移動速度のオフセット
+        public Vector3 VelocityOffset {
+            get => _vectorProperties.IsCreated ? _vectorProperties[2] : Vector3.zero;
+            set {
+                if (_vectorProperties.IsCreated) {
+                    _vectorProperties[2] = value;
+                }
+            }
+        }
 
         // ルート回転のスケール
         public Vector3 AngleScale {
@@ -59,14 +69,26 @@ namespace GameFramework.BodySystems {
                 }
             }
         }
+        
+        // ルート角速度のオフセット
+        public Vector3 AngularVelocityOffset {
+            get => _vectorProperties.IsCreated ? _vectorProperties[3] : Vector3.zero;
+            set {
+                if (_vectorProperties.IsCreated) {
+                    _vectorProperties[3] = value;
+                }
+            }
+        }
 
         /// <summary>
         /// 初期化処理
         /// </summary>
         AnimationJob IAnimationJobProvider<AnimationJob>.Initialize(MotionPlayer player) {
-            _vectorProperties = new NativeArray<float3>(2, Allocator.Persistent);
+            _vectorProperties = new NativeArray<float3>(4, Allocator.Persistent);
             _vectorProperties[0] = Vector3.one;
             _vectorProperties[1] = Vector3.one;
+            _vectorProperties[2] = Vector3.zero;
+            _vectorProperties[3] = Vector3.zero;
 
             return new AnimationJob {
                 vectorProperties = _vectorProperties,

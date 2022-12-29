@@ -24,7 +24,7 @@ namespace GameFramework.Kinematics {
         /// <summary>
         /// Transformを反映
         /// </summary>
-        public override void ApplyTransform() {
+        public override void Resolve() {
             Owner.localScale = Vector3.Scale(GetTargetLocalScale(), Settings.offsetScale);
         }
 

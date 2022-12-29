@@ -59,7 +59,7 @@ namespace GameFramework.Kinematics {
         /// <summary>
         /// Transformの反映
         /// </summary>
-        public abstract void ApplyTransform();
+        public abstract void Resolve();
 
         /// <summary>
         /// オフセットを初期化

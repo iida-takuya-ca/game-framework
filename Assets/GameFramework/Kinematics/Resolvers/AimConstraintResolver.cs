@@ -34,7 +34,7 @@ namespace GameFramework.Kinematics {
         /// <summary>
         /// Transformを反映
         /// </summary>
-        public override void ApplyTransform() {
+        public override void Resolve() {
             var space = Settings.space;
             var offsetRotation = Quaternion.Euler(Settings.offsetAngles);
             var axisRotation = Quaternion.Inverse(Quaternion.LookRotation(Settings.forwardVector, Settings.upVector));

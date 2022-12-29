@@ -20,7 +20,7 @@ namespace GameFramework.Kinematics {
         /// 更新処理
         /// </summary>
         public void ManualUpdate() {
-            Resolver.ApplyTransform();
+            Resolver.Resolve();
         }
     }
 }

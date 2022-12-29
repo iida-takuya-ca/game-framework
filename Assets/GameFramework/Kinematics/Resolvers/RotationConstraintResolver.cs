@@ -28,7 +28,7 @@ namespace GameFramework.Kinematics {
         /// <summary>
         /// Transformを反映
         /// </summary>
-        public override void ApplyTransform() {
+        public override void Resolve() {
             var space = Settings.space;
             var offset = Quaternion.Euler(Settings.offsetAngles);
 

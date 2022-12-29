@@ -12,7 +12,7 @@ namespace GameFramework.BodySystems {
         private DirectorUpdateMode _updateMode = DirectorUpdateMode.GameTime;
 
         // ルートスケール制御用
-        private RootScaleAnimationJobProvider _rootScaleAnimationJobProvider;
+        private RootMoveAnimationJobProvider _rootMoveAnimationJobProvider;
 
         // Animator
         public Animator Animator { get; private set; }
@@ -21,13 +21,23 @@ namespace GameFramework.BodySystems {
 
         // ルートスケール（座標）
         public Vector3 RootPositionScale {
-            get => _rootScaleAnimationJobProvider.PositionScale;
-            set => _rootScaleAnimationJobProvider.PositionScale = value;
+            get => _rootMoveAnimationJobProvider.PositionScale;
+            set => _rootMoveAnimationJobProvider.PositionScale = value;
+        }
+        // ルート速度オフセット
+        public Vector3 RootVelocityOffset {
+            get => _rootMoveAnimationJobProvider.VelocityOffset;
+            set => _rootMoveAnimationJobProvider.VelocityOffset = value;
         }
         // ルートスケール（回転）
         public Vector3 RootAngleScale {
-            get => _rootScaleAnimationJobProvider.AngleScale;
-            set => _rootScaleAnimationJobProvider.AngleScale = value;
+            get => _rootMoveAnimationJobProvider.AngleScale;
+            set => _rootMoveAnimationJobProvider.AngleScale = value;
+        }
+        // ルート角速度オフセット
+        public Vector3 RootAngularVelocityOffset {
+            get => _rootMoveAnimationJobProvider.AngularVelocityOffset;
+            set => _rootMoveAnimationJobProvider.AngularVelocityOffset = value;
         }
 
         /// <summary>
@@ -38,8 +48,8 @@ namespace GameFramework.BodySystems {
             Player = new MotionPlayer(Animator, _updateMode);
 
             // RootScaleJobの初期化
-            _rootScaleAnimationJobProvider = new RootScaleAnimationJobProvider();
-            Player.AddJob(_rootScaleAnimationJobProvider);
+            _rootMoveAnimationJobProvider = new RootMoveAnimationJobProvider();
+            Player.AddJob(_rootMoveAnimationJobProvider);
         }
 
         /// <summary>

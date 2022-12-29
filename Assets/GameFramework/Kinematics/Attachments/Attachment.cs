@@ -74,7 +74,7 @@ namespace GameFramework.Kinematics {
         /// Transformを反映
         /// </summary>
         public void ApplyTransform() {
-            Resolver.ApplyTransform();
+            Resolver.Resolve();
         }
         
         /// <summary>
