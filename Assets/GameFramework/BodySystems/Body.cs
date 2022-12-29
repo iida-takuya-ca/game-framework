@@ -27,6 +27,8 @@ namespace GameFramework.BodySystems {
         // 解放スコープ
         public event Action OnExpired;
 
+        // ユーザー定義ID
+        public string UserId { get; set; } = "";
         // 有効なBodyか
         public bool IsValid => GameObject != null;
         // 有効状態
