@@ -5,39 +5,22 @@ namespace GameFramework.Kinematics {
     /// 姿勢追従
     /// </summary>
     public class RotationRuntimeAttachment : RuntimeAttachment {
-        // 追従設定
-        public class AttachmentSettings {
-            public Space space = Space.Self;
-            public Vector3 offsetAngles = Vector3.zero;
-        }
+        private RotationConstraintResolver _resolver;
 
+        // Transform制御用インスタンス
+        protected override ConstraintResolver Resolver => _resolver;
+        
         // 追従設定
-        public AttachmentSettings Settings { get; set; } = new AttachmentSettings();
+        public RotationConstraintResolver.ResolverSettings Settings {
+            get => _resolver.Settings;
+            set => _resolver.Settings = value;
+        }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RotationRuntimeAttachment(Transform owner, string targetName = "")
-            : base(owner, targetName) {
-        }
-
-        public RotationRuntimeAttachment(Transform owner, Transform target)
-            : base(owner, target) {
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            var space = Settings.space;
-            var offset = Quaternion.Euler(Settings.offsetAngles);
-
-            if (space == Space.Self) {
-                Owner.rotation = GetTargetRotation() * offset;
-            }
-            else {
-                Owner.rotation = offset * GetTargetRotation();
-            }
+        public RotationRuntimeAttachment(Transform owner) {
+            _resolver = new RotationConstraintResolver(owner);
         }
     }
 }

@@ -5,38 +5,22 @@ namespace GameFramework.Kinematics {
     /// 座標追従
     /// </summary>
     public class PositionRuntimeAttachment : RuntimeAttachment {
-        // 追従設定
-        public class AttachmentSettings {
-            public Space space = Space.Self;
-            public Vector3 offsetPosition;
-        }
+        private PositionConstraintResolver _resolver;
 
+        // Transform制御用インスタンス
+        protected override ConstraintResolver Resolver => _resolver;
+        
         // 追従設定
-        public AttachmentSettings Settings { get; set; } = new AttachmentSettings();
+        public PositionConstraintResolver.ResolverSettings Settings {
+            get => _resolver.Settings;
+            set => _resolver.Settings = value;
+        }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PositionRuntimeAttachment(Transform owner, string targetName = "")
-            : base(owner, targetName) {
-        }
-
-        public PositionRuntimeAttachment(Transform owner, Transform target)
-            : base(owner, target) {
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        protected override void ApplyTransform() {
-            var space = Settings.space;
-            var offset = Settings.offsetPosition;
-
-            if (space == Space.Self) {
-                offset = Owner.TransformVector(offset);
-            }
-
-            Owner.position = GetTargetPosition() + offset;
+        public PositionRuntimeAttachment(Transform owner) {
+            _resolver = new PositionConstraintResolver(owner);
         }
     }
 }

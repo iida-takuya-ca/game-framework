@@ -70,7 +70,7 @@ namespace SampleGame {
             _rootAngle = new GameObject("RootAngle").transform;
             var rootAngleConstraint = cameraController.GetAttachment<ParentAttachment>("RootAngle");
             rootAngleConstraint.Sources = new[] {
-                new Attachment.TargetSource {
+                new ConstraintResolver.TargetSource {
                     target = _rootAngle,
                     weight = 1.0f
                 }
@@ -83,7 +83,7 @@ namespace SampleGame {
                     // CameraのAttachment設定
                     var playerConstraint = cameraController.GetAttachment<ParentAttachment>("Player");
                     playerConstraint.Sources = new[] {
-                        new Attachment.TargetSource {
+                        new ConstraintResolver.TargetSource {
                             target = entity.GetBody().Transform,
                             weight = 1.0f
                         }
