@@ -76,6 +76,10 @@ namespace GameFramework.Kinematics {
         /// ターゲットのWeightを合計で1になるように正規化
         /// </summary>
         private void NormalizeWeights() {
+            if (_normalized) {
+                return;
+            }
+            
             var totalWeight = _targetInfos.Where(x => x.target != null).Sum(x => x.source.weight);
 
             if (totalWeight <= float.Epsilon) {
