@@ -6,56 +6,26 @@ namespace GameFramework.Kinematics {
     /// 座標追従
     /// </summary>
     public class PositionAttachment : Attachment {
-        // 設定
-        [Serializable]
-        public class AttachmentSettings {
-            public Space space = Space.Self;
-            public Vector3 offsetPosition;
-        }
+        [SerializeField, Tooltip("制御用設定")]
+        private PositionConstraintResolver.ResolverSettings _settings = null;
 
-        [SerializeField, Tooltip("追従設定")]
-        private AttachmentSettings _settings = null;
+        private PositionConstraintResolver _resolver;
 
-        // 追従設定
-        public AttachmentSettings Settings {
-            get => _settings;
-            set => _settings = value;
-        }
-
-        /// <summary>
-        /// 自身のTransformからオフセットを設定する
-        /// </summary>
-        public override void TransferOffset() {
-            var space = _settings.space;
-            // Position
-            var offsetPosition = transform.position - GetTargetPosition();
-
-            if (space == Space.Self) {
-                offsetPosition = transform.InverseTransformVector(offsetPosition);
+        // 制御用設定
+        public PositionConstraintResolver.ResolverSettings Settings {
+            set {
+                _settings = value;
+                _resolver.Settings = _settings;
             }
-
-            _settings.offsetPosition = offsetPosition;
         }
+        // Transform制御用クラス
+        protected override ConstraintResolver Resolver => _resolver;
 
         /// <summary>
-        /// オフセットを初期化
+        /// 初期化処理
         /// </summary>
-        public override void ResetOffset() {
-            _settings.offsetPosition = Vector3.zero;
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        public override void ApplyTransform() {
-            var space = _settings.space;
-            var offset = _settings.offsetPosition;
-
-            if (space == Space.Self) {
-                offset = transform.TransformVector(offset);
-            }
-
-            transform.position = GetTargetPosition() + offset;
+        protected override void Initialize() {
+            _resolver = new PositionConstraintResolver(transform);
         }
     }
 }

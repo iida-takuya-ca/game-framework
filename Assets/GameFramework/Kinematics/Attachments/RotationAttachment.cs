@@ -6,61 +6,26 @@ namespace GameFramework.Kinematics {
     /// 姿勢追従
     /// </summary>
     public class RotationAttachment : Attachment {
-        // 追従設定
-        [Serializable]
-        public class AttachmentSettings {
-            public Space space = Space.Self;
-            public Vector3 offsetAngles = Vector3.zero;
-        }
+        [SerializeField, Tooltip("制御用設定")]
+        private RotationConstraintResolver.ResolverSettings _settings = null;
 
-        [SerializeField, Tooltip("追従設定")]
-        private AttachmentSettings _settings = null;
+        private RotationConstraintResolver _resolver;
 
-        // 追従設定
-        public AttachmentSettings Settings {
-            get => _settings;
-            set => _settings = value;
+        // 制御用設定
+        public RotationConstraintResolver.ResolverSettings Settings {
+            set {
+                _settings = value;
+                _resolver.Settings = _settings;
+            }
         }
+        // Transform制御用クラス
+        protected override ConstraintResolver Resolver => _resolver;
 
         /// <summary>
-        /// オフセットを初期化
+        /// 初期化処理
         /// </summary>
-        public override void ResetOffset() {
-            _settings.offsetAngles = Vector3.zero;
-        }
-
-        /// <summary>
-        /// 自身のTransformからオフセットを設定する
-        /// </summary>
-        public override void TransferOffset() {
-            var space = _settings.space;
-
-            // Rotation
-            Quaternion offsetRotation;
-
-            if (space == Space.Self) {
-                offsetRotation = Quaternion.Inverse(GetTargetRotation()) * transform.rotation;
-            }
-            else {
-                offsetRotation = transform.rotation * Quaternion.Inverse(GetTargetRotation());
-            }
-
-            _settings.offsetAngles = offsetRotation.eulerAngles;
-        }
-
-        /// <summary>
-        /// Transformを反映
-        /// </summary>
-        public override void ApplyTransform() {
-            var space = _settings.space;
-            var offset = Quaternion.Euler(_settings.offsetAngles);
-
-            if (space == Space.Self) {
-                transform.rotation = GetTargetRotation() * offset;
-            }
-            else {
-                transform.rotation = offset * GetTargetRotation();
-            }
+        protected override void Initialize() {
+            _resolver = new RotationConstraintResolver(transform);
         }
     }
 }

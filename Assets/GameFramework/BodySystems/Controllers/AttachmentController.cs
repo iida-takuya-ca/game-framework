@@ -20,7 +20,6 @@ namespace GameFramework.BodySystems {
         /// </summary>
         public void RegisterConstraint(IAttachment attachment) {
             _customAttachments.Add(attachment);
-            attachment.RefreshTargets(Body.Transform);
         }
 
         /// <summary>
@@ -72,12 +71,6 @@ namespace GameFramework.BodySystems {
                 if (attachment is Attachment a) {
                     a.UpdateMode = Attachment.Mode.Manual;
                 }
-
-                attachment.RefreshTargets(bodyTransform);
-            }
-
-            foreach (var attachment in _customAttachments) {
-                attachment.RefreshTargets(bodyTransform);
             }
         }
     }

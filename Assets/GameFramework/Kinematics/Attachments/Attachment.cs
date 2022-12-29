@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 
 namespace GameFramework.Kinematics {
@@ -15,36 +14,15 @@ namespace GameFramework.Kinematics {
             Manual,
         }
 
-        // ターゲット情報
-        [Serializable]
-        public class TargetSource {
-            [Tooltip("追従先")]
-            public Transform target;
-            [Tooltip("影響率")]
-            public float weight = 1.0f;
-        }
-
-        // ターゲット情報
-        private class TargetInfo {
-            // ターゲットの元情報
-            public TargetSource source = new TargetSource();
-            // 参照するTarget
-            public Transform target;
-            // 正規化済みのWeight
-            public float normalizedWeight;
-        }
-
         [SerializeField, Tooltip("有効化")]
         private bool _active = false;
         [SerializeField, Tooltip("更新モード")]
         private Mode _updateMode = Mode.LateUpdate;
         [SerializeField, Tooltip("ターゲットリスト")]
-        private TargetSource[] _sources = Array.Empty<TargetSource>();
+        private ConstraintResolver.TargetSource[] _sources = Array.Empty<ConstraintResolver.TargetSource>();
 
-        // ターゲット情報リスト
-        private TargetInfo[] _targetInfos = Array.Empty<TargetInfo>();
-        // Weightが正規化済みか
-        private bool _normalized = false;
+        // 初期化済みか
+        private bool _initialized;
 
         // 更新モード
         public Mode UpdateMode {
@@ -52,17 +30,14 @@ namespace GameFramework.Kinematics {
             set => _updateMode = value;
         }
         // ターゲットリスト
-        public TargetSource[] Sources {
+        public ConstraintResolver.TargetSource[] Sources {
             set {
                 _sources = value;
-                _targetInfos = value.Select(x => new TargetInfo {
-                        source = x,
-                        target = x.target
-                    })
-                    .ToArray();
-                _normalized = false;
+                Resolver.Sources = _sources;
             }
         }
+        // Transform制御用インスタンス
+        protected abstract ConstraintResolver Resolver { get; }
 
         /// <summary>
         /// 更新処理
@@ -76,121 +51,30 @@ namespace GameFramework.Kinematics {
         }
 
         /// <summary>
-        /// ターゲットのTransform参照をリフレッシュ
-        /// </summary>
-        public void RefreshTargets(Transform root) {
-            _active = false;
-
-            for (var i = 0; i < _targetInfos.Length; i++) {
-                var info = _targetInfos[i];
-                if (info.target != null) {
-                    _active = true;
-                    continue;
-                }
-
-                info.target = _sources[i].target;
-
-                if (info.target != null) {
-                    _active = true;
-                }
-            }
-        }
-
-        /// <summary>
         /// 自身のTransformからオフセットを設定する
         /// </summary>
-        public abstract void TransferOffset();
+        public void TransferOffset() {
+            Resolver.TransferOffset();
+        }
 
         /// <summary>
         /// オフセットを初期化
         /// </summary>
-        public abstract void ResetOffset();
+        public void ResetOffset() {
+            Resolver.ResetOffset();
+        }
 
         /// <summary>
         /// Transformを反映
         /// </summary>
-        public abstract void ApplyTransform();
-
-        /// <summary>
-        /// ターゲット座標
-        /// </summary>
-        protected Vector3 GetTargetPosition() {
-            if (!(_normalized && Application.isPlaying)) {
-                NormalizeWeights();
-            }
-
-            var position = Vector3.zero;
-
-            foreach (var info in _targetInfos) {
-                if (info.target == null) {
-                    continue;
-                }
-
-                position += info.target.position * info.normalizedWeight;
-            }
-
-            return position;
+        public void ApplyTransform() {
+            Resolver.ApplyTransform();
         }
-
+        
         /// <summary>
-        /// ターゲット姿勢
+        /// 初期化処理
         /// </summary>
-        protected Quaternion GetTargetRotation() {
-            if (!(_normalized && Application.isPlaying)) {
-                NormalizeWeights();
-            }
-
-            var rotation = Quaternion.identity;
-
-            foreach (var info in _targetInfos) {
-                if (info.target == null) {
-                    continue;
-                }
-
-                rotation *= Quaternion.Slerp(Quaternion.identity, info.target.rotation,
-                    info.normalizedWeight);
-            }
-
-            return rotation;
-        }
-
-        /// <summary>
-        /// ターゲットローカルスケール
-        /// </summary>
-        protected Vector3 GetTargetLocalScale() {
-            if (!(_normalized && Application.isPlaying)) {
-                NormalizeWeights();
-            }
-
-            var scale = Vector3.zero;
-
-            foreach (var info in _targetInfos) {
-                if (info.target == null) {
-                    continue;
-                }
-
-                scale += info.target.localScale * info.normalizedWeight;
-            }
-
-            return scale;
-        }
-
-        /// <summary>
-        /// ターゲットのWeightを合計で1になるように正規化
-        /// </summary>
-        private void NormalizeWeights() {
-            var totalWeight = _targetInfos.Where(x => x.target != null).Sum(x => x.source.weight);
-
-            if (totalWeight <= float.Epsilon) {
-                return;
-            }
-
-            foreach (var info in _targetInfos) {
-                info.normalizedWeight = info.source.weight / totalWeight;
-            }
-
-            _normalized = true;
-        }
+        protected abstract void Initialize();
 
         /// <summary>
         /// 更新処理(内部用)
@@ -205,6 +89,10 @@ namespace GameFramework.Kinematics {
                 return;
             }
 #endif
+            if (!_initialized) {
+                Initialize();
+                _initialized = true;
+            }
 
             ApplyTransform();
         }
@@ -214,6 +102,10 @@ namespace GameFramework.Kinematics {
         /// </summary>
         private void Awake() {
             Sources = _sources;
+            if (!_initialized) {
+                Initialize();
+                _initialized = true;
+            }
         }
 
         /// <summary>
