@@ -54,8 +54,6 @@ namespace SampleGame {
             _globalObject.Install(Services.Instance);
             
             // 各種システム初期化
-            yield return Addressables.InitializeAsync();
-            
             _taskRunner = new TaskRunner();
             Services.Instance.Set(_taskRunner);
             var assetManager = new AssetManager();
@@ -82,7 +80,11 @@ namespace SampleGame {
                 // 未指定ならLogin > Titleへ
                 startSituation = new LoginSceneSituation(new TitleSceneSituation());
             }
+            
+            // Addressables初期化
+            yield return Addressables.InitializeAsync();
 
+            // 初期シチュエーションに遷移
             var handle = _sceneSituationContainer.Transition(startSituation);
             yield return handle;
         }
