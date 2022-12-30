@@ -6,7 +6,7 @@ namespace GameFramework.SituationSystems {
     /// ServiceContainerにServiceをインストールするクラス
     /// </summary>
     public class ServiceContainerInstaller : MonoBehaviour {
-        [SerializeField, Tooltip("LocatorにインストールするServiceリスト")]
+        [SerializeField, Tooltip("LocatorにインストールするServiceリスト"), ComponentSelector]
         private Component[] _installServices = new Component[0];
 
         /// <summary>
