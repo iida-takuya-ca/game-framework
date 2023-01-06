@@ -46,7 +46,7 @@ namespace GameFramework.CoroutineSystems {
         /// <param name="onNext">Streamの戻り値確保用</param>
         /// <param name="onError">Streamのエラー確保用</param>
         /// <param name="throwException">エラー時にExceptionを吐き出すか</param>
-        public static IEnumerator StartAsCoroutine<T>(this IObservable<T> source, IScope scope, Action<T> onNext = null,
+        public static IEnumerator StartAsEnumerator<T>(this IObservable<T> source, IScope scope, Action<T> onNext = null,
             Action<Exception> onError = null, bool throwException = true) {
             // Rx実行
             var done = false;
