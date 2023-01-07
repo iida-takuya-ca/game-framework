@@ -45,7 +45,7 @@ namespace SampleGame {
         /// コンストラクタ
         /// </summary>
         public PlayerActor(Body body, ISetupData setupData)
-            : base(body, 1) {
+            : base(body) {
             _statusEventListener = body.GetComponent<StatusEventListener>();
             var motionController = body.GetController<MotionController>();
             _animatorControllerProvider = motionController.Player.SetMotion(setupData.Controller, 0.0f, false);
