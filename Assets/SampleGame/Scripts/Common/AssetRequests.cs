@@ -175,4 +175,13 @@ namespace SampleGame {
             : base($"Battle/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset") {
         }
     }
+
+    /// <summary>
+    /// ModelViewerBodyDataのAssetRequest
+    /// </summary>
+    public class ModelViewerBodyDataRequest : DataAssetRequest<ModelViewerBodyData> {
+        public ModelViewerBodyDataRequest(string assetKey)
+            : base($"ModelViewer/Body/dat_model_viewer_body_{assetKey}.asset") {
+        }
+    }
 }
