@@ -165,7 +165,7 @@ namespace GameFramework.SituationSystems {
             }
 
             _activeScope = new DisposableScope();
-            ActiveInternal(handle, _activeScope);
+            ActivateInternal(handle, _activeScope);
             CurrentState = State.Active;
         }
 
@@ -192,7 +192,7 @@ namespace GameFramework.SituationSystems {
             }
 
             CurrentState = State.SetupFinished;
-            DeactiveInternal(handle);
+            DeactivateInternal(handle);
             _activeScope.Dispose();
             _activeScope = null;
         }
@@ -369,7 +369,7 @@ namespace GameFramework.SituationSystems {
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
         /// <param name="scope">スコープ(Active～Deactiveまで)</param>
-        protected virtual void ActiveInternal(TransitionHandle handle, IScope scope) {
+        protected virtual void ActivateInternal(TransitionHandle handle, IScope scope) {
         }
 
         /// <summary>
@@ -388,7 +388,7 @@ namespace GameFramework.SituationSystems {
         /// 非アクティブ処理(内部用)
         /// </summary>
         /// <param name="handle">遷移ハンドル</param>
-        protected virtual void DeactiveInternal(TransitionHandle handle) {
+        protected virtual void DeactivateInternal(TransitionHandle handle) {
         }
 
         /// <summary>
