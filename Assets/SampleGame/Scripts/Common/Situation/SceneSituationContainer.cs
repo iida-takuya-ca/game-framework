@@ -26,6 +26,13 @@ namespace SampleGame {
         }
 
         /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        protected override void DisposeInternal() {
+            this.UnregisterTask();
+        }
+
+        /// <summary>
         /// 遷移用のTransition取得
         /// </summary>
         protected override ITransition GetDefaultTransition() {

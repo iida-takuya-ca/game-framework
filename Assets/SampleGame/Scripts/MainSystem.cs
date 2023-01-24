@@ -107,8 +107,6 @@ namespace SampleGame {
         /// 廃棄時処理
         /// </summary>
         protected override void OnDestroyInternal() {
-            _sceneSituationContainer.Dispose();
-            _taskRunner.Dispose();
             Services.Instance.Clear();
         }
     }
