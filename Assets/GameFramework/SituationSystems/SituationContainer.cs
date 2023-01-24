@@ -265,6 +265,8 @@ namespace GameFramework.SituationSystems {
         /// 廃棄時処理
         /// </summary>
         public void Dispose() {
+            DisposeInternal();
+            
             // PreLoad毎解放する
             void ForceRelease(ISituation situation) {
                 situation.UnPreLoad();
@@ -279,6 +281,12 @@ namespace GameFramework.SituationSystems {
 
             _coroutineRunner.Dispose();
             _transitionInfo = null;
+        }
+
+        /// <summary>
+        /// 廃棄時処理(Override用)
+        /// </summary>
+        protected virtual void DisposeInternal() {
         }
 
         /// <summary>
