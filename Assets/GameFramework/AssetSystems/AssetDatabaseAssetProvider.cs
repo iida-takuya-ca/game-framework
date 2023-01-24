@@ -40,14 +40,14 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private SceneInstance _sceneInstance;
+            private SceneHolder _sceneHolder;
             
             bool ISceneAssetInfo.IsDone => true;
-            SceneInstance ISceneAssetInfo.SceneInstance => _sceneInstance;
+            SceneHolder ISceneAssetInfo.SceneHolder => _sceneHolder;
             Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
 
             public SceneAssetInfo() {
-                _sceneInstance = new SceneInstance();
+                _sceneHolder = new SceneHolder();
             }
             
             public void Dispose() {

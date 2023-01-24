@@ -4,7 +4,6 @@ using GameFramework.AssetSystems;
 using GameFramework.Core;
 using UniRx;
 using UnityEngine;
-using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -81,8 +80,8 @@ namespace SampleGame {
         /// アセットの読み込み
         /// </summary>
         /// <param name="unloadScope">解放スコープ</param>
-        public IObservable<SceneInstance> LoadAsync(IScope unloadScope) {
-            return Observable.Create<SceneInstance>(observer => {
+        public IObservable<SceneHolder> LoadAsync(IScope unloadScope) {
+            return Observable.Create<SceneHolder>(observer => {
                 var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
                 if (!handle.IsValid) {
                     observer.OnError(new KeyNotFoundException($"Load scene failed. {Address}"));
@@ -90,7 +89,7 @@ namespace SampleGame {
                 }
 
                 if (handle.IsDone) {
-                    observer.OnNext(handle.SceneInstance);
+                    observer.OnNext(handle.SceneHolder);
                     observer.OnCompleted();
                     return Disposable.Empty;
                 }
@@ -102,7 +101,7 @@ namespace SampleGame {
                             observer.OnError(handle.Exception);
                         }
                         else if (handle.IsDone) {
-                            observer.OnNext(handle.SceneInstance);
+                            observer.OnNext(handle.SceneHolder);
                             observer.OnCompleted();
                         }
                     });

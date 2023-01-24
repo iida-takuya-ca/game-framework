@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -34,14 +33,14 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private SceneInstance _sceneInstance;
+            private SceneHolder _sceneHolder;
             
             bool ISceneAssetInfo.IsDone => true;
-            SceneInstance ISceneAssetInfo.SceneInstance => _sceneInstance;
+            SceneHolder ISceneAssetInfo.SceneHolder => _sceneHolder;
             Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
 
             public SceneAssetInfo() {
-                _sceneInstance = new SceneInstance();
+                _sceneHolder = new SceneHolder();
             }
             
             public void Dispose() {

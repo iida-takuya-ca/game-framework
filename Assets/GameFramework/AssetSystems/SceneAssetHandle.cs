@@ -1,6 +1,5 @@
 using System;
 using GameFramework.Core;
-using UnityEngine.ResourceManagement.ResourceProviders;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -16,7 +15,7 @@ namespace GameFramework.AssetSystems {
         // 読み込み完了しているか
         public bool IsDone => _info == null || _info.IsDone;
         // シーンインスタンス
-        public SceneInstance SceneInstance => _info?.SceneInstance ?? new SceneInstance();
+        public SceneHolder SceneHolder => _info?.SceneHolder ?? new SceneHolder();
         // エラー
         public Exception Exception => _info?.Exception ?? null;
         // 有効なハンドルか

@@ -1,7 +1,6 @@
 #if USE_ADDRESSABLES
 
 using System;
-using System.Linq;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -41,10 +40,10 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private AsyncOperationHandle<SceneInstance> _handle;
+            private AsyncOperationHandle<UnityEngine.ResourceManagement.ResourceProviders.SceneInstance> _handle;
             
             bool ISceneAssetInfo.IsDone => _handle.IsDone;
-            SceneInstance ISceneAssetInfo.SceneInstance => _handle.Result;
+            SceneHolder ISceneAssetInfo.SceneHolder => new SceneHolder { Scene = _handle.Result };
             Exception ISceneAssetInfo.Exception => _handle.OperationException;
 
             public SceneAssetInfo(AsyncOperationHandle<SceneInstance> handle) {
@@ -108,7 +107,7 @@ namespace GameFramework.AssetSystems {
                     }
                 }
                 else {
-                    if (locator.Locate(address, typeof(SceneInstance), out var _)) {
+                    if (locator.Locate(address, typeof(SceneHolder), out var _)) {
                         return true;
                     }
                 }

@@ -16,11 +16,11 @@ namespace SampleGame {
                 var request = new SceneAssetRequest(relativeScenePath, LoadSceneMode.Additive);
                 return request.LoadAsync(scope)
                     .DoOnError(observer.OnError)
-                    .SelectMany(instance => {
-                        var op = instance.ActivateAsync();
+                    .SelectMany(holder => {
+                        var op = holder.Scene.ActivateAsync();
                         return op.AsAsyncOperationObservable()
                             .Do(_ => {
-                                var scene = instance.Scene;
+                                var scene = holder.Scene.Scene;
                                 scope.OnExpired += () => SceneManager.UnloadSceneAsync(scene);
                                 observer.OnNext(scene);
                                 observer.OnCompleted();

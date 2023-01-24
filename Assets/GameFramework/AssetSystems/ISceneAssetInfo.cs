@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.ResourceManagement.ResourceProviders;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -14,7 +13,7 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// シーンの読み込み情報
         /// </summary>
-        SceneInstance SceneInstance { get; }
+        SceneHolder SceneHolder { get; }
         
         /// <summary>
         /// エラー
