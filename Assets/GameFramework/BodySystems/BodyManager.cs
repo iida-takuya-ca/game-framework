@@ -90,6 +90,13 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
+        /// 何もない空のBodyを作成する
+        /// </summary>
+        public Body CreateEmpty(string bodyName) {
+            return CreateFromGameObject(new GameObject(bodyName));
+        }
+
+        /// <summary>
         /// タスク更新処理
         /// </summary>
         protected override void UpdateInternal() {
