@@ -51,9 +51,10 @@ namespace GameFramework.Core {
         /// <summary>
         /// サービスの設定
         /// </summary>
+        /// <param name="type">紐づけ用の型</param>
         /// <param name="service">登録するインスタンス</param>
-        public void Set(object service) {
-            var type = service.GetType();
+        public void Set<TClass>(Type type, TClass service)
+            where TClass : class {
             if (_services.ContainsKey(type)) {
                 Debug.LogError($"Already set service. Type:{type}");
                 return;
@@ -66,12 +67,31 @@ namespace GameFramework.Core {
         }
 
         /// <summary>
-        /// サービスの設定(複数登録するバージョン）
+        /// サービスの設定
         /// </summary>
         /// <param name="service">登録するインスタンス</param>
+        public void Set<T, TClass>(TClass service)
+            where TClass : class {
+            Set(typeof(T), service);
+        }
+
+        /// <summary>
+        /// サービスの設定
+        /// </summary>
+        /// <param name="service">登録するインスタンス</param>
+        public void Set<TClass>(TClass service)
+            where TClass : class {
+            Set(service.GetType(), service);
+        }
+
+        /// <summary>
+        /// サービスの設定(複数登録するバージョン）
+        /// </summary>
+        /// <param name="type">紐づけ用の型</param>
+        /// <param name="service">登録するインスタンス</param>
         /// <param name="index">インデックス</param>
-        public void Set(object service, int index) {
-            var type = service.GetType();
+        public void Set<TClass>(Type type, TClass service, int index)
+            where TClass : class {
             if (!_serviceLists.TryGetValue(type, out var list)) {
                 list = new List<object>();
                 _serviceLists[type] = list;
@@ -90,6 +110,26 @@ namespace GameFramework.Core {
             if (service is IDisposable disposable) {
                 _disposableServices.Add(disposable);
             }
+        }
+
+        /// <summary>
+        /// サービスの設定(複数登録するバージョン）
+        /// </summary>
+        /// <param name="service">登録するインスタンス</param>
+        /// <param name="index">インデックス</param>
+        public void Set<T, TClass>(TClass service, int index)
+            where TClass : class {
+            Set(typeof(T), service, index);
+        }
+
+        /// <summary>
+        /// サービスの設定(複数登録するバージョン）
+        /// </summary>
+        /// <param name="service">登録するインスタンス</param>
+        /// <param name="index">インデックス</param>
+        public void Set<TClass>(TClass service, int index)
+            where TClass : class {
+            Set(service.GetType(), service, index);
         }
 
         /// <summary>

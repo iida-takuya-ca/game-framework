@@ -13,15 +13,49 @@ namespace GameFramework.Core {
         /// <summary>
         /// サービスの設定
         /// </summary>
+        /// <param name="type">紐づけ用の型</param>
         /// <param name="service">登録するインスタンス</param>
-        void Set(object service);
+        void Set<TClass>(Type type, TClass service)
+            where TClass : class;
+
+        /// <summary>
+        /// サービスの設定
+        /// </summary>
+        /// <param name="service">登録するインスタンス</param>
+        void Set<T, TClass>(TClass service)
+            where TClass : class;
+
+        /// <summary>
+        /// サービスの設定
+        /// </summary>
+        /// <param name="service">登録するインスタンス</param>
+        void Set<TClass>(TClass service)
+            where TClass : class;
 
         /// <summary>
         /// サービスの設定(複数登録するバージョン）
         /// </summary>
         /// <param name="service">登録するインスタンス</param>
         /// <param name="index">インデックス</param>
-        void Set(object service, int index);
+        void Set<T, TClass>(TClass service, int index)
+            where TClass : class;
+
+        /// <summary>
+        /// サービスの設定(複数登録するバージョン）
+        /// </summary>
+        /// <param name="type">紐づけ用の型</param>
+        /// <param name="service">登録するインスタンス</param>
+        /// <param name="index">インデックス</param>
+        void Set<TClass>(Type type, TClass service, int index)
+            where TClass : class;
+
+        /// <summary>
+        /// サービスの設定(複数登録するバージョン）
+        /// </summary>
+        /// <param name="service">登録するインスタンス</param>
+        /// <param name="index">インデックス</param>
+        void Set<TClass>(TClass service, int index)
+            where TClass : class;
 
         /// <summary>
         /// サービスの取得
