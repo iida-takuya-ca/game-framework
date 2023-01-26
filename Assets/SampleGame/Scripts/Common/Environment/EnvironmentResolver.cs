@@ -19,6 +19,7 @@ namespace SampleGame {
         /// <param name="context">反映対象のコンテキスト</param>
         protected override void ApplyInternal(IEnvironmentContext context) {
             context.DefaultSettings.Apply();
+            RenderSettings.sun = context.Sun;
         }
 
         /// <summary>
@@ -33,6 +34,7 @@ namespace SampleGame {
 
             var result = new EnvironmentContext();
             result.DefaultSettings = current.DefaultSettings.Lerp(target.DefaultSettings, ratio);
+            result.Sun = target.Sun;
 
             return result;
         }

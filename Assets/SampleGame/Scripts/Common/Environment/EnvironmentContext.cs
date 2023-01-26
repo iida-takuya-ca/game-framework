@@ -1,4 +1,5 @@
 using GameFramework.EnvironmentSystems;
+using UnityEngine;
 
 namespace SampleGame {
     /// <summary>
@@ -6,5 +7,6 @@ namespace SampleGame {
     /// </summary>
     public class EnvironmentContext : IEnvironmentContext {
         public EnvironmentDefaultSettings DefaultSettings { get; set; }
+        public Light Sun { get; set; }
     }
 }

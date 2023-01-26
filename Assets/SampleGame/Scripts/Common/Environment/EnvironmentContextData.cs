@@ -6,7 +6,7 @@ namespace SampleGame {
     /// 環境設定用のアセット
     /// </summary>
     [CreateAssetMenu(fileName = "dat_env_hoge.asset", menuName = "Sample/Environment Context Data")]
-    public class EnvironmentContextData : ScriptableObject, IEnvironmentContext {
+    public class EnvironmentContextData : ScriptableObject {
         [SerializeField]
         public EnvironmentDefaultSettings defaultSettings;
 

@@ -11,6 +11,7 @@ namespace SampleGame.Editor {
     [CustomEditor(typeof(EnvironmentSettings))]
     public class EnvironmentSettingsEditor : UnityEditor.Editor {
         private SerializedProperty _data;
+        private SerializedProperty _sun;
         private UnityEditor.Editor _dataEditor;
 
         /// <summary>
@@ -21,6 +22,7 @@ namespace SampleGame.Editor {
 
             if (GUI.changed) {
                 ApplyDataEditor();
+                ApplyEnvironment();
             }
 
             if (_dataEditor != null) {
@@ -66,8 +68,12 @@ namespace SampleGame.Editor {
             else {
                 var resolver = (IEnvironmentResolver)new EnvironmentResolver();
                 var data = _data.objectReferenceValue as EnvironmentContextData;
+                var sun = _sun.objectReferenceValue as Light;
                 if (data != null) {
-                    resolver.Apply(data);
+                    resolver.Apply(new EnvironmentContext {
+                        DefaultSettings = data.defaultSettings,
+                        Sun = sun
+                    });
                 }
             }
         }
@@ -77,6 +83,7 @@ namespace SampleGame.Editor {
         /// </summary>
         private void OnEnable() {
             _data = serializedObject.FindProperty(nameof(_data));
+            _sun = serializedObject.FindProperty(nameof(_sun));
             ApplyDataEditor();
         }
 

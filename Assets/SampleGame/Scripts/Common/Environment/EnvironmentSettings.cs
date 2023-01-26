@@ -10,6 +10,8 @@ namespace SampleGame {
     public class EnvironmentSettings : MonoBehaviour {
         [SerializeField, Tooltip("反映対象のデータ")]
         private EnvironmentContextData _data;
+        [SerializeField, Tooltip("平行光源")]
+        private Light _sun;
         [SerializeField, Tooltip("ブレンド時間")]
         private float _blendDuration;
 
@@ -25,7 +27,11 @@ namespace SampleGame {
 
             var manager = Services.Get<EnvironmentManager>();
             if (manager != null) {
-                _handle = manager.Push(_data, _blendDuration);
+                var context = new EnvironmentContext {
+                    DefaultSettings = _data.defaultSettings,
+                    Sun = _sun
+                };
+                _handle = manager.Push(context, _blendDuration);
             }
         }
 
