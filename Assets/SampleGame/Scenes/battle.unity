@@ -14,15 +14,15 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
-  m_AmbientEquatorColor: {r: 0.6737718, g: 0.7470428, b: 0.9716981, a: 1}
-  m_AmbientGroundColor: {r: 1, g: 0.966144, b: 0.8820755, a: 1}
+  m_AmbientSkyColor: {r: 0.91237986, g: 0.9131333, b: 0.9528302, a: 1}
+  m_AmbientEquatorColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
+  m_AmbientGroundColor: {r: 0.5424528, g: 0.5865548, b: 1, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 753101724}
   m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
@@ -566,6 +566,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: acaeedf606171fd49a8fa09991f20fb9, type: 2}
+  _sun: {fileID: 753101724}
   _blendDuration: 0.2
 --- !u!1 &753101723
 GameObject:
