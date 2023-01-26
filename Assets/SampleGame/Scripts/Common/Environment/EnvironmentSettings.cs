@@ -33,19 +33,25 @@ namespace SampleGame {
                 };
                 _handle = manager.Push(context, _blendDuration);
             }
+
+            if (_sun != null) {
+                _sun.enabled = true;
+            }
         }
 
         /// <summary>
         /// 非アクティブ時処理
         /// </summary>
         private void OnDisable() {
-            if (!_handle.IsValid) {
-                return;
+            if (_handle.IsValid) {
+                var manager = Services.Get<EnvironmentManager>();
+                if (manager != null) {
+                    manager.Remove(_handle);
+                }
             }
 
-            var manager = Services.Get<EnvironmentManager>();
-            if (manager != null) {
-                manager.Remove(_handle);
+            if (_sun != null) {
+                _sun.enabled = false;
             }
         }
     }
