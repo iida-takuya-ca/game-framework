@@ -8,7 +8,6 @@ namespace GameFramework.EnvironmentSystems {
     /// </summary>
     [Serializable]
     public struct EnvironmentDefaultSettings {
-        public Light sun;
         public Color subtractiveShadowColor;
         public AmbientMode ambientMode;
         public Color ambientSkyColor;
@@ -38,7 +37,6 @@ namespace GameFramework.EnvironmentSystems {
         /// <returns></returns>
         public static EnvironmentDefaultSettings GetCurrent() {
             return new EnvironmentDefaultSettings {
-                sun = RenderSettings.sun,
                 subtractiveShadowColor = RenderSettings.subtractiveShadowColor,
                 ambientMode = RenderSettings.ambientMode,
                 ambientSkyColor = RenderSettings.ambientSkyColor,
@@ -68,7 +66,6 @@ namespace GameFramework.EnvironmentSystems {
         /// 値の反映
         /// </summary>
         public void Apply() {
-            RenderSettings.sun = sun;
             RenderSettings.subtractiveShadowColor = subtractiveShadowColor;
             RenderSettings.ambientMode = ambientMode;
             RenderSettings.ambientSkyColor = ambientSkyColor;

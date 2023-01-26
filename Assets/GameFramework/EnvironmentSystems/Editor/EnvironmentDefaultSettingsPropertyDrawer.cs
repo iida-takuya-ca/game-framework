@@ -17,9 +17,6 @@ namespace GameFramework.EnvironmentSystems.Editor {
             public static readonly GUIContent SkyTitle = EditorGUIUtility.TrTextContent("Sky");
             public static readonly GUIContent AmbientTitle = EditorGUIUtility.TrTextContent("Environment Lighting");
 
-            public static readonly GUIContent Sun = EditorGUIUtility.TrTextContent("Sun Source",
-                "Specifies the directional light that is used to indicate the direction of the sun when a procedural skybox is used. If set to None, the brightest directional light in the Scene is used to represent the sun.");
-
             public static readonly GUIContent SubtractiveShadowColor = EditorGUIUtility.TrTextContent(
                 "Realtime Shadow Color",
                 "The color used for mixing realtime shadows with baked lightmaps in Subtractive lighting mode. The color defines the darkest point of the realtime shadow.");
@@ -126,7 +123,6 @@ namespace GameFramework.EnvironmentSystems.Editor {
         }
 
         private bool _foldout;
-        private SerializedProperty _sun;
         private SerializedProperty _subtractiveShadowColor;
         private SerializedProperty _ambientMode;
         private SerializedProperty _ambientSkyColor;
@@ -193,10 +189,7 @@ namespace GameFramework.EnvironmentSystems.Editor {
                     rect.y += lineOffsetUnit + lineHeight;
                     rect.height = lineHeight;
                 }
-
-                EditorGUI.showMixedValue = _sun.hasMultipleDifferentValues;
-                EditorGUI.PropertyField(rect, _sun, Styles.Sun);
-                rect.y += lineOffsetUnit;
+                
                 EditorGUI.showMixedValue = _subtractiveShadowColor.hasMultipleDifferentValues;
                 EditorGUI.PropertyField(rect, _subtractiveShadowColor, Styles.SubtractiveShadowColor);
                 rect.y += lineOffsetUnit;
@@ -345,7 +338,6 @@ namespace GameFramework.EnvironmentSystems.Editor {
                 // 値の取得/反映ボタン
                 rect.width = position.width * 0.5f;
                 if (GUI.Button(rect, "Get Settings")) {
-                    _sun.objectReferenceValue = RenderSettings.sun;
                     _subtractiveShadowColor.colorValue = RenderSettings.subtractiveShadowColor;
                     _ambientMode.intValue = (int)RenderSettings.ambientMode;
                     _ambientSkyColor.colorValue = RenderSettings.ambientSkyColor;
@@ -372,7 +364,6 @@ namespace GameFramework.EnvironmentSystems.Editor {
                 rect.x += rect.width;
                 GUI.enabled = property.serializedObject.targetObjects.Length == 1;
                 if (GUI.Button(rect, "Set Settings")) {
-                    RenderSettings.sun = _sun.objectReferenceValue as Light;
                     RenderSettings.subtractiveShadowColor = _subtractiveShadowColor.colorValue;
                     RenderSettings.ambientMode = (AmbientMode)_ambientMode.intValue;
                     RenderSettings.ambientSkyColor = _ambientSkyColor.colorValue;
@@ -491,7 +482,6 @@ namespace GameFramework.EnvironmentSystems.Editor {
         /// プロパティの取得
         /// </summary>
         private void GetProperties(SerializedProperty property) {
-            _sun = property.FindPropertyRelative("sun");
             _subtractiveShadowColor = property.FindPropertyRelative("subtractiveShadowColor");
             _ambientMode = property.FindPropertyRelative("ambientMode");
             _ambientSkyColor = property.FindPropertyRelative("ambientSkyColor");
