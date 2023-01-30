@@ -12,7 +12,7 @@ namespace SampleGame {
         // TitleScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
 
-        public override string SceneAssetPath => "title";
+        protected override string SceneAssetPath => "title";
 
         /// <summary>
         /// 読み込み処理

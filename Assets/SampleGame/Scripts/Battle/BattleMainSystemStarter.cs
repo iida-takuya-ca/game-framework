@@ -1,3 +1,5 @@
+using GameFramework.SituationSystems;
+
 namespace SampleGame {
     /// <summary>
     /// Battleを直接開始するためのStarter

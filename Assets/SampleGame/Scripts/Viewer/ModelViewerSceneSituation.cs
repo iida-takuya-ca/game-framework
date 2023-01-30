@@ -12,7 +12,7 @@ namespace SampleGame {
     public class ModelViewerSceneSituation : SceneSituation {
         private int _debugPageId;
         
-        public override string SceneAssetPath => "model_viewer";
+        protected override string SceneAssetPath => "model_viewer";
 
         /// <summary>
         /// 初期化処理

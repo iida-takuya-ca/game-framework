@@ -14,7 +14,7 @@ namespace SampleGame {
 
         private float _timer;
 
-        public override string SceneAssetPath => "login";
+        protected override string SceneAssetPath => "login";
 
         /// <summary>
         /// コンストラクタ

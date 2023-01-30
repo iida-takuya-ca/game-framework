@@ -11,7 +11,7 @@ namespace SampleGame {
         // FieldScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
 
-        public override string SceneAssetPath => "field";
+        protected override string SceneAssetPath => "field";
 
         /// <summary>
         /// 読み込み処理

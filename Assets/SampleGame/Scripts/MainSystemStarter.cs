@@ -1,3 +1,5 @@
+using GameFramework.SituationSystems;
+
 namespace SampleGame {
     /// <summary>
     /// MainSystemのStarter

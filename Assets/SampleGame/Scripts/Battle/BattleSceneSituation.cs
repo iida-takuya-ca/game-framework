@@ -40,7 +40,7 @@ namespace SampleGame {
         // カメラ方向を使ったRoot位置
         private Transform _rootAngle;
 
-        public override string SceneAssetPath => "battle";
+        protected override string SceneAssetPath => "battle";
 
         /// <summary>
         /// 初期化処理
