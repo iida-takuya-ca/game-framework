@@ -44,12 +44,6 @@ namespace SampleGame {
         }
 
         /// <summary>
-        /// 生成時処理
-        /// </summary>
-        protected override void OnCreatedInternal() {
-        }
-
-        /// <summary>
         /// 削除時処理
         /// </summary>
         protected override void OnDeletedInternal() {
@@ -90,5 +84,7 @@ namespace SampleGame {
 
             PlayerModel.ActorModel.Update(setupData, actionDataList);
         }
+        
+        private BattleModel(object empty) : base(empty) {}
     }
 }

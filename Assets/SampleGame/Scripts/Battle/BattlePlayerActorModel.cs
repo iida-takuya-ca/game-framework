@@ -26,5 +26,7 @@ namespace SampleGame {
             Actions = actionDataList;
             OnUpdated?.Invoke(this);
         }
+        
+        private BattlePlayerActorModel(int id) : base(id) {}
     }
 }

@@ -91,5 +91,7 @@ namespace SampleGame {
             BattlePlayerActorModel.Delete(ActorModel.Id);
             ActorModel = null;
         }
+        
+        private BattlePlayerModel(int id) : base(id) {}
     }
 }

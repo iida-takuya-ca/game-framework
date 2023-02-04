@@ -1,29 +1,50 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
-namespace GameFramework.ModelSystems {
+namespace GameFramework.ModelSystems
+{
     /// <summary>
     /// Id管理によるモデル
     /// </summary>
     public abstract class IdModel<TKey, TModel> : IModel
-        where TModel : IdModel<TKey, TModel>, new() {
+        where TModel : IdModel<TKey, TModel>, new()
+    {
+        /// <summary>
+        /// GenericTypeCache
+        /// </summary>
+        private static class TypeCache<T>
+        {
+            // コンストラクタ
+            public static ConstructorInfo ConstructorInfo { get; }
+            
+            static TypeCache()
+            {
+                ConstructorInfo = typeof(T).GetConstructor( BindingFlags.NonPublic | BindingFlags.Instance, null, new [] { typeof(TKey) }, null);
+            }
+        }
+        
         /// <summary>
         /// モデル格納用ストレージ
         /// </summary>
-        private class Storage {
+        private class Storage
+        {
             // 管理対象のモデル
             private Dictionary<TKey, TModel> _models = new Dictionary<TKey, TModel>();
 
             /// <summary>
             /// リセット処理
             /// </summary>
-            public void Reset() {
+            public void Reset()
+            {
                 var keys = _models.Keys.ToArray();
-                for (var i = 0; i < keys.Length; i++) {
+                for (var i = 0; i < keys.Length; i++)
+                {
                     var model = _models[keys[i]];
-                    if (model == null) {
+                    if (model == null)
+                    {
                         return;
                     }
 
@@ -36,14 +57,22 @@ namespace GameFramework.ModelSystems {
             /// モデルの生成
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
-            public TModel Create(TKey id) {
-                if (_models.ContainsKey(id)) {
+            public TModel Create(TKey id)
+            {
+                if (_models.ContainsKey(id))
+                {
                     Debug.LogError($"Already exists {typeof(TModel).Name}. key:{id}");
                     return null;
                 }
 
-                var model = new TModel();
-                model.OnCreated(id);
+                var constructor = TypeCache<TModel>.ConstructorInfo;
+                if (constructor == null)
+                {
+                    Debug.LogError($"Not found constructor. {typeof(TModel).Name}");
+                    return null;
+                }
+                
+                var model = (TModel)constructor.Invoke(new object[] { id });
                 _models[id] = model;
                 return model;
             }
@@ -52,8 +81,10 @@ namespace GameFramework.ModelSystems {
             /// モデルの取得
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
-            public TModel Get(TKey id) {
-                if (!_models.TryGetValue(id, out var model)) {
+            public TModel Get(TKey id)
+            {
+                if (!_models.TryGetValue(id, out var model))
+                {
                     return null;
                 }
 
@@ -64,8 +95,10 @@ namespace GameFramework.ModelSystems {
             /// モデルの削除
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
-            public void Delete(TKey id) {
-                if (!_models.TryGetValue(id, out var model)) {
+            public void Delete(TKey id)
+            {
+                if (!_models.TryGetValue(id, out var model))
+                {
                     return;
                 }
 
@@ -79,6 +112,7 @@ namespace GameFramework.ModelSystems {
 
         // 識別ID
         public TKey Id { get; private set; }
+
         // スコープ通知用
         public event Action OnExpired;
 
@@ -86,9 +120,11 @@ namespace GameFramework.ModelSystems {
         /// 取得 or 生成処理
         /// </summary>
         /// <param name="id">識別キー</param>
-        public static TModel GetOrCreate(TKey id) {
+        public static TModel GetOrCreate(TKey id)
+        {
             var model = Get(id);
-            if (model == null) {
+            if (model == null)
+            {
                 model = Create(id);
             }
 
@@ -99,7 +135,8 @@ namespace GameFramework.ModelSystems {
         /// 取得処理
         /// </summary>
         /// <param name="id">識別キー</param>
-        public static TModel Get(TKey id) {
+        public static TModel Get(TKey id)
+        {
             return s_storage.Get(id);
         }
 
@@ -107,7 +144,8 @@ namespace GameFramework.ModelSystems {
         /// 生成処理
         /// </summary>
         /// <param name="id">識別キー</param>
-        public static TModel Create(TKey id) {
+        public static TModel Create(TKey id)
+        {
             return s_storage.Create(id);
         }
 
@@ -115,54 +153,54 @@ namespace GameFramework.ModelSystems {
         /// 削除処理
         /// </summary>
         /// <param name="id">識別キー</param>
-        public static void Delete(TKey id) {
+        public static void Delete(TKey id)
+        {
             s_storage.Delete(id);
         }
 
         /// <summary>
         /// リセット処理
         /// </summary>
-        public static void Reset() {
+        public static void Reset()
+        {
             s_storage.Reset();
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             Delete(Id);
         }
 
         /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
-        protected virtual void OnCreatedInternal() {
+        protected virtual void OnCreatedInternal()
+        {
         }
 
         /// <summary>
         /// 削除時処理(Override用)
         /// </summary>
-        protected virtual void OnDeletedInternal() {
+        protected virtual void OnDeletedInternal()
+        {
         }
 
         /// <summary>
-        /// コンストラクタ使用禁止
+        /// コンストラクタ
         /// </summary>
-        protected IdModel() {
-        }
-
-        /// <summary>
-        /// 生成時処理
-        /// </summary>
-        private void OnCreated(TKey id) {
+        protected IdModel(TKey id)
+        {
             Id = id;
-            OnCreatedInternal();
         }
 
         /// <summary>
         /// 削除時処理
         /// </summary>
-        private void OnDeleted() {
+        private void OnDeleted()
+        {
             OnDeletedInternal();
             Id = default;
             OnExpired?.Invoke();
