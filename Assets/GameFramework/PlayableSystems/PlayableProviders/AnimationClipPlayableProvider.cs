@@ -14,7 +14,9 @@ namespace GameFramework.PlayableSystems {
         /// コンストラクタ
         /// </summary>
         /// <param name="clip">再生対象のAnimationClip</param>
-        public AnimationClipPlayableProvider(AnimationClip clip) {
+        /// <param name="autoDispose">自動廃棄するか</param>
+        public AnimationClipPlayableProvider(AnimationClip clip, bool autoDispose)
+            : base(autoDispose) {
             _clip = clip;
         }
 

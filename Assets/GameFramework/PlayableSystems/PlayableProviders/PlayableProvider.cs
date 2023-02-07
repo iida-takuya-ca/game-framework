@@ -9,18 +9,28 @@ namespace GameFramework.PlayableSystems {
         private Playable _playable;
         private bool _initialized;
         private bool _disposed;
+        private bool _autoDispose;
 
         // 初期化済みか
         bool IPlayableProvider.IsInitialized => _initialized;
         // 廃棄済みか
         bool IPlayableProvider.IsDisposed => _disposed;
+        // 自動廃棄フラグ
+        bool IPlayableProvider.AutoDispose => _autoDispose;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public PlayableProvider(bool autoDispose) {
+            _autoDispose = autoDispose;
+        }
 
         /// <summary>
         /// 初期化処理
         /// </summary>
         /// <inheritdoc/>
         void IPlayableProvider.Initialize(PlayableGraph graph) {
-            if (!_initialized) {
+            if (_initialized) {
                 return;
             }
             

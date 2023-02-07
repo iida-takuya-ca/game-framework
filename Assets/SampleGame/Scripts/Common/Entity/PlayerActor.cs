@@ -4,6 +4,7 @@ using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
 using GameFramework.EntitySystems;
+using GameFramework.PlayableSystems;
 using UniRx;
 using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace SampleGame {
         // コルーチン実行用
         private CoroutineRunner _coroutineRunner;
         // AnimatorController制御用
-        private AnimatorControllerMotionPlayableProvider _animatorControllerProvider;
+        private AnimatorControllerPlayableProvider _basePlayableProvider;
         // 現在のステータス名
         private string _currentStatus = "";
         // ステータスリスナー
@@ -48,10 +49,10 @@ namespace SampleGame {
             : base(body) {
             _statusEventListener = body.GetComponent<StatusEventListener>();
             var motionController = body.GetController<MotionController>();
-            _animatorControllerProvider = motionController.Player.SetMotion(setupData.Controller, 0.0f, false);
+            _basePlayableProvider = motionController.Player.Change(setupData.Controller, 0.0f, false);
             _coroutineRunner = new CoroutineRunner();
             _moveController = new MoveController(body.Transform, setupData.AngularVelocity,
-                rate => { _animatorControllerProvider.GetPlayable().SetFloat("speed", rate); });
+                rate => { _basePlayableProvider.GetPlayable().SetFloat("speed", rate); });
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace SampleGame {
         /// </summary>
         public void SetDeath(bool death) {
             CancelAction();
-            _animatorControllerProvider.GetPlayable().SetBool("death", death);
+            _basePlayableProvider.GetPlayable().SetBool("death", death);
         }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace SampleGame {
                 return;
             }
 
-            _animatorControllerProvider.GetPlayable().SetTrigger("onJump");
+            _basePlayableProvider.GetPlayable().SetTrigger("onJump");
         }
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace SampleGame {
 
                             // 状態を戻す
                             var motionController = Body.GetController<MotionController>();
-                            motionController.Player.SetMotion(_animatorControllerProvider, 0.2f);
+                            motionController.Player.Change(_basePlayableProvider, 0.2f);
                         })
                     .Subscribe(_ => {
                         observer.OnNext(Unit.Default);
@@ -167,13 +168,13 @@ namespace SampleGame {
 
             // アクション専用のControllerに変更
             var motionController = Body.GetController<MotionController>();
-            motionController.Player.SetMotion(actionData.Controller, 0.2f);
+            motionController.Player.Change(actionData.Controller, 0.2f);
 
             // 最終アクションが終わるまで待つ
             yield return WaitCycleRoutine("LastAction", 1, cancelScope);
 
             // 元のControllerに戻す
-            motionController.Player.SetMotion(_animatorControllerProvider, 0.2f);
+            motionController.Player.Change(_basePlayableProvider, 0.2f);
         }
 
         /// <summary>
@@ -192,7 +193,7 @@ namespace SampleGame {
         /// ダメージトリガー発生
         /// </summary>
         private void SetDamageTrigger(int damageIndex) {
-            var playable = _animatorControllerProvider.GetPlayable();
+            var playable = _basePlayableProvider.GetPlayable();
             playable.SetInteger("damageIndex", damageIndex);
             playable.SetTrigger("onDamage");
         }

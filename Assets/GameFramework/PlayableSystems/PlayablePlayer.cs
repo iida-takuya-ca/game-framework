@@ -14,7 +14,17 @@ namespace GameFramework.PlayableSystems {
         /// </summary>
         private struct PlayingInfo {
             public IPlayableProvider provider;
-            public bool autoDispose;
+
+            public void TryDispose(bool force = false) {
+                if (provider == null) {
+                    return;
+                }
+
+                if (provider.AutoDispose || force) {
+                    provider.Dispose();
+                    provider = null;
+                }
+            }
         }
 
         // Playable情報
@@ -38,6 +48,8 @@ namespace GameFramework.PlayableSystems {
         public int SkipFrame { get; set; } = 0;
         // アニメーションの更新をSkipするかのフレーム数に対するOffset
         public int SkipFrameOffset { get; set; } = 0;
+        // AnimationJob差し込み用
+        public AnimationJobPlayer JobPlayer { get; private set; }
 
         /// <summary>
         /// コンストラクタ
@@ -48,7 +60,7 @@ namespace GameFramework.PlayableSystems {
         public PlayablePlayer(Animator animator, DirectorUpdateMode updateMode = DirectorUpdateMode.GameTime,
             ushort outputSortingOrder = 0) {
             _graph = PlayableGraph.Create($"{nameof(PlayablePlayer)}({animator.name})");
-            _mixer = AnimationMixerPlayable.Create(_graph);
+            _mixer = AnimationMixerPlayable.Create(_graph, 2);
             var output = AnimationPlayableOutput.Create(_graph, "Output", animator);
 
             _graph.SetTimeUpdateMode(updateMode);
@@ -58,22 +70,21 @@ namespace GameFramework.PlayableSystems {
 
             _prevPlayingInfo = new PlayingInfo();
             _currentPlayingInfo = new PlayingInfo();
+            
+            // JobPlayerの生成
+            JobPlayer = new AnimationJobPlayer(animator, _graph);
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
         public void Dispose() {
+            // JobPlayer削除
+            JobPlayer.Dispose();
+            
             // 再生中のPlayableをクリア
-            if (_prevPlayingInfo.provider != null && _prevPlayingInfo.autoDispose) {
-                _prevPlayingInfo.provider.Dispose();
-                _prevPlayingInfo.provider = null;
-            }
-
-            if (_currentPlayingInfo.provider != null && _currentPlayingInfo.autoDispose) {
-                _currentPlayingInfo.provider.Dispose();
-                _currentPlayingInfo.provider = null;
-            }
+            _prevPlayingInfo.TryDispose();
+            _currentPlayingInfo.TryDispose();
 
             // Graphを削除
             _graph.Destroy();
@@ -139,9 +150,7 @@ namespace GameFramework.PlayableSystems {
             // Blend完了
             else if (_prevPlayingInfo.provider != null) {
                 // Providerの削除
-                if (_prevPlayingInfo.autoDispose) {
-                    _prevPlayingInfo.provider.Dispose();
-                }
+                _prevPlayingInfo.TryDispose();
 
                 // Mixerの接続関係修正
                 _mixer.DisconnectInput(0);
@@ -164,6 +173,9 @@ namespace GameFramework.PlayableSystems {
 
             UpdateProvider(_prevPlayingInfo.provider, _prevTime);
             UpdateProvider(_currentPlayingInfo.provider, _currentTime);
+            
+            // JobProvider更新
+            JobPlayer.Update();
 
             // Manualモードの場合、ここで骨の更新を行う
             if (updateMode == DirectorUpdateMode.Manual) {
@@ -183,8 +195,7 @@ namespace GameFramework.PlayableSystems {
         /// </summary>
         /// <param name="provider">変更対象のPlayableを返すProvider</param>
         /// <param name="blendDuration">ブレンド時間</param>
-        /// <param name="autoDispose">Providerが再生停止した時に自動でDisposeされるか</param>
-        public void Change(IPlayableProvider provider, float blendDuration = 0.2f, bool autoDispose = true) {
+        public void Change(IPlayableProvider provider, float blendDuration) {
             // 無効なProvider
             if (provider != null && provider.IsDisposed) {
                 Debug.LogError($"Provider is invalid. [{provider}]");
@@ -192,13 +203,10 @@ namespace GameFramework.PlayableSystems {
             }
 
             // ブレンド中なら古い物は削除
-            if (_prevPlayingInfo.provider != null && _prevPlayingInfo.autoDispose) {
-                _prevPlayingInfo.provider.Dispose();
-            }
+            _prevPlayingInfo.TryDispose();
 
             // CurrentをPrevに移す
             _prevPlayingInfo.provider = _currentPlayingInfo.provider;
-            _prevPlayingInfo.autoDispose = _currentPlayingInfo.autoDispose;
             _prevTime = _currentTime;
 
             // 未初期化だった場合は、初期化
@@ -207,7 +215,6 @@ namespace GameFramework.PlayableSystems {
             }
 
             _currentPlayingInfo.provider = provider;
-            _currentPlayingInfo.autoDispose = autoDispose;
             _currentTime = 0.0f;
 
             // Graphの更新
@@ -241,6 +248,8 @@ namespace GameFramework.PlayableSystems {
         /// 再生速度の設定
         /// </summary>
         public void SetSpeed(float speed) {
+            JobPlayer.SetSpeed(speed);
+            
             if (Math.Abs(speed - _speed) <= float.Epsilon) {
                 return;
             }

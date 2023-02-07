@@ -1,4 +1,4 @@
-using GameFramework.MotionSystems;
+using GameFramework.PlayableSystems;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -12,32 +12,32 @@ namespace GameFramework.BodySystems {
         private DirectorUpdateMode _updateMode = DirectorUpdateMode.GameTime;
 
         // ルートスケール制御用
-        private RootMoveAnimationJobProvider _rootMoveAnimationJobProvider;
+        private RootAnimationJobProvider _rootAnimationJobProvider;
 
         // Animator
         public Animator Animator { get; private set; }
         // モーション再生用クラス
-        public MotionPlayer Player { get; private set; }
+        public PlayablePlayer Player { get; private set; }
 
         // ルートスケール（座標）
         public Vector3 RootPositionScale {
-            get => _rootMoveAnimationJobProvider.PositionScale;
-            set => _rootMoveAnimationJobProvider.PositionScale = value;
+            get => _rootAnimationJobProvider.PositionScale;
+            set => _rootAnimationJobProvider.PositionScale = value;
         }
         // ルート速度オフセット
         public Vector3 RootVelocityOffset {
-            get => _rootMoveAnimationJobProvider.VelocityOffset;
-            set => _rootMoveAnimationJobProvider.VelocityOffset = value;
+            get => _rootAnimationJobProvider.VelocityOffset;
+            set => _rootAnimationJobProvider.VelocityOffset = value;
         }
         // ルートスケール（回転）
         public Vector3 RootAngleScale {
-            get => _rootMoveAnimationJobProvider.AngleScale;
-            set => _rootMoveAnimationJobProvider.AngleScale = value;
+            get => _rootAnimationJobProvider.AngleScale;
+            set => _rootAnimationJobProvider.AngleScale = value;
         }
         // ルート角速度オフセット
         public Vector3 RootAngularVelocityOffset {
-            get => _rootMoveAnimationJobProvider.AngularVelocityOffset;
-            set => _rootMoveAnimationJobProvider.AngularVelocityOffset = value;
+            get => _rootAnimationJobProvider.AngularVelocityOffset;
+            set => _rootAnimationJobProvider.AngularVelocityOffset = value;
         }
 
         /// <summary>
@@ -45,18 +45,23 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected override void InitializeInternal() {
             Animator = Body.GetComponent<Animator>();
-            Player = new MotionPlayer(Animator, _updateMode);
+            Player = new PlayablePlayer(Animator, _updateMode);
 
             // RootScaleJobの初期化
-            _rootMoveAnimationJobProvider = new RootMoveAnimationJobProvider();
-            Player.AddJob(_rootMoveAnimationJobProvider);
+            _rootAnimationJobProvider = new RootAnimationJobProvider();
+            Player.JobPlayer.SetProvider(_rootAnimationJobProvider);
+            
+            // TimeScale監視
+            Body.LayeredTime.OnChangedTimeScale += scale => {
+                Player.SetSpeed(scale);
+            };
         }
 
         /// <summary>
         /// 更新処理
         /// </summary>
         protected override void UpdateInternal(float deltaTime) {
-            Player.Update(deltaTime);
+            Player.Update();
         }
 
         /// <summary>

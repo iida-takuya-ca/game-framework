@@ -10,7 +10,9 @@ namespace GameFramework.PlayableSystems {
         bool IsInitialized { get;  }
         // 廃棄済みか
         bool IsDisposed { get;  }
-        
+        // 自動廃棄するか
+        bool AutoDispose { get; }
+
         /// <summary>
         /// 初期化処理
         /// </summary>

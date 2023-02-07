@@ -21,12 +21,13 @@ namespace GameFramework.PlayableSystems {
         /// </summary>
         /// <inheritdoc/>
         void IAnimationJobProvider.Initialize(Animator animator, PlayableGraph graph) {
-            if (!_initialized) {
+            if (_initialized) {
                 return;
             }
             
             _initialized = true;
             _playable = CreatePlayable(animator, graph);
+            _playable.SetInputCount(1);
         }
 
         /// <summary>
