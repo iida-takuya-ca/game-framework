@@ -51,6 +51,15 @@ namespace GameFramework.PlayableSystems {
         /// 廃棄時処理
         /// </summary>
         public void Dispose() {
+            // 登録されているProviderをDisposeする
+            foreach (var info in _sortedPlayingInfos) {
+                info.provider.Dispose();
+            }
+            _sortedPlayingInfos.Clear();
+            _providers.Clear();
+            
+            // Graphを削除
+            _graph.Destroy();
         }
 
         /// <summary>
