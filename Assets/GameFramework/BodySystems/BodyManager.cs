@@ -144,6 +144,20 @@ namespace GameFramework.BodySystems {
             body.AddController(new AttachmentController());
             body.AddController(new GimmickController());
 
+            void TryAddComponent<T>(GameObject go)
+                where T : Component {
+                if (go.GetComponent<T>() != null) {
+                    return;
+                }
+
+                go.AddComponent<T>();
+            }
+            
+            // Rigidbodyがついている場合、ColliderController追加
+            if (gameObject.GetComponent<Rigidbody>() != null) {
+                TryAddComponent<ColliderController>(gameObject);
+            }
+
             // Componentとして入っている物を抽出
             var controllers = gameObject.GetComponentsInChildren<SerializedBodyController>(true);
             foreach (var controller in controllers) {
