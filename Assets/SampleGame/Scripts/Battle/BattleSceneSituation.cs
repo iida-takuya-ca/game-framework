@@ -1,5 +1,6 @@
 using System.Collections;
 using GameFramework.BodySystems;
+using GameFramework.CollisionSystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
 using GameFramework.Kinematics;
@@ -60,7 +61,12 @@ namespace SampleGame {
             // BodyManagerの生成
             var bodyManager = new BodyManager(new BodyBuilder());
             ServiceContainer.Set(bodyManager);
-            taskRunner.Register(bodyManager, TaskOrder.Body);
+            bodyManager.RegisterTask(TaskOrder.Body);
+            
+            // CollisionManagerの登録
+            var collisionManager = new CollisionManager();
+            ServiceContainer.Set(collisionManager);
+            collisionManager.RegisterTask(TaskOrder.Collision);
 
             // タスク登録
             Services.Get<CameraController>().RegisterTask(TaskOrder.Camera);
@@ -106,6 +112,17 @@ namespace SampleGame {
 
             if (Input.GetKeyDown(KeyCode.Space)) {
                 MainSystem.Instance.Reboot(new BattleSceneSituation());
+            }
+
+            // todo:コリジョンテスト
+            if (Input.GetKeyDown(KeyCode.C)) {
+                var collisionManager = Services.Get<CollisionManager>();
+                var handle = collisionManager.Register(new SphereCollision(Vector3.zero, 10), -1, result => {
+                    Debug.Log($"Hit:{result.collider.name}");
+                });
+                
+                Observable.TimerFrame(10)
+                    .Subscribe(_ => handle.Dispose());
             }
         }
 

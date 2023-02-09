@@ -10,6 +10,7 @@ namespace SampleGame {
         Body,
         Collision,
         Camera,
+        Effect,
         UI,
         PostSystem,
     }
