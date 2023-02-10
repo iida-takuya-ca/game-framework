@@ -54,5 +54,12 @@ namespace GameFramework.CollisionSystems {
 
             return count;
         }
+
+        /// <summary>
+        /// ギズモ描画
+        /// </summary>
+        protected override void DrawGizmosInternal() {
+            Gizmos.DrawLine(Start, End);
+        }
     }
 }

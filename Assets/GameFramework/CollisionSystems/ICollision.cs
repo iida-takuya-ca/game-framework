@@ -17,5 +17,10 @@ namespace GameFramework.CollisionSystems {
         /// 衝突履歴のクリア
         /// </summary>
         void ClearHistory();
+
+        /// <summary>
+        /// ギズモ描画
+        /// </summary>
+        void DrawGizmos();
     }
 }

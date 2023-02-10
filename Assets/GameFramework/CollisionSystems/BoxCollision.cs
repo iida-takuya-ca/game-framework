@@ -33,5 +33,15 @@ namespace GameFramework.CollisionSystems {
         protected override int HitCheck(int layerMask, Collider[] hitResults) {
             return Physics.OverlapBoxNonAlloc(Center, HalfExtents, hitResults, Orientation, layerMask);
         }
+
+        /// <summary>
+        /// ギズモ描画
+        /// </summary>
+        protected override void DrawGizmosInternal() {
+            var prevMatrix = Gizmos.matrix;
+            Gizmos.matrix = Matrix4x4.TRS(Center, Orientation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, HalfExtents);
+            Gizmos.matrix = prevMatrix;
+        }
     }
 }

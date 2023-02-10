@@ -65,6 +65,10 @@ namespace GameFramework.CollisionSystems {
 
             // ハンドル生成
             var handle = new CollisionHandle(this, collisionInfo);
+            
+            // Debug用の登録
+            CollisionVisualizer.Register(collision);
+            
             return handle;
         }
 
@@ -91,14 +95,27 @@ namespace GameFramework.CollisionSystems {
             }
 
             // 登録されていたら削除フラグを立てる
-            if (handle.Key is CollisionInfo collisionInfo) {
+            if (handle.Key is CollisionInfo collisionInfo && !collisionInfo.destroy) {
                 collisionInfo.destroy = true;
             }
 
             // ハンドルを無効化
             handle.Dispose();
         }
-        
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        protected override void DisposeInternal() {
+            // 削除済みの物をクリア
+            for (var i = 0; i < _collisionInfos.Count; i++) {
+                // Debug用の登録解除
+                CollisionVisualizer.Unregister(_collisionInfos[i].collision);
+            }
+            
+            _collisionInfos.Clear();
+        }
+
         /// <summary>
         /// 更新処理
         /// </summary>
@@ -123,9 +140,12 @@ namespace GameFramework.CollisionSystems {
         private void UpdateCollisionInfos() {
             // 削除済みの物をクリア
             for (var i = _collisionInfos.Count - 1; i >= 0; i--) {
-                if (!_collisionInfos[i].destroy && _collisionInfos[i].collision != null) {
+                if (!_collisionInfos[i].destroy) {
                     continue;
                 }
+
+                // Debug用の登録解除
+                CollisionVisualizer.Unregister(_collisionInfos[i].collision);
 
                 _collisionInfos.RemoveAt(i);
             }

@@ -47,11 +47,26 @@ namespace GameFramework.CollisionSystems {
         }
 
         /// <summary>
+        /// ギズモ描画
+        /// </summary>
+        void ICollision.DrawGizmos() {
+            var prevColor = Gizmos.color;
+            Gizmos.color = Color.red;
+            DrawGizmosInternal();
+            Gizmos.color = prevColor;
+        }
+
+        /// <summary>
         /// 当たり判定実行
         /// </summary>
         /// <param name="layerMask">衝突対象のLayerMask</param>
         /// <param name="hitResults">判定格納用配列</param>
         /// <returns>衝突有効数</returns>
         protected abstract int HitCheck(int layerMask, Collider[] hitResults);
+        
+        /// <summary>
+        /// ギズモ描画(Override用)
+        /// </summary>
+        protected virtual void DrawGizmosInternal() {}
     }
 }

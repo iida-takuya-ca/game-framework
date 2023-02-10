@@ -29,5 +29,21 @@ namespace GameFramework.CollisionSystems {
         protected override int HitCheck(int layerMask, Collider[] hitResults) {
             return Physics.OverlapSphereNonAlloc(Center, Radius, hitResults, layerMask);
         }
+
+        /// <summary>
+        /// ギズモ描画
+        /// </summary>
+        protected override void DrawGizmosInternal() {
+            var prevMatrix = Gizmos.matrix;
+            var splitCount = 3;
+            
+            for (var y = 0; y < splitCount; y++) {
+                var angleY = 90.0f * y / splitCount;
+                Gizmos.matrix = Matrix4x4.TRS(Center, Quaternion.Euler(0.0f, angleY, 0.0f), Vector3.one);
+                Gizmos.DrawWireSphere(Vector3.zero, Radius);
+            }
+
+            Gizmos.matrix = prevMatrix;
+        }
     }
 }
