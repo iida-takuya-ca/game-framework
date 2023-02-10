@@ -14,12 +14,12 @@ namespace GameFramework.BodySystems {
 
         // Collider情報のリフレッシュ
         public event Action OnRefreshed;
-        
+
         // Trigger系イベント通知
         public event Action<Collider> OnTriggerEnterEvent;
         public event Action<Collider> OnTriggerStayEvent;
         public event Action<Collider> OnTriggerExitEvent;
-        
+
         // Collision系イベント通知
         public event Action<Collision> OnCollisionEnterEvent;
         public event Action<Collision> OnCollisionStayEvent;
@@ -93,11 +93,11 @@ namespace GameFramework.BodySystems {
                     var info = parts.infos[j];
 
                     if (!_colliderInfos.TryGetValue(info.key, out var list)) {
-                        list = new List<Collider>();
-                        _colliderInfos.Add(info.key, list.Where(x => x != null).ToList());
+                        list = new List<Collider>(info.colliders.Where(x => x != null));
+                        _colliderInfos.Add(info.key, list);
                     }
                     else {
-                        list.AddRange(list.Where(x => x != null));
+                        list.AddRange(info.colliders.Where(x => x != null));
                     }
                 }
             }
