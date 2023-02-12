@@ -40,7 +40,7 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private AsyncOperationHandle<UnityEngine.ResourceManagement.ResourceProviders.SceneInstance> _handle;
+            private AsyncOperationHandle<SceneInstance> _handle;
             
             bool ISceneAssetInfo.IsDone => _handle.IsDone;
             SceneHolder ISceneAssetInfo.SceneHolder => new SceneHolder { Scene = _handle.Result };
@@ -107,7 +107,7 @@ namespace GameFramework.AssetSystems {
                     }
                 }
                 else {
-                    if (locator.Locate(address, typeof(SceneHolder), out var _)) {
+                    if (locator.Locate(address, typeof(SceneInstance), out var _)) {
                         return true;
                     }
                 }
