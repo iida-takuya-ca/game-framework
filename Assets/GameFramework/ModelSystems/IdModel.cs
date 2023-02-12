@@ -73,6 +73,7 @@ namespace GameFramework.ModelSystems
                 }
                 
                 var model = (TModel)constructor.Invoke(new object[] { id });
+                model.OnCreatedInternal();
                 _models[id] = model;
                 return model;
             }

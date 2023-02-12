@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameFramework.BodySystems {
     /// <summary>
-    /// Mesh結合情報保持クラス
+    /// Material情報保持クラス
     /// </summary>
     [DisallowMultipleComponent]
     public class MaterialParts : MonoBehaviour {

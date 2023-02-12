@@ -66,6 +66,7 @@ namespace GameFramework.ModelSystems
                 }
                 
                 var model = (TModel)constructor.Invoke(new object[] { null });
+                model.OnCreatedInternal();
                 _model = model;
                 return model;
             }
@@ -152,6 +153,13 @@ namespace GameFramework.ModelSystems
         public void Dispose()
         {
             Delete();
+        }
+
+        /// <summary>
+        /// 生成時処理(Override用)
+        /// </summary>
+        protected virtual void OnCreatedInternal()
+        {
         }
 
         /// <summary>

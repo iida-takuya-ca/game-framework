@@ -69,6 +69,7 @@ namespace GameFramework.ModelSystems {
                 
                 var id = _nextId++;
                 var model = (TModel)constructor.Invoke(new object[] { id });
+                model.OnCreatedInternal();
                 _models.Add(model);
                 return model;
             }
