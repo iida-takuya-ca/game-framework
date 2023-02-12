@@ -8,7 +8,7 @@ namespace GameFramework.PlayableSystems {
     /// <summary>
     /// AnimationJobを再生させるためのクラス
     /// </summary>
-    public class AnimationJobPlayer : IDisposable {
+    public class AnimationJobConnector : IDisposable {
         // 再生中のProvider情報
         private class PlayingInfo {
             public int order;
@@ -39,10 +39,11 @@ namespace GameFramework.PlayableSystems {
         /// </summary>
         /// <param name="animator">Outputを反映させるAnimator</param>
         /// <param name="graph">構築に使うGraph</param>
-        public AnimationJobPlayer(Animator animator, PlayableGraph graph) {
+        /// <param name="outputIndex">接続に使うOutputのIndex</param>
+        public AnimationJobConnector(Animator animator, PlayableGraph graph, int outputIndex = 0) {
             _animator = animator;
             _graph = graph;
-            _output = (AnimationPlayableOutput)graph.GetOutput(0);
+            _output = (AnimationPlayableOutput)graph.GetOutput(outputIndex);
             _nextPlayable = _output.GetSourcePlayable();
         }
 
@@ -65,12 +66,7 @@ namespace GameFramework.PlayableSystems {
         /// <summary>
         /// 更新処理
         /// </summary>
-        public void Update() {
-            // 時間の更新
-            var updateMode = _graph.GetTimeUpdateMode();
-            var deltaTime =
-                (updateMode == DirectorUpdateMode.UnscaledGameTime ? Time.unscaledDeltaTime : Time.deltaTime) * _speed;
-
+        public void Update(float deltaTime) {
             // 無効なProviderがいたら削除
             for (var i = _sortedPlayingInfos.Count - 1; i >= 0; i--) {
                 var info = _sortedPlayingInfos[i];
@@ -91,11 +87,6 @@ namespace GameFramework.PlayableSystems {
             // Providerの更新
             for (var i = 0; i < _sortedPlayingInfos.Count; i++) {
                 _sortedPlayingInfos[i].provider.Update(deltaTime);
-            }
-
-            // Manualモードの場合、ここで骨の更新を行う
-            if (updateMode == DirectorUpdateMode.Manual) {
-                _graph.Evaluate(deltaTime);
             }
         }
 

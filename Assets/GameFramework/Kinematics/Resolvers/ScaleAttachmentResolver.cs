@@ -4,7 +4,7 @@ namespace GameFramework.Kinematics {
     /// <summary>
     /// 拡大縮小追従用のResolver
     /// </summary>
-    public class ScaleConstraintResolver : ConstraintResolver {
+    public class ScaleAttachmentResolver : AttachmentResolver {
         // 設定
         public class ResolverSettings {
             [Tooltip("スケールオフセット")]
@@ -18,7 +18,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         /// <param name="owner">制御対象のTransform</param>
-        public ScaleConstraintResolver(Transform owner)
+        public ScaleAttachmentResolver(Transform owner)
             : base(owner) { }
 
         /// <summary>

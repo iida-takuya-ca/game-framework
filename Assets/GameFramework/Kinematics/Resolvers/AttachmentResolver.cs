@@ -6,7 +6,7 @@ namespace GameFramework.Kinematics {
     /// <summary>
     /// Transform加工用のResolver
     /// </summary>
-    public abstract class ConstraintResolver {
+    public abstract class AttachmentResolver {
         // ターゲット情報
         [Serializable]
         public class TargetSource {
@@ -52,7 +52,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         /// <param name="owner">制御対象のTransform</param>
-        public ConstraintResolver(Transform owner) {
+        public AttachmentResolver(Transform owner) {
             Owner = owner;
         }
 

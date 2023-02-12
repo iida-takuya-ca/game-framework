@@ -6,9 +6,9 @@ using UnityEngine.Playables;
 
 namespace GameFramework.PlayableSystems {
     /// <summary>
-    /// Playableを再生させるためのクラス
+    /// Motionを再生させるためのクラス
     /// </summary>
-    public class PlayablePlayer : IDisposable {
+    public class MotionPlayer : IDisposable {
         /// <summary>
         /// 再生中Provider情報
         /// </summary>
@@ -49,7 +49,7 @@ namespace GameFramework.PlayableSystems {
         // アニメーションの更新をSkipするかのフレーム数に対するOffset
         public int SkipFrameOffset { get; set; } = 0;
         // AnimationJob差し込み用
-        public AnimationJobPlayer JobPlayer { get; private set; }
+        public AnimationJobConnector JobConnector { get; private set; }
 
         /// <summary>
         /// コンストラクタ
@@ -57,9 +57,9 @@ namespace GameFramework.PlayableSystems {
         /// <param name="animator">Outputを反映させるAnimator</param>
         /// <param name="updateMode">更新モード</param>
         /// <param name="outputSortingOrder">Outputの出力オーダー</param>
-        public PlayablePlayer(Animator animator, DirectorUpdateMode updateMode = DirectorUpdateMode.GameTime,
+        public MotionPlayer(Animator animator, DirectorUpdateMode updateMode = DirectorUpdateMode.GameTime,
             ushort outputSortingOrder = 0) {
-            _graph = PlayableGraph.Create($"{nameof(PlayablePlayer)}({animator.name})");
+            _graph = PlayableGraph.Create($"{nameof(MotionPlayer)}({animator.name})");
             _mixer = AnimationMixerPlayable.Create(_graph, 2);
             var output = AnimationPlayableOutput.Create(_graph, "Output", animator);
 
@@ -72,15 +72,15 @@ namespace GameFramework.PlayableSystems {
             _currentPlayingInfo = new PlayingInfo();
             
             // JobPlayerの生成
-            JobPlayer = new AnimationJobPlayer(animator, _graph);
+            JobConnector = new AnimationJobConnector(animator, _graph);
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
         public void Dispose() {
-            // JobPlayer削除
-            JobPlayer.Dispose();
+            // JobConnector削除
+            JobConnector.Dispose();
             
             // 再生中のPlayableをクリア
             _prevPlayingInfo.TryDispose();
@@ -175,7 +175,7 @@ namespace GameFramework.PlayableSystems {
             UpdateProvider(_currentPlayingInfo.provider, _currentTime);
             
             // JobProvider更新
-            JobPlayer.Update();
+            JobConnector.Update(deltaTime);
 
             // Manualモードの場合、ここで骨の更新を行う
             if (updateMode == DirectorUpdateMode.Manual) {
@@ -248,7 +248,7 @@ namespace GameFramework.PlayableSystems {
         /// 再生速度の設定
         /// </summary>
         public void SetSpeed(float speed) {
-            JobPlayer.SetSpeed(speed);
+            JobConnector.SetSpeed(speed);
             
             if (Math.Abs(speed - _speed) <= float.Epsilon) {
                 return;

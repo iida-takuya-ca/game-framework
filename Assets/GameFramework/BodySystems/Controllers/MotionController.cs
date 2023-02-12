@@ -17,7 +17,7 @@ namespace GameFramework.BodySystems {
         // Animator
         public Animator Animator { get; private set; }
         // モーション再生用クラス
-        public PlayablePlayer Player { get; private set; }
+        public MotionPlayer Player { get; private set; }
 
         // ルートスケール（座標）
         public Vector3 RootPositionScale {
@@ -45,11 +45,11 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected override void InitializeInternal() {
             Animator = Body.GetComponent<Animator>();
-            Player = new PlayablePlayer(Animator, _updateMode);
+            Player = new MotionPlayer(Animator, _updateMode);
 
             // RootScaleJobの初期化
             _rootAnimationJobProvider = new RootAnimationJobProvider();
-            Player.JobPlayer.SetProvider(_rootAnimationJobProvider);
+            Player.JobConnector.SetProvider(_rootAnimationJobProvider);
             
             // TimeScale監視
             Body.LayeredTime.OnChangedTimeScale += scale => {

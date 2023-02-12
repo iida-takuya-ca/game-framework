@@ -19,7 +19,7 @@ namespace GameFramework.Kinematics {
         [SerializeField, Tooltip("更新モード")]
         private Mode _updateMode = Mode.LateUpdate;
         [SerializeField, Tooltip("ターゲットリスト")]
-        private ConstraintResolver.TargetSource[] _sources = Array.Empty<ConstraintResolver.TargetSource>();
+        private AttachmentResolver.TargetSource[] _sources = Array.Empty<AttachmentResolver.TargetSource>();
 
         // 初期化済みか
         private bool _initialized;
@@ -30,7 +30,7 @@ namespace GameFramework.Kinematics {
             set => _updateMode = value;
         }
         // ターゲットリスト
-        public ConstraintResolver.TargetSource[] Sources {
+        public AttachmentResolver.TargetSource[] Sources {
             set {
                 if (!_initialized) {
                     Initialize();
@@ -43,7 +43,7 @@ namespace GameFramework.Kinematics {
             }
         }
         // Transform制御用インスタンス
-        protected abstract ConstraintResolver Resolver { get; }
+        protected abstract AttachmentResolver Resolver { get; }
 
         /// <summary>
         /// 更新処理

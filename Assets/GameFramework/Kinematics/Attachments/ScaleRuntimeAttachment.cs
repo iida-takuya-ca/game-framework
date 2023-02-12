@@ -5,13 +5,13 @@ namespace GameFramework.Kinematics {
     /// 拡大縮小追従
     /// </summary>
     public class ScaleRuntimeAttachment : RuntimeAttachment {
-        private ScaleConstraintResolver _resolver;
+        private ScaleAttachmentResolver _resolver;
 
         // Transform制御用インスタンス
-        protected override ConstraintResolver Resolver => _resolver;
+        protected override AttachmentResolver Resolver => _resolver;
         
         // 追従設定
-        public ScaleConstraintResolver.ResolverSettings Settings {
+        public ScaleAttachmentResolver.ResolverSettings Settings {
             get => _resolver.Settings;
             set => _resolver.Settings = value;
         }
@@ -20,7 +20,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         public ScaleRuntimeAttachment(Transform owner) {
-            _resolver = new ScaleConstraintResolver(owner);
+            _resolver = new ScaleAttachmentResolver(owner);
         }
     }
 }

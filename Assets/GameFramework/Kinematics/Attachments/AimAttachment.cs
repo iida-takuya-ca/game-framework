@@ -6,25 +6,25 @@ namespace GameFramework.Kinematics {
     /// </summary>
     public class AimAttachment : Attachment {
         [SerializeField, Tooltip("制御用設定")]
-        private AimConstraintResolver.ResolverSettings _settings = null;
+        private AimAttachmentResolver.ResolverSettings _settings = null;
 
-        private AimConstraintResolver _resolver;
+        private AimAttachmentResolver _resolver;
 
         // 制御用設定
-        public AimConstraintResolver.ResolverSettings Settings {
+        public AimAttachmentResolver.ResolverSettings Settings {
             set {
                 _settings = value;
                 _resolver.Settings = _settings;
             }
         }
         // Transform制御用クラス
-        protected override ConstraintResolver Resolver => _resolver;
+        protected override AttachmentResolver Resolver => _resolver;
 
         /// <summary>
         /// 初期化処理
         /// </summary>
         protected override void Initialize() {
-            _resolver = new AimConstraintResolver(transform);
+            _resolver = new AimAttachmentResolver(transform);
         }
     }
 }

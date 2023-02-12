@@ -10,11 +10,11 @@ namespace GameFramework.Kinematics {
         public Transform Owner => Resolver.Owner;
 
         // ターゲットリスト
-        public ConstraintResolver.TargetSource[] Sources {
+        public AttachmentResolver.TargetSource[] Sources {
             set => Resolver.Sources = value;
         }
         // Transform制御用インスタンス
-        protected abstract ConstraintResolver Resolver { get; }
+        protected abstract AttachmentResolver Resolver { get; }
 
         /// <summary>
         /// 更新処理

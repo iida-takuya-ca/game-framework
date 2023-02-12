@@ -5,13 +5,13 @@ namespace GameFramework.Kinematics {
     /// 姿勢追従
     /// </summary>
     public class RotationRuntimeAttachment : RuntimeAttachment {
-        private RotationConstraintResolver _resolver;
+        private RotationAttachmentResolver _resolver;
 
         // Transform制御用インスタンス
-        protected override ConstraintResolver Resolver => _resolver;
+        protected override AttachmentResolver Resolver => _resolver;
         
         // 追従設定
-        public RotationConstraintResolver.ResolverSettings Settings {
+        public RotationAttachmentResolver.ResolverSettings Settings {
             get => _resolver.Settings;
             set => _resolver.Settings = value;
         }
@@ -20,7 +20,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         public RotationRuntimeAttachment(Transform owner) {
-            _resolver = new RotationConstraintResolver(owner);
+            _resolver = new RotationAttachmentResolver(owner);
         }
     }
 }

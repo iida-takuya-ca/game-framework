@@ -8,7 +8,7 @@ namespace GameFramework.PlayableSystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public static AnimationClipPlayableProvider Change(this PlayablePlayer source, AnimationClip clip,
+        public static AnimationClipPlayableProvider Change(this MotionPlayer source, AnimationClip clip,
             float blendDuration, bool autoDispose = true) {
             if (clip == null) {
                 source.Change(null, blendDuration);
@@ -23,7 +23,7 @@ namespace GameFramework.PlayableSystems {
         /// <summary>
         /// モーションの設定
         /// </summary>
-        public static AnimatorControllerPlayableProvider Change(this PlayablePlayer source,
+        public static AnimatorControllerPlayableProvider Change(this MotionPlayer source,
             RuntimeAnimatorController controller,
             float blendDuration, bool autoDispose = true) {
             if (controller == null) {

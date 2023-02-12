@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace GameFramework.Kinematics {
     /// <summary>
-    /// 座標追従用のResolver
+    /// 姿勢追従
     /// </summary>
-    public class PositionConstraintResolver : ConstraintResolver {
+    public class RotationAttachmentResolver : AttachmentResolver {
         // 設定
         [Serializable]
         public class ResolverSettings {
             [Tooltip("制御空間")]
             public Space space = Space.Self;
-            [Tooltip("座標オフセット")]
-            public Vector3 offsetPosition;
+            [Tooltip("角度オフセット")]
+            public Vector3 offsetAngles = Vector3.zero;
         }
 
         // 設定
@@ -22,7 +22,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         /// <param name="owner">制御対象のTransform</param>
-        public PositionConstraintResolver(Transform owner)
+        public RotationAttachmentResolver(Transform owner)
             : base(owner) { }
 
         /// <summary>
@@ -30,13 +30,21 @@ namespace GameFramework.Kinematics {
         /// </summary>
         public override void Resolve() {
             var space = Settings.space;
-            var offset = Settings.offsetPosition;
+            var offset = Quaternion.Euler(Settings.offsetAngles);
 
             if (space == Space.Self) {
-                offset = Owner.TransformVector(offset);
+                Owner.rotation = GetTargetRotation() * offset;
             }
+            else {
+                Owner.rotation = offset * GetTargetRotation();
+            }
+        }
 
-            Owner.position = GetTargetPosition() + offset;
+        /// <summary>
+        /// オフセットを初期化
+        /// </summary>
+        public override void ResetOffset() {
+            Settings.offsetAngles = Vector3.zero;
         }
 
         /// <summary>
@@ -44,21 +52,18 @@ namespace GameFramework.Kinematics {
         /// </summary>
         public override void TransferOffset() {
             var space = Settings.space;
-            // Position
-            var offsetPosition = Owner.position - GetTargetPosition();
+
+            // Rotation
+            Quaternion offsetRotation;
 
             if (space == Space.Self) {
-                offsetPosition = Owner.InverseTransformVector(offsetPosition);
+                offsetRotation = Quaternion.Inverse(GetTargetRotation()) * Owner.rotation;
+            }
+            else {
+                offsetRotation = Owner.rotation * Quaternion.Inverse(GetTargetRotation());
             }
 
-            Settings.offsetPosition = offsetPosition;
-        }
-
-        /// <summary>
-        /// オフセットを初期化
-        /// </summary>
-        public override void ResetOffset() {
-            Settings.offsetPosition = Vector3.zero;
+            Settings.offsetAngles = offsetRotation.eulerAngles;
         }
     }
 }

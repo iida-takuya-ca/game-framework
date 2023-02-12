@@ -5,7 +5,7 @@ namespace GameFramework.Kinematics {
     /// <summary>
     /// Transform追従用Resolver
     /// </summary>
-    public class ParentConstraintResolver : ConstraintResolver {
+    public class ParentAttachmentResolver : AttachmentResolver {
         // 設定
         [Serializable]
         public class ResolverSettings {
@@ -23,7 +23,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         /// <param name="owner">制御対象のTransform</param>
-        public ParentConstraintResolver(Transform owner)
+        public ParentAttachmentResolver(Transform owner)
             : base(owner) { }
 
         /// <summary>
