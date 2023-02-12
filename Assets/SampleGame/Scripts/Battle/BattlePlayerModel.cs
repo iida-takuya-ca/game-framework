@@ -78,13 +78,6 @@ namespace SampleGame {
         }
 
         /// <summary>
-        /// 生成時処理
-        /// </summary>
-        protected override void OnCreatedInternal() {
-            ActorModel = BattlePlayerActorModel.Create();
-        }
-
-        /// <summary>
         /// 削除時処理
         /// </summary>
         protected override void OnDeletedInternal() {
@@ -92,6 +85,11 @@ namespace SampleGame {
             ActorModel = null;
         }
         
-        private BattlePlayerModel(int id) : base(id) {}
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        private BattlePlayerModel(int id) : base(id) {
+            ActorModel = BattlePlayerActorModel.Create();
+        }
     }
 }

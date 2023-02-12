@@ -5,13 +5,13 @@ namespace GameFramework.Kinematics {
     /// エイム追従コンポーネント
     /// </summary>
     public class AimRuntimeAttachment : RuntimeAttachment {
-        private AimConstraintResolver _resolver;
+        private AimAttachmentResolver _resolver;
 
         // Transform制御用インスタンス
-        protected override ConstraintResolver Resolver => _resolver;
+        protected override AttachmentResolver Resolver => _resolver;
         
         // 追従設定
-        public AimConstraintResolver.ResolverSettings Settings {
+        public AimAttachmentResolver.ResolverSettings Settings {
             get => _resolver.Settings;
             set => _resolver.Settings = value;
         }
@@ -20,7 +20,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         public AimRuntimeAttachment(Transform owner) {
-            _resolver = new AimConstraintResolver(owner);
+            _resolver = new AimAttachmentResolver(owner);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using GameFramework.Core;
 using Object = UnityEngine.Object;
 
@@ -19,7 +20,7 @@ namespace GameFramework.AssetSystems {
     // 読み込んだアセット
     public T Asset => _info?.Asset;
     // エラー
-    public Exception Exception => _info?.Exception ?? null;
+    public Exception Exception => _info?.Exception ?? new InvalidDataException();
     // 有効なハンドルか
     public bool IsValid => _info != null;
 

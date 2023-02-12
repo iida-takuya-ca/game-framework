@@ -40,6 +40,9 @@ namespace GameFramework.AssetSystems {
                 // 解放処理を仕込む
                 unloadScope.OnExpired += () => handle.Release();
             }
+            else {
+                Debug.LogError($"Not found provider. [{address}]");
+            }
 
             return handle;
         }

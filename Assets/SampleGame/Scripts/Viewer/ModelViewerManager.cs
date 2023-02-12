@@ -1,5 +1,6 @@
 using System;
 using GameFramework.BodySystems;
+using GameFramework.PlayableSystems;
 using GameFramework.Core;
 using GameFramework.TaskSystems;
 using UnityEngine;
@@ -87,7 +88,7 @@ namespace SampleGame {
                 return;
             }
 
-            motionController.Player.SetMotion(clip, 0.2f);
+            motionController.Player.Change(clip, 0.2f);
         }
     }
 }

@@ -5,13 +5,13 @@ namespace GameFramework.Kinematics {
     /// 注視追従コンポーネント
     /// </summary>
     public class LookAtRuntimeAttachment : RuntimeAttachment {
-        private LookAtConstraintResolver _resolver;
+        private LookAtAttachmentResolver _resolver;
 
         // Transform制御用インスタンス
-        protected override ConstraintResolver Resolver => _resolver;
+        protected override AttachmentResolver Resolver => _resolver;
         
         // 追従設定
-        public LookAtConstraintResolver.ResolverSettings Settings {
+        public LookAtAttachmentResolver.ResolverSettings Settings {
             get => _resolver.Settings;
             set => _resolver.Settings = value;
         }
@@ -20,7 +20,7 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         public LookAtRuntimeAttachment(Transform owner) {
-            _resolver = new LookAtConstraintResolver(owner);
+            _resolver = new LookAtAttachmentResolver(owner);
         }
     }
 }
