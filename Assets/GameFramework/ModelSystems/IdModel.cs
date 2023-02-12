@@ -176,6 +176,13 @@ namespace GameFramework.ModelSystems
         }
 
         /// <summary>
+        /// 生成時処理(Override用)
+        /// </summary>
+        protected virtual void OnCreatedInternal()
+        {
+        }
+
+        /// <summary>
         /// 削除時処理(Override用)
         /// </summary>
         protected virtual void OnDeletedInternal()
