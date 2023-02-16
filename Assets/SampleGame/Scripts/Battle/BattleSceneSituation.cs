@@ -117,7 +117,7 @@ namespace SampleGame {
             // todo:コリジョンテスト
             if (Input.GetKeyDown(KeyCode.C)) {
                 var collisionManager = Services.Get<CollisionManager>();
-                var handle = collisionManager.Register(new SphereCollision(Vector3.forward * 5, 10), -1, result => {
+                var handle = collisionManager.Register(new SphereCollision(Vector3.forward * 5, 10), -1, null, result => {
                     Debug.Log($"Hit:{result.collider.name}");
                 });
                 
@@ -126,7 +126,7 @@ namespace SampleGame {
             }
             if (Input.GetKeyDown(KeyCode.V)) {
                 var collisionManager = Services.Get<CollisionManager>();
-                var handle = collisionManager.Register(new BoxCollision(Vector3.back * 5, Vector3.one * 10, Quaternion.identity), -1, result => {
+                var handle = collisionManager.Register(new BoxCollision(Vector3.back * 5, Vector3.one * 10, Quaternion.identity), -1,null, result => {
                     Debug.Log($"Hit:{result.collider.name}");
                 });
                 

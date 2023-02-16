@@ -7,5 +7,7 @@ namespace GameFramework.CollisionSystems {
     public struct HitResult {
         // 衝突検知したCollider
         public Collider collider;
+        // 登録したCustomData
+        public object customData;
     }
 }

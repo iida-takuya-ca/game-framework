@@ -24,6 +24,7 @@ namespace GameFramework.CollisionSystems {
             public ICollisionListener listener;
             public ICollision collision;
             public int layerMask;
+            public object customData;
         }
 
         private UpdateMode _updateMode;
@@ -48,12 +49,14 @@ namespace GameFramework.CollisionSystems {
         /// <param name="listener">通知を受け取るためのリスナー</param>
         /// <param name="collision">衝突判定用コリジョン</param>
         /// <param name="layerMask">判定対象を絞るためのレイヤーマスク</param>
+        /// <param name="customData">ヒット時に一緒に通知する独自データ</param>
         /// <param name="clearHistory">衝突履歴をクリアするか</param>
-        public CollisionHandle Register(ICollisionListener listener, ICollision collision, int layerMask, bool clearHistory = true) {
+        public CollisionHandle Register(ICollisionListener listener, ICollision collision, int layerMask, object customData = null, bool clearHistory = true) {
             var collisionInfo = new CollisionInfo {
                 listener = listener,
                 collision = collision,
-                layerMask = layerMask
+                layerMask = layerMask,
+                customData = customData
             };
 
             if (clearHistory) {
@@ -77,9 +80,10 @@ namespace GameFramework.CollisionSystems {
         /// </summary>
         /// <param name="collision">衝突判定用コリジョン</param>
         /// <param name="layerMask">判定対象を絞るためのレイヤーマスク</param>
+        /// <param name="customData">ヒット時に一緒に通知する独自データ</param>
         /// <param name="onHitCollision">当たり判定通知用のCallback</param>
         /// <param name="clearHistory">衝突履歴をクリアするか</param>
-        public CollisionHandle Register(ICollision collision, int layerMask, Action<HitResult> onHitCollision, bool clearHistory = true) {
+        public CollisionHandle Register(ICollision collision, int layerMask, object customData, Action<HitResult> onHitCollision, bool clearHistory = true) {
             var listener = new CollisionListener();
             listener.OnHitCollisionEvent += onHitCollision;
             return Register(listener, collision, layerMask, clearHistory);
@@ -159,6 +163,9 @@ namespace GameFramework.CollisionSystems {
                 if (!info.collision.Tick(info.layerMask, _workResults)) {
                     continue;
                 }
+                
+                // カスタムデータ設定
+                hitResult.customData = info.customData;
 
                 // 衝突が発生していたら通知する
                 foreach (var result in _workResults) {
