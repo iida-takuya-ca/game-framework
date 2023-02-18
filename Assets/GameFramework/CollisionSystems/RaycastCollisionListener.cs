@@ -4,26 +4,26 @@ namespace GameFramework.CollisionSystems {
     /// <summary>
     /// 衝突検知用リスナー
     /// </summary>
-    public interface ICollisionListener {
+    public interface IRaycastCollisionListener {
         /// <summary>
         /// 当たり判定の発生通知
         /// </summary>
         /// <param name="result">当たり結果</param>
-        void OnHitCollision(HitResult result);
+        void OnHitRaycastCollision(RaycastHitResult result);
     }
 
     /// <summary>
     /// 汎用衝突検知用リスナー
     /// </summary>
-    public class CollisionListener : ICollisionListener {
+    public class RaycastCollisionListener : IRaycastCollisionListener {
         // 当たり判定発生通知
-        public event Action<HitResult> OnHitCollisionEvent;
+        public event Action<RaycastHitResult> OnHitRaycastCollisionEvent;
 
         /// <summary>
         /// 当たり判定の発生通知
         /// </summary>
-        void ICollisionListener.OnHitCollision(HitResult result) {
-            OnHitCollisionEvent?.Invoke(result);
+        void IRaycastCollisionListener.OnHitRaycastCollision(RaycastHitResult result) {
+            OnHitRaycastCollisionEvent?.Invoke(result);
         }
     }
 }

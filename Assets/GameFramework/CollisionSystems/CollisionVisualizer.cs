@@ -8,7 +8,7 @@ namespace GameFramework.CollisionSystems {
     public class CollisionVisualizer : MonoBehaviour {
         private static CollisionVisualizer s_instance;
 
-        private List<ICollision> _collisions = new List<ICollision>();
+        private List<IVisualizable> _collisions = new List<IVisualizable>();
 
         // Singletonインスタンス
         private static CollisionVisualizer Instance {
@@ -16,7 +16,7 @@ namespace GameFramework.CollisionSystems {
                 if (!Application.isPlaying) {
                     return null;
                 }
-                
+
                 if (s_instance == null) {
                     var gameObj = new GameObject(nameof(CollisionVisualizer), typeof(CollisionVisualizer));
                     DontDestroyOnLoad(gameObj);
@@ -26,11 +26,11 @@ namespace GameFramework.CollisionSystems {
                 return s_instance;
             }
         }
-        
+
         /// <summary>
         /// 描画登録
         /// </summary>
-        public static void Register(ICollision collision) {
+        public static void Register(IVisualizable collision) {
 #if !UNITY_EDITOR
             return;
 #endif
@@ -40,7 +40,7 @@ namespace GameFramework.CollisionSystems {
         /// <summary>
         /// 描画登録解除
         /// </summary>
-        public static void Unregister(ICollision collision) {
+        public static void Unregister(IVisualizable collision) {
 #if !UNITY_EDITOR
             return;
 #endif

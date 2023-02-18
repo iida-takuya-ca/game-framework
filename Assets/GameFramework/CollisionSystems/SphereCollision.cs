@@ -7,6 +7,7 @@ namespace GameFramework.CollisionSystems {
     public class SphereCollision : Collision {
         // 中心座標
         public Vector3 Center { get; set; }
+
         // 半径
         public float Radius { get; set; }
 
@@ -36,7 +37,7 @@ namespace GameFramework.CollisionSystems {
         protected override void DrawGizmosInternal() {
             var prevMatrix = Gizmos.matrix;
             var splitCount = 3;
-            
+
             for (var y = 0; y < splitCount; y++) {
                 var angleY = 90.0f * y / splitCount;
                 Gizmos.matrix = Matrix4x4.TRS(Center, Quaternion.Euler(0.0f, angleY, 0.0f), Vector3.one);

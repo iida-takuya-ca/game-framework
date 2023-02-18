@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace GameFramework.CollisionSystems {
     /// <summary>
-    /// コリジョン用インターフェース
+    /// レイキャストコリジョン用インターフェース
     /// </summary>
-    public interface ICollision : IVisualizable {
+    public interface IRaycastCollision : IVisualizable {
         /// <summary>
         /// 更新処理
         /// </summary>
         /// <param name="layerMask">当たり判定の対象とするLayerMask</param>
-        /// <param name="newColliderResults">新しくヒットしたCollider結果格納用リスト</param>
-        bool Tick(int layerMask, List<Collider> newColliderResults);
+        /// <param name="newHitResults">新しくヒットしたRaycastHit結果格納用リスト</param>
+        bool Tick(int layerMask, List<RaycastHit> newHitResults);
 
         /// <summary>
         /// 衝突履歴のクリア

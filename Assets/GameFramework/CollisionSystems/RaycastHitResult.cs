@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace GameFramework.CollisionSystems {
     /// <summary>
-    /// 衝突結果
+    /// レイキャスト衝突結果
     /// </summary>
-    public struct HitResult {
+    public struct RaycastHitResult {
         // 衝突検知したCollider
-        public Collider collider;
+        public RaycastHit raycastHit;
         // カスタムデータ
         public object customData;
     }

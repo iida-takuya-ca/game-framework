@@ -7,8 +7,10 @@ namespace GameFramework.CollisionSystems {
     public class BoxCollision : Collision {
         // 中心座標
         public Vector3 Center { get; set; }
+
         // ハーフサイズ
         public Vector3 HalfExtents { get; set; }
+
         // 姿勢
         public Quaternion Orientation { get; set; }
 

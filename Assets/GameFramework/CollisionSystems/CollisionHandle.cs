@@ -7,9 +7,10 @@ namespace GameFramework.CollisionSystems {
     public struct CollisionHandle : IDisposable {
         private bool _disposed;
         private CollisionManager _manager;
-        
+
         // 有効なハンドルか
         internal bool IsValid => Key != null;
+
         // 管理用のキー
         internal object Key { get; private set; }
 
@@ -29,7 +30,7 @@ namespace GameFramework.CollisionSystems {
             if (_disposed) {
                 return;
             }
-            
+
             _disposed = true;
             _manager?.Unregister(this);
             Key = null;

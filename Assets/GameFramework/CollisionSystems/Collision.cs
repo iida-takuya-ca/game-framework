@@ -8,9 +8,10 @@ namespace GameFramework.CollisionSystems {
     public abstract class Collision : ICollision {
         // 結果格納最大数
         private const int ResultCountMax = 8;
+
         // 当たり判定受け取り用の配列
         private static readonly Collider[] s_workResults = new Collider[ResultCountMax];
-        
+
         // 衝突済みのCollider
         private readonly List<Collider> _hitColliders = new List<Collider>();
 
@@ -38,7 +39,7 @@ namespace GameFramework.CollisionSystems {
                 }
 
                 newColliderResults.Add(result);
-                
+
                 // ヒストリーに追加
                 _hitColliders.Add(result);
             }
@@ -49,7 +50,7 @@ namespace GameFramework.CollisionSystems {
         /// <summary>
         /// ギズモ描画
         /// </summary>
-        void ICollision.DrawGizmos() {
+        void IVisualizable.DrawGizmos() {
             var prevColor = Gizmos.color;
             Gizmos.color = Color.red;
             DrawGizmosInternal();
@@ -63,10 +64,11 @@ namespace GameFramework.CollisionSystems {
         /// <param name="hitResults">判定格納用配列</param>
         /// <returns>衝突有効数</returns>
         protected abstract int HitCheck(int layerMask, Collider[] hitResults);
-        
+
         /// <summary>
         /// ギズモ描画(Override用)
         /// </summary>
-        protected virtual void DrawGizmosInternal() {}
+        protected virtual void DrawGizmosInternal() {
+        }
     }
 }
