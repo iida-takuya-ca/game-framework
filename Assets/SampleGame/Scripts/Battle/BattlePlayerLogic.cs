@@ -1,4 +1,5 @@
 using GameFramework.BodySystems;
+using GameFramework.CollisionSystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
 using UniRx;
@@ -68,6 +69,8 @@ namespace SampleGame {
             var input = Services.Get<BattleInput>();
             var cameraController = Services.Get<CameraController>();
             var camera = cameraController.MainCamera;
+            var projectileManager = Services.Get<ProjectileManager>();
+            var collisionManager = Services.Get<CollisionManager>();
 
             // 移動
             var moveVector = input.MoveVector;
@@ -88,17 +91,37 @@ namespace SampleGame {
             if (Keyboard.current.tKey.wasPressedThisFrame) {
                 _gimmickController.GetAnimationGimmicks("Test").Resume();
             }
+
             if (Keyboard.current.yKey.wasPressedThisFrame) {
                 _gimmickController.GetAnimationGimmicks("Test").Resume(true);
             }
+
             if (Keyboard.current.gKey.wasPressedThisFrame) {
                 _gimmickController.GetActiveGimmicks("Sphere").Activate();
             }
+
             if (Keyboard.current.hKey.wasPressedThisFrame) {
                 _gimmickController.GetActiveGimmicks("Sphere").Deactivate();
             }
+
             if (Keyboard.current.fKey.wasPressedThisFrame) {
                 _gimmickController.GetAnimationGimmicks("Damage").Play();
+            }
+
+            if (Keyboard.current.pKey.wasPressedThisFrame) {
+                var startPos = _actor.Body.Position;
+                var velocity = _actor.Body.Transform.TransformVector(new Vector3(0.0f, 1.0f, 1.0f).normalized) * 5;
+                var acceleration = Vector3.down * 9.8f;
+                var projectile = new StraightProjectile(startPos, velocity, acceleration, 50.0f);
+                var raycastCollision = new LineRaycastCollision(startPos, startPos);
+                var handle = collisionManager.Register(raycastCollision, -1, null, res => {
+                    Debug.Log($"Hit:{res.raycastHit.point}");
+                });
+                projectileManager.Play(projectile, (pos, rot) => {
+                    raycastCollision.March(pos);
+                }, () => {
+                    handle.Dispose();
+                });
             }
         }
     }

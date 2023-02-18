@@ -68,6 +68,11 @@ namespace SampleGame {
             ServiceContainer.Set(collisionManager);
             collisionManager.RegisterTask(TaskOrder.Collision);
 
+            // ProjectileManagerの登録
+            var projectileManager = new ProjectileManager();
+            ServiceContainer.Set(projectileManager);
+            projectileManager.RegisterTask(TaskOrder.Projectile);
+
             // タスク登録
             Services.Get<CameraController>().RegisterTask(TaskOrder.Camera);
             Services.Get<BattleInput>().RegisterTask(TaskOrder.Input);

@@ -48,6 +48,9 @@ namespace SampleGame {
         /// 初期化処理
         /// </summary>
         protected override IEnumerator StartRoutineInternal(object[] args) {
+            // FPS設定
+            Application.targetFrameRate = 30;
+            
             // GlobalObjectを初期化
             DontDestroyOnLoad(_globalObject.gameObject);
             // RootのServiceにインスタンスを登録

@@ -39,6 +39,11 @@ namespace GameFramework.CollisionSystems {
         protected override int HitCheck(int layerMask, RaycastHit[] hitResults) {
             var direction = End - Start;
             var distance = direction.magnitude;
+            if (distance <= float.Epsilon) {
+                return 0;
+            }
+
+            direction /= distance;
             return Physics.RaycastNonAlloc(Start, direction, hitResults, distance, layerMask);
         }
 

@@ -8,6 +8,7 @@ namespace SampleGame {
         Logic,
         Actor,
         Body,
+        Projectile,
         Collision,
         Camera,
         Effect,
