@@ -152,8 +152,10 @@ namespace GameFramework.ProjectileSystems {
         /// </summary>
         protected override void DisposeInternal() {
             _projectilePlayer.Dispose();
-            UnityEngine.Object.Destroy(_rootTransform.gameObject);
-            _rootTransform = null;
+            if (_rootTransform != null) {
+                UnityEngine.Object.Destroy(_rootTransform.gameObject);
+                _rootTransform = null;
+            }
         }
 
         /// <summary>
