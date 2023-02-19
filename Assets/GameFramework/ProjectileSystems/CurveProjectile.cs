@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GameFramework.CollisionSystems {
+namespace GameFramework.ProjectileSystems {
     /// <summary>
     /// カーブ制御Projectile
     /// </summary>

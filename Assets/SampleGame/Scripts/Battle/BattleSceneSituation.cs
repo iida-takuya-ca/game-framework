@@ -4,6 +4,7 @@ using GameFramework.CollisionSystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
 using GameFramework.Kinematics;
+using GameFramework.ProjectileSystems;
 using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
 using UniRx;
@@ -63,16 +64,16 @@ namespace SampleGame {
             ServiceContainer.Set(bodyManager);
             bodyManager.RegisterTask(TaskOrder.Body);
             
-            // CollisionManagerの登録
+            // CollisionManagerの生成
             var collisionManager = new CollisionManager();
             ServiceContainer.Set(collisionManager);
             collisionManager.RegisterTask(TaskOrder.Collision);
-
-            // ProjectileManagerの登録
-            var projectileManager = new ProjectileManager();
-            ServiceContainer.Set(projectileManager);
-            projectileManager.RegisterTask(TaskOrder.Projectile);
-
+            
+            // ProjectileObjectManagerの生成
+            var projectileObjectManager = new ProjectileObjectManager();
+            ServiceContainer.Set(projectileObjectManager);
+            projectileObjectManager.RegisterTask(TaskOrder.Projectile);
+            
             // タスク登録
             Services.Get<CameraController>().RegisterTask(TaskOrder.Camera);
             Services.Get<BattleInput>().RegisterTask(TaskOrder.Input);

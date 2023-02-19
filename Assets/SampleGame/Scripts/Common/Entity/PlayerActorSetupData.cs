@@ -8,8 +8,10 @@ namespace SampleGame {
     public class PlayerActorSetupData : ScriptableObject, PlayerActor.ISetupData {
         public RuntimeAnimatorController controller;
         public float angularVelocity = 360.0f;
+        public GameObject bulletPrefab;
 
         RuntimeAnimatorController PlayerActor.ISetupData.Controller => controller;
         float PlayerActor.ISetupData.AngularVelocity => angularVelocity;
+        GameObject PlayerActor.ISetupData.BulletPrefab => bulletPrefab;
     }
 }

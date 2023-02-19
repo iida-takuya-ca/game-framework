@@ -1,37 +1,27 @@
 using System;
-using GameFramework.TaskSystems;
 using UnityEngine;
 using System.Collections.Generic;
-using GameFramework.Core;
 
-namespace GameFramework.CollisionSystems {
+namespace GameFramework.ProjectileSystems {
     /// <summary>
-    /// 飛翔体管理用クラス
+    /// 飛翔体再生用クラス
     /// </summary>
-    public class ProjectileManager : DisposableLateUpdatableTask {
-        /// <summary>
-        /// 更新モード
-        /// </summary>
-        public enum UpdateMode {
-            Update,
-            LateUpdate,
-        }
-        
+    public class ProjectilePlayer : IDisposable {
         /// <summary>
         /// 飛翔ハンドル
         /// </summary>
-        public struct ProjectileHandle : IDisposable {
-            private ProjectileManager _manager;
+        public struct Handle : IDisposable {
+            private ProjectilePlayer _player;
             private PlayingInfo _playingInfo;
 
             // 有効なハンドルか
-            public bool IsValid => _manager != null && _playingInfo != null;
+            public bool IsValid => _player != null && _playingInfo != null;
 
             /// <summary>
             /// コンストラクタ
             /// </summary>
-            internal ProjectileHandle(ProjectileManager manager, PlayingInfo info) {
-                _manager = manager;
+            internal Handle(ProjectilePlayer player, PlayingInfo info) {
+                _player = player;
                 _playingInfo = info;
             }
 
@@ -46,14 +36,11 @@ namespace GameFramework.CollisionSystems {
                 // 再生中なら止める
                 if (!_playingInfo.stopped) {
                     _playingInfo.Stop();
-                    var infoIndex = _manager._playingInfos.IndexOf(_playingInfo);
-                    if (infoIndex >= 0) {
-                        _manager._removePlayingInfoIndices.Add(infoIndex);
-                    }
+                    _player._removePlayingInfos.Add(_playingInfo);
                 }
 
                 _playingInfo = null;
-                _manager = null;
+                _player = null;
             }
         }
 
@@ -93,32 +80,35 @@ namespace GameFramework.CollisionSystems {
                 onStopped?.Invoke();
             }
         }
-
-        // 更新モード
-        private UpdateMode _updateMode;
+        
         // 飛翔体再生情報リスト
         private List<PlayingInfo> _playingInfos = new List<PlayingInfo>();
-        // リスト除外対象Indexのワーク
-        private List<int> _removePlayingInfoIndices = new List<int>();
-
-        // DeltaTime管理用クラス
-        public LayeredTime LayeredTime { get; } = new LayeredTime();
+        // リスト除外対象のワーク
+        private List<PlayingInfo> _removePlayingInfos = new List<PlayingInfo>();
 
         /// <summary>
-        /// コンストラクタ
+        /// 廃棄時処理
         /// </summary>
-        /// <param name="updateMode">更新モード</param>
-        public ProjectileManager(UpdateMode updateMode = UpdateMode.Update) {
-            _updateMode = updateMode;
+        public void Dispose() {
+            // 全飛翔体を停止
+            StopAll();
         }
 
+        /// <summary>
+        /// 更新処理
+        /// </summary>
+        /// <param name="deltaTime">変位時間</param>
+        public void Update(float deltaTime) {
+            UpdatePlayingInfos(deltaTime);
+        }
+        
         /// <summary>
         /// 飛翔体の開始
         /// </summary>
         /// <param name="projectile">飛翔体インスタンス</param>
         /// <param name="onUpdatedTransform">座標の更新通知</param>
         /// <param name="onStopped">飛翔完了通知</param>
-        public ProjectileHandle Play(IProjectile projectile,
+        public Handle Play(IProjectile projectile,
             Action<Vector3, Quaternion> onUpdatedTransform,
             Action onStopped) {
             var playingInfo = new PlayingInfo {
@@ -128,14 +118,14 @@ namespace GameFramework.CollisionSystems {
             };
             _playingInfos.Add(playingInfo);
 
-            var handle = new ProjectileHandle(this, playingInfo);
+            var handle = new Handle(this, playingInfo);
             return handle;
         }
 
         /// <summary>
         /// 飛翔体の停止
         /// </summary>
-        public void Stop(ProjectileHandle handle) {
+        public void Stop(Handle handle) {
             handle.Dispose();
         }
 
@@ -149,41 +139,13 @@ namespace GameFramework.CollisionSystems {
             }
 
             _playingInfos.Clear();
-            _removePlayingInfoIndices.Clear();
-        }
-
-        /// <summary>
-        /// 廃棄時処理
-        /// </summary>
-        protected override void DisposeInternal() {
-            // 全飛翔体を停止
-            StopAll();
-        }
-
-        /// <summary>
-        /// 更新処理
-        /// </summary>
-        protected override void UpdateInternal() {
-            if (_updateMode == UpdateMode.Update) {
-                UpdatePlayingInfos();
-            }
-        }
-
-        /// <summary>
-        /// 後更新処理
-        /// </summary>
-        protected override void LateUpdateInternal() {
-            if (_updateMode == UpdateMode.LateUpdate) {
-                UpdatePlayingInfos();
-            }
+            _removePlayingInfos.Clear();
         }
 
         /// <summary>
         /// Projectileの更新処理
         /// </summary>
-        private void UpdatePlayingInfos() {
-            var deltaTime = LayeredTime.DeltaTime;
-
+        private void UpdatePlayingInfos(float deltaTime) {
             for (var i = 0; i < _playingInfos.Count; i++) {
                 var playingInfo = _playingInfos[i];
 
@@ -202,16 +164,16 @@ namespace GameFramework.CollisionSystems {
                 if (!continuation) {
                     // 終了したらStop処理実行
                     playingInfo.Stop();
-                    _removePlayingInfoIndices.Add(i);
+                    _removePlayingInfos.Add(playingInfo);
                 }
             }
 
             // 不要なProjectileの再生情報をクリア
-            for (var i = _removePlayingInfoIndices.Count - 1; i >= 0; i--) {
-                _playingInfos.RemoveAt(_removePlayingInfoIndices[i]);
+            for (var i = _removePlayingInfos.Count - 1; i >= 0; i--) {
+                _playingInfos.Remove(_removePlayingInfos[i]);
             }
 
-            _removePlayingInfoIndices.Clear();
+            _removePlayingInfos.Clear();
         }
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GameFramework.CollisionSystems {
+namespace GameFramework.ProjectileSystems {
     /// <summary>
     /// 飛翔体用制御用インターフェース
     /// </summary>

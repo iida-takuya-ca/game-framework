@@ -19,6 +19,7 @@ namespace SampleGame {
         public interface ISetupData {
             RuntimeAnimatorController Controller { get; }
             float AngularVelocity { get; }
+            GameObject BulletPrefab { get; }
         }
 
         /// <summary>
@@ -41,12 +42,16 @@ namespace SampleGame {
 
         // 移動制御用
         private MoveController _moveController;
+        
+        // データ
+        public ISetupData Data { get; private set; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public PlayerActor(Body body, ISetupData setupData)
             : base(body) {
+            Data = setupData;
             _statusEventListener = body.GetComponent<StatusEventListener>();
             var motionController = body.GetController<MotionController>();
             _basePlayableProvider = motionController.Player.Change(setupData.Controller, 0.0f, false);

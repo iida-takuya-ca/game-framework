@@ -46,6 +46,13 @@ namespace GameFramework.BodySystems {
         public Transform Transform { get; private set; }
         // 時間管理クラス
         public LayeredTime LayeredTime { get; } = new LayeredTime();
+        // 変位時間
+        public float DeltaTime => LayeredTime.DeltaTime;
+        // ローカルのタイムスケール
+        public float LocalTimeScale {
+            get => LayeredTime.LocalTimeScale;
+            set => LayeredTime.LocalTimeScale = value;
+        }
 
         // 座標
         public Vector3 Position {

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: dat_player_actor_setup_pl001
   m_EditorClassIdentifier: 
   controller: {fileID: 9100000, guid: 17ca755ec5a14d442a85f9de63861ae8, type: 2}
-  velocity: 3
   angularVelocity: 360
+  bulletPrefab: {fileID: 6348469947777406372, guid: 62f1c922c68302944a70560f3ed8b73f, type: 3}

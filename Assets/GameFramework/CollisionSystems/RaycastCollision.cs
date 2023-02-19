@@ -14,12 +14,36 @@ namespace GameFramework.CollisionSystems {
 
         // 衝突済みのCollider
         private readonly List<Collider> _hitColliders = new List<Collider>();
+        
+        // 開始位置
+        public Vector3 Start { get; set; }
+        // 終了位置
+        public Vector3 End { get; set; }
+        
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="start">開始位置</param>
+        /// <param name="end">終了位置</param>
+        public RaycastCollision(Vector3 start, Vector3 end) {
+            Start = start;
+            End = end;
+        }
 
         /// <summary>
         /// 衝突履歴のクリア
         /// </summary>
         public void ClearHistory() {
             _hitColliders.Clear();
+        }
+
+        /// <summary>
+        /// 現在のEndをStartにして、Endを進める
+        /// </summary>
+        /// <param name="nextEnd">新しいEnd</param>
+        public void March(Vector3 nextEnd) {
+            Start = End;
+            End = nextEnd;
         }
 
         /// <summary>

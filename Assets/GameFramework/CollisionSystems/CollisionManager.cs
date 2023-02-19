@@ -38,6 +38,7 @@ namespace GameFramework.CollisionSystems {
             public object customData;
         }
 
+        // 更新モード
         private UpdateMode _updateMode;
 
         // 登録済みコリジョン情報
