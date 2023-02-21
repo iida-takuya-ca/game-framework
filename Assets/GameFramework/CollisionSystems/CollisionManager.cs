@@ -35,6 +35,7 @@ namespace GameFramework.CollisionSystems {
             public IRaycastCollisionListener listener;
             public IRaycastCollision collision;
             public int layerMask;
+            public int hitCount;
             public object customData;
         }
 
@@ -281,6 +282,7 @@ namespace GameFramework.CollisionSystems {
                 hitResult.customData = info.customData;
                 foreach (var result in _workRaycastResults) {
                     hitResult.raycastHit = result;
+                    hitResult.hitCount = ++info.hitCount;
                     info.listener?.OnHitRaycastCollision(hitResult);
                 }
             }

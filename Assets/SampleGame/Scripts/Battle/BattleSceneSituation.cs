@@ -70,7 +70,7 @@ namespace SampleGame {
             collisionManager.RegisterTask(TaskOrder.Collision);
             
             // ProjectileObjectManagerの生成
-            var projectileObjectManager = new ProjectileObjectManager();
+            var projectileObjectManager = new ProjectileObjectManager(collisionManager);
             ServiceContainer.Set(projectileObjectManager);
             projectileObjectManager.RegisterTask(TaskOrder.Projectile);
             

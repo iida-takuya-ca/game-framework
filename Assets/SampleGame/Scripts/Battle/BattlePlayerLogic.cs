@@ -115,17 +115,9 @@ namespace SampleGame {
                 var velocity = -baseTrans.right * 5;
                 var acceleration = Vector3.down * 9.8f;
                 var projectile = new StraightProjectile(startPos, velocity, acceleration, 50.0f);
-                var raycastCollision = new SphereRaycastCollision(startPos, startPos, 0.05f);
-                var projectileHandle = new ProjectileObjectManager.Handle();
-                var collisionHandle = collisionManager.Register(raycastCollision, LayerMask.GetMask("Default"), null, res => {
-                    Debug.Log($"Hit:{res.raycastHit.point}");
-                    projectileHandle.Dispose();
-                });
-                projectileHandle = projectileObjectManager.Play(_actor.Data.BulletPrefab, projectile, (pos, rot) => {
-                    raycastCollision.March(pos);
-                }, () => {
-                    collisionHandle.Dispose();
-                });
+                projectileObjectManager.Play(_actor.Data.BulletPrefab, projectile, LayerMask.GetMask("Default"), 1,
+                    null,
+                    result => { Debug.Log($"Hit:[{result.hitCount}]{result.raycastHit.point}"); });
             }
         }
     }
