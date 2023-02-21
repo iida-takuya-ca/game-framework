@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GameFramework.ProjectileSystems {
@@ -5,6 +6,21 @@ namespace GameFramework.ProjectileSystems {
     /// 直進用Projectile
     /// </summary>
     public class StraightProjectile : IProjectile {
+        /// <summary>
+        /// 初期化用データ 
+        /// </summary>
+        [Serializable]
+        public struct Context {
+            [Tooltip("開始座標")]
+            public Vector3 startPoint;
+            [Tooltip("初速度")]
+            public Vector3 startVelocity;
+            [Tooltip("加速度")]
+            public Vector3 acceleration;
+            [Tooltip("最大距離")]
+            public float maxDistance;
+        }
+        
         private readonly Vector3 _startPoint;
         private readonly Vector3 _startVelocity;
         private readonly Vector3 _acceleration;
@@ -30,13 +46,24 @@ namespace GameFramework.ProjectileSystems {
             _startVelocity = startVelocity;
             _acceleration = acceleration;
             _maxDistance = maxDistance;
+
+            Position = _startPoint;
+            Rotation = Quaternion.LookRotation(_startVelocity);
         }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="context">初期化パラメータ</param>
+        public StraightProjectile(Context context)
+            : this(context.startPoint, context.startVelocity, context.acceleration, context.maxDistance) {}
 
         /// <summary>
         /// 飛翔開始
         /// </summary>
         void IProjectile.Start() {
             Position = _startPoint;
+            Rotation = Quaternion.LookRotation(_startVelocity);
             _velocity = _startVelocity;
             _distance = 0.0f;
         }

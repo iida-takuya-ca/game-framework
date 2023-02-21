@@ -135,7 +135,7 @@ namespace GameFramework.ProjectileSystems {
                 instance.ExitProjectile();
                 onStopped?.Invoke();
             });
-            
+
             // コリジョン登録
             collisionHandle = _collisionManager.Register(raycastCollision, hitLayerMask, customData, result => {
                 instance.OnHitCollision(result);
@@ -200,12 +200,12 @@ namespace GameFramework.ProjectileSystems {
             if (_updateMode == UpdateMode.Update) {
                 // Projectileの更新
                 _projectilePlayer.Update(deltaTime);
-                
+
                 // ProjectileObjectの更新
                 for (var i = _playingInfos.Count - 1; i >= 0; i--) {
                     var info = _playingInfos[i];
                     info.projectileObject.UpdateProjectile(deltaTime);
-                    
+
                     // 再生完了していたらPoolに返却する
                     if (!info.projectileObject.IsPlaying) {
                         info.pool.Release(info.projectileObject);
@@ -230,10 +230,16 @@ namespace GameFramework.ProjectileSystems {
         /// </summary>
         protected override void DisposeInternal() {
             _projectilePlayer.Dispose();
-            
+
             foreach (var info in _playingInfos) {
                 info.pool.Release(info.projectileObject);
             }
+
+            foreach (var pool in _objectPools.Values) {
+                pool.Dispose();
+            }
+
+            _objectPools.Clear();
 
             if (_rootTransform != null) {
                 UnityEngine.Object.Destroy(_rootTransform.gameObject);

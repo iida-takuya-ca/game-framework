@@ -112,9 +112,9 @@ namespace SampleGame {
             if (Keyboard.current.pKey.wasPressedThisFrame) {
                 var baseTrans = _actor.Body.Locators["Head"];
                 var startPos = baseTrans.TransformPoint(new Vector3(0.0f, 0.0f, 0.0f));
+                var targetPos = Vector3.zero;
                 var velocity = -baseTrans.right * 5;
-                var acceleration = Vector3.down * 9.8f;
-                var projectile = new StraightProjectile(startPos, velocity, acceleration, 50.0f);
+                var projectile = new HomingProjectile(startPos, targetPos, velocity, 1.0f, 0.2f, 50.0f, 50.0f);
                 projectileObjectManager.Play(_actor.Data.BulletPrefab, projectile, LayerMask.GetMask("Default"), 1,
                     null,
                     result => { Debug.Log($"Hit:[{result.hitCount}]{result.raycastHit.point}"); });
