@@ -13,7 +13,7 @@ namespace GameFramework.ProjectileSystems {
         /// 再生中か
         /// </summary>
         bool IsPlaying { get; }
-        
+
         /// <summary>
         /// レイキャスト用の半径（0より大きいとSphereCast）
         /// </summary>
@@ -76,6 +76,10 @@ namespace GameFramework.ProjectileSystems {
         /// 廃棄時処理
         /// </summary>
         void IDisposable.Dispose() {
+            if (gameObject == null) {
+                return;
+            }
+
             Destroy(gameObject);
         }
 
@@ -83,6 +87,10 @@ namespace GameFramework.ProjectileSystems {
         /// アクティブ状態の切り替え
         /// </summary>
         void IProjectileObject.SetActive(bool active) {
+            if (gameObject == null) {
+                return;
+            }
+            
             if (gameObject.activeSelf == active) {
                 return;
             }
@@ -97,7 +105,7 @@ namespace GameFramework.ProjectileSystems {
             if (_isPlaying) {
                 return;
             }
-            
+
             Projectile = projectile;
             ((IProjectileObject)this).UpdateTransform(projectile.Position, projectile.Rotation);
             _isPlaying = true;
