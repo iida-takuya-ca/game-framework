@@ -73,6 +73,16 @@ namespace GameFramework.ProjectileSystems {
         }
 
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="context">初期化用パラメータ</param>
+        public HomingProjectile(Context context)
+            : this(context.startPoint, context.endPoint, context.startVelocity, context.propulsion, context.damping,
+                context.maxAcceleration, context.maxDistance)
+        {
+        }
+
+        /// <summary>
         /// 飛翔開始
         /// </summary>
         void IProjectile.Start() {
