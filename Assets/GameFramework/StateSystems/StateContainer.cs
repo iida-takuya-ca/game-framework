@@ -6,10 +6,11 @@ namespace GameFramework.StateSystems {
     /// <summary>
     /// 状態制御クラス
     /// </summary>
-    public class StateContainer<TKey> : IDisposable
+    public class StateContainer<TState, TKey> : IDisposable
+        where TState : IState<TKey>
         where TKey : IComparable {
         // Stateリスト
-        private Dictionary<TKey, IState<TKey>> _states = new Dictionary<TKey, IState<TKey>>();
+        private Dictionary<TKey, TState> _states = new Dictionary<TKey, TState>();
         // State用のScope
         private DisposableScope _scope = new DisposableScope();
 
@@ -33,7 +34,7 @@ namespace GameFramework.StateSystems {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public void Setup(TKey invalidKey, params IState<TKey>[] states) {
+        public void Setup(TKey invalidKey, params TState[] states) {
             Cleanup();
 
             InvalidKey = invalidKey;
@@ -86,7 +87,7 @@ namespace GameFramework.StateSystems {
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
         public void Update(float deltaTime) {
-            var state = default(IState<TKey>);
+            var state = default(TState);
 
             // 遷移
             if (!NextKey.Equals(CurrentKey)) {
@@ -113,12 +114,19 @@ namespace GameFramework.StateSystems {
         /// <summary>
         /// Stateの検索
         /// </summary>
-        public IState<TKey> FindState(TKey key) {
+        public TState FindState(TKey key) {
             if (_states.TryGetValue(key, out var state)) {
                 return state;
             }
 
             return default;
         }
+    }
+    
+    /// <summary>
+    /// TState省略するタイプのStateContainer
+    /// </summary>
+    public class StateContainer<TKey> : StateContainer<IState<TKey>, TKey>
+        where TKey : IComparable {
     }
 }
