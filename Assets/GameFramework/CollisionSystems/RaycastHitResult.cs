@@ -9,5 +9,7 @@ namespace GameFramework.CollisionSystems {
         public RaycastHit raycastHit;
         // カスタムデータ
         public object customData;
+        // ヒットカウント
+        public int hitCount;
     }
 }

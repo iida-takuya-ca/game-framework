@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameFramework.CollisionSystems;
 using GameFramework.Core;
 using GameFramework.TaskSystems;
 using UnityEngine;
@@ -46,6 +47,17 @@ namespace GameFramework.ProjectileSystems {
             }
         }
 
+        /// <summary>
+        /// 再生中情報
+        /// </summary>
+        private class PlayingInfo {
+            public ObjectPool<IProjectileObject> pool;
+            public IProjectileObject projectileObject;
+            public ProjectilePlayer.Handle projectileHandle;
+        }
+
+        // コリジョンマネージャ
+        private CollisionManager _collisionManager;
         // 更新モード
         private UpdateMode _updateMode;
 
@@ -54,8 +66,10 @@ namespace GameFramework.ProjectileSystems {
         // Projectile再生用Player
         private ProjectilePlayer _projectilePlayer;
         // ProjectileObjectPool管理用
-        private Dictionary<GameObject, ObjectPool<ProjectileObject>> _objectPools =
-            new Dictionary<GameObject, ObjectPool<ProjectileObject>>();
+        private Dictionary<GameObject, ObjectPool<IProjectileObject>> _objectPools =
+            new Dictionary<GameObject, ObjectPool<IProjectileObject>>();
+        // 再生中情報
+        private List<PlayingInfo> _playingInfos = new List<PlayingInfo>();
 
         // DeltaTime制御用
         public LayeredTime LayeredTime { get; } = new LayeredTime();
@@ -63,10 +77,11 @@ namespace GameFramework.ProjectileSystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ProjectileObjectManager(UpdateMode updateMode = UpdateMode.Update) {
+        public ProjectileObjectManager(CollisionManager collisionManager, UpdateMode updateMode = UpdateMode.Update) {
+            _collisionManager = collisionManager;
             _updateMode = updateMode;
             _projectilePlayer = new ProjectilePlayer();
-            
+
             // Rootの生成
             var rootObj = new GameObject("ProjectileObjectManager");
             UnityEngine.Object.DontDestroyOnLoad(rootObj);
@@ -76,41 +91,91 @@ namespace GameFramework.ProjectileSystems {
         /// <summary>
         /// 飛翔オブジェクトの再生
         /// </summary>
+        /// <param name="listener">当たり判定通知用リスナー</param>
         /// <param name="prefab">再生の実体に使うPrefab</param>
         /// <param name="projectile">飛翔アルゴリズム</param>
+        /// <param name="hitLayerMask">当たり判定に使うLayerMask</param>
+        /// <param name="hitCount">最大衝突回数(-1だと無限)</param>
+        /// <param name="customData">当たり判定通知時に使うカスタムデータ</param>
         /// <param name="onUpdatedTransform">座標の更新通知</param>
         /// <param name="onStopped">飛翔完了通知</param>
-        public Handle Play(GameObject prefab, IProjectile projectile,
-            Action<Vector3, Quaternion> onUpdatedTransform,
-            Action onStopped) {
+        public Handle Play(IRaycastCollisionListener listener, GameObject prefab, IProjectile projectile,
+            int hitLayerMask, int hitCount = -1, object customData = null,
+            Action<Vector3, Quaternion> onUpdatedTransform = null,
+            Action onStopped = null) {
             if (prefab == null) {
                 Debug.LogWarning("Projectile object prefab is null.");
                 return new Handle();
             }
-            
+
             // Poolの初期化
             if (!_objectPools.TryGetValue(prefab, out var pool)) {
-                pool = new ObjectPool<ProjectileObject>(
+                pool = new ObjectPool<IProjectileObject>(
                     () => CreateInstance(prefab), OnGetInstance, OnReleaseInstance, OnDestroyInstance);
                 _objectPools[prefab] = pool;
             }
 
             // インスタンスの取得、初期化
             var instance = pool.Get();
-            instance.Setup(projectile);
+            instance.StartProjectile(projectile);
+
+            // Raycastの生成
+            var raycastCollision = (IRaycastCollision)(instance.RaycastRadius > float.Epsilon
+                ? new SphereRaycastCollision(projectile.Position, projectile.Position, instance.RaycastRadius)
+                : new LineRaycastCollision(projectile.Position, projectile.Position));
+            var collisionHandle = new CollisionHandle();
 
             // Projectileを再生
             var projectileHandle = _projectilePlayer.Play(projectile, (pos, rot) => {
                 instance.UpdateTransform(pos, rot);
+                raycastCollision.March(pos);
                 onUpdatedTransform?.Invoke(pos, rot);
             }, () => {
-                instance.Cleanup();
+                collisionHandle.Dispose();
+                instance.ExitProjectile();
                 onStopped?.Invoke();
-                pool.Release(instance);
+            });
+
+            // コリジョン登録
+            collisionHandle = _collisionManager.Register(raycastCollision, hitLayerMask, customData, result => {
+                instance.OnHitCollision(result);
+                listener.OnHitRaycastCollision(result);
+                if (hitCount >= 0 && result.hitCount >= hitCount) {
+                    projectileHandle.Dispose();
+                }
+            });
+
+            // 再生情報として登録
+            _playingInfos.Add(new PlayingInfo {
+                pool = pool,
+                projectileObject = instance,
+                projectileHandle = projectileHandle
             });
 
             // ハンドル化して返却
             return new Handle(projectileHandle);
+        }
+
+        /// <summary>
+        /// 飛翔オブジェクトの再生
+        /// </summary>
+        /// <param name="prefab">再生の実体に使うPrefab</param>
+        /// <param name="projectile">飛翔アルゴリズム</param>
+        /// <param name="hitLayerMask">当たり判定に使うLayerMask</param>
+        /// <param name="hitCount">最大衝突回数(-1だと無限)</param>
+        /// <param name="customData">当たり判定通知時に使うカスタムデータ</param>
+        /// <param name="onHitRaycastCollision">当たり判定発生時通知</param>
+        /// <param name="onUpdatedTransform">座標の更新通知</param>
+        /// <param name="onStopped">飛翔完了通知</param>
+        public Handle Play(GameObject prefab, IProjectile projectile,
+            int hitLayerMask, int hitCount = -1, object customData = null,
+            Action<RaycastHitResult> onHitRaycastCollision = null,
+            Action<Vector3, Quaternion> onUpdatedTransform = null,
+            Action onStopped = null) {
+            var listener = new RaycastCollisionListener();
+            listener.OnHitRaycastCollisionEvent += onHitRaycastCollision;
+            return Play(listener, prefab, projectile, hitLayerMask, hitCount, customData,
+                onUpdatedTransform, onStopped);
         }
 
         /// <summary>
@@ -133,7 +198,20 @@ namespace GameFramework.ProjectileSystems {
         protected override void UpdateInternal() {
             var deltaTime = LayeredTime.DeltaTime;
             if (_updateMode == UpdateMode.Update) {
+                // Projectileの更新
                 _projectilePlayer.Update(deltaTime);
+
+                // ProjectileObjectの更新
+                for (var i = _playingInfos.Count - 1; i >= 0; i--) {
+                    var info = _playingInfos[i];
+                    info.projectileObject.UpdateProjectile(deltaTime);
+
+                    // 再生完了していたらPoolに返却する
+                    if (!info.projectileObject.IsPlaying) {
+                        info.pool.Release(info.projectileObject);
+                        _playingInfos.RemoveAt(i);
+                    }
+                }
             }
         }
 
@@ -152,6 +230,17 @@ namespace GameFramework.ProjectileSystems {
         /// </summary>
         protected override void DisposeInternal() {
             _projectilePlayer.Dispose();
+
+            foreach (var info in _playingInfos) {
+                info.pool.Release(info.projectileObject);
+            }
+
+            foreach (var pool in _objectPools.Values) {
+                pool.Dispose();
+            }
+
+            _objectPools.Clear();
+
             if (_rootTransform != null) {
                 UnityEngine.Object.Destroy(_rootTransform.gameObject);
                 _rootTransform = null;
@@ -161,36 +250,36 @@ namespace GameFramework.ProjectileSystems {
         /// <summary>
         /// インスタンス生成処理
         /// </summary>
-        private ProjectileObject CreateInstance(GameObject prefab) {
+        private IProjectileObject CreateInstance(GameObject prefab) {
             var gameObj = UnityEngine.Object.Instantiate(prefab, _rootTransform);
-            var instance = gameObj.GetComponent<ProjectileObject>();
+            var instance = gameObj.GetComponent<IProjectileObject>();
             if (instance == null) {
                 instance = gameObj.AddComponent<ProjectileObject>();
             }
 
-            gameObj.SetActive(false);
+            instance.SetActive(false);
             return instance;
         }
 
         /// <summary>
         /// インスタンス廃棄時処理
         /// </summary>
-        private void OnDestroyInstance(ProjectileObject instance) {
-            UnityEngine.Object.Destroy(instance.gameObject);
+        private void OnDestroyInstance(IProjectileObject instance) {
+            instance.Dispose();
         }
 
         /// <summary>
         /// インスタンス取得時処理
         /// </summary>
-        private void OnGetInstance(ProjectileObject instance) {
-            instance.gameObject.SetActive(true);
+        private void OnGetInstance(IProjectileObject instance) {
+            instance.SetActive(true);
         }
 
         /// <summary>
         /// インスタンス返却時処理
         /// </summary>
-        private void OnReleaseInstance(ProjectileObject instance) {
-            instance.gameObject.SetActive(false);
+        private void OnReleaseInstance(IProjectileObject instance) {
+            instance.SetActive(false);
         }
     }
 }
