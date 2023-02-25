@@ -13,6 +13,8 @@ namespace GameFramework.BodySystems {
         public virtual int ExecutionOrder => 0;
         // 制御対象のBody
         public Body Body { get; private set; }
+        // 有効なControllerか
+        public bool IsValid => Body != null && Body.IsValid;
 
         /// <summary>
         /// 初期化処理

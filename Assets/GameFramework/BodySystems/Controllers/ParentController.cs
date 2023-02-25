@@ -92,7 +92,7 @@ namespace GameFramework.BodySystems {
         protected override void LateUpdateInternal(float deltaTime) {
             if (_parent != null) {
                 // 親が無効になっていたら外れる
-                if (!_parent.Body.IsValid) {
+                if (!_parent.IsValid) {
                     SetParent(null, null, Vector3.zero, Quaternion.identity, ScaleType.Self);
                 }
 
@@ -112,7 +112,7 @@ namespace GameFramework.BodySystems {
         protected override void DisposeInternal() {
             // 子要素の追従を全部クリアする
             foreach (var child in _children) {
-                if (!child.Body.IsValid) {
+                if (!child.IsValid) {
                     continue;
                 }
 
@@ -152,7 +152,7 @@ namespace GameFramework.BodySystems {
 
             // 子供の更新を呼び出す
             foreach (var child in _children) {
-                if (!child.Body.IsValid) {
+                if (!child.IsValid) {
                     continue;
                 }
 
@@ -179,7 +179,7 @@ namespace GameFramework.BodySystems {
             var root = this;
             while (root._parent != null) {
                 root = root._parent;
-                if (root.Body.IsActive) {
+                if (root.IsValid && root.Body.IsActive) {
                     return true;
                 }
             }
