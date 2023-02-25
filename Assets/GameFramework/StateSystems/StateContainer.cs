@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameFramework.Core;
+using UnityEngine;
 
 namespace GameFramework.StateSystems {
     /// <summary>
@@ -44,6 +45,11 @@ namespace GameFramework.StateSystems {
             foreach (var state in states) {
                 // 無効キーは登録しない
                 if (state.Key.Equals(invalidKey)) {
+                    continue;
+                }
+
+                if (_states.ContainsKey(state.Key)) {
+                    Debug.LogError($"Already exists state key. {state.Key}");
                     continue;
                 }
 
