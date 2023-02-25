@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace GameFramework.CoroutineSystems {
     /// <summary>
@@ -18,6 +19,15 @@ namespace GameFramework.CoroutineSystems {
         /// </summary>
         /// <param name="funcs">非同期処理リスト</param>
         public MergedCoroutine(params IEnumerator[] funcs) {
+            _coroutines = funcs.Select(x => new Coroutine(x))
+                .ToArray();
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="funcs">非同期処理リスト</param>
+        public MergedCoroutine(IEnumerable<IEnumerator> funcs) {
             _coroutines = funcs.Select(x => new Coroutine(x))
                 .ToArray();
         }
