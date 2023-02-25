@@ -71,6 +71,10 @@ namespace GameFramework.CoroutineSystems {
                 return;
             }
 
+            if (coroutine.IsDone) {
+                return;
+            }
+
             var foundIndex = _coroutineInfos.FindIndex(x => x.coroutine == coroutine);
             if (foundIndex < 0) {
                 Debug.LogError("Not found coroutine.");
