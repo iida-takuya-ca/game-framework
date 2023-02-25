@@ -140,7 +140,12 @@ namespace GameFramework.CoroutineSystems {
                 catch (Exception exception) {
                     coroutineInfo.exception = exception;
                     // エラー終了通知
-                    coroutineInfo.onError?.Invoke(exception);
+                    if (coroutineInfo.onError != null) {
+                        coroutineInfo.onError.Invoke(exception);
+                    }
+                    else {
+                        Debug.LogException(exception);
+                    }
                     _cachedRemoveIndices.Add(i);
                 }
             }
