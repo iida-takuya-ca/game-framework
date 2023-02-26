@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using GameFramework.Core;
 using UnityEngine;
 
 namespace GameFramework.ModelSystems
@@ -67,8 +66,7 @@ namespace GameFramework.ModelSystems
                 }
                 
                 var model = (TModel)constructor.Invoke(new object[] { null });
-                model._scope = new DisposableScope();
-                model.OnCreatedInternal(model._scope);
+                model.OnCreatedInternal();
                 _model = model;
                 return model;
             }
@@ -94,16 +92,11 @@ namespace GameFramework.ModelSystems
 
                 _model = null;
                 model.OnDeleted();
-                model._scope.Dispose();
-                model._scope = null;
             }
         }
 
         // インスタンス管理用クラス
         private static Storage s_storage = new Storage();
-
-        // 生成中のスコープ
-        private DisposableScope _scope;
 
         // スコープ通知用
         public event Action OnExpired;
@@ -165,7 +158,7 @@ namespace GameFramework.ModelSystems
         /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
-        protected virtual void OnCreatedInternal(IScope scope)
+        protected virtual void OnCreatedInternal()
         {
         }
 
