@@ -20,7 +20,7 @@ namespace GameFramework.AssetSystems {
     // 読み込んだアセット
     public T Asset => _info?.Asset;
     // エラー
-    public Exception Exception => _info?.Exception ?? new InvalidDataException();
+    public Exception Exception => _info?.Exception;
     // 有効なハンドルか
     public bool IsValid => _info != null;
 
