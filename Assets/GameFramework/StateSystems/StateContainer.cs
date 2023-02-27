@@ -99,7 +99,7 @@ namespace GameFramework.StateSystems {
             if (!NextKey.Equals(CurrentKey)) {
                 if (_states.TryGetValue(CurrentKey, out state)) {
                     state.OnExit(NextKey);
-                    _scope.Dispose();
+                    _scope.Clear();
                 }
 
                 var prevKey = CurrentKey;
