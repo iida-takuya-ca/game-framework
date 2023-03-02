@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace GameFramework.EnvironmentSystems {
+namespace AlmaFramework.EnvironmentSystems {
     /// <summary>
     /// Unityにある環境設定
     /// </summary>
@@ -30,6 +30,35 @@ namespace GameFramework.EnvironmentSystems {
         public float haloStrength;
         public float flareStrength;
         public float flareFadeSpeed;
+
+        /// <summary>
+        /// クローンの作成
+        /// </summary>
+        public EnvironmentDefaultSettings Clone() {
+            return new EnvironmentDefaultSettings {
+                subtractiveShadowColor = subtractiveShadowColor,
+                ambientMode = ambientMode,
+                ambientSkyColor = ambientSkyColor,
+                ambientEquatorColor = ambientEquatorColor,
+                ambientGroundColor = ambientGroundColor,
+                ambientIntensity = ambientIntensity,
+                skyboxMaterial = skyboxMaterial,
+                defaultReflectionMode = defaultReflectionMode,
+                defaultReflectionResolution = defaultReflectionResolution,
+                customReflection = customReflection,
+                reflectionIntensity = reflectionIntensity,
+                reflectionBounces = reflectionBounces,
+                fog = fog,
+                fogColor = fogColor,
+                fogMode = fogMode,
+                fogDensity = fogDensity,
+                fogStartDistance = fogStartDistance,
+                fogEndDistance = fogEndDistance,
+                haloStrength = haloStrength,
+                flareStrength = flareStrength,
+                flareFadeSpeed = flareFadeSpeed,
+            };
+        }
 
         /// <summary>
         /// 現在の値を取得
@@ -96,7 +125,7 @@ namespace GameFramework.EnvironmentSystems {
         /// <param name="target">補間対象</param>
         /// <param name="ratio">ブレンド率</param>
         public EnvironmentDefaultSettings Lerp(EnvironmentDefaultSettings target, float ratio) {
-            var newSettings = target;
+            var newSettings = target.Clone();
             newSettings.subtractiveShadowColor =
                 Color.Lerp(subtractiveShadowColor, target.subtractiveShadowColor, ratio);
             newSettings.ambientSkyColor = Color.Lerp(ambientSkyColor, target.ambientSkyColor, ratio);
@@ -104,7 +133,7 @@ namespace GameFramework.EnvironmentSystems {
             newSettings.ambientGroundColor = Color.Lerp(ambientGroundColor, target.ambientGroundColor, ratio);
             newSettings.ambientIntensity = Mathf.Lerp(ambientIntensity, target.ambientIntensity, ratio);
             newSettings.reflectionIntensity = Mathf.Lerp(reflectionIntensity, target.reflectionIntensity, ratio);
-            
+
             newSettings.fogColor = Color.Lerp(fogColor, target.fogColor, ratio);
             newSettings.fogDensity = Mathf.Lerp(fogDensity, target.fogDensity, ratio);
             newSettings.fogStartDistance = Mathf.Lerp(fogStartDistance, target.fogStartDistance, ratio);
