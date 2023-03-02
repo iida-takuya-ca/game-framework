@@ -7,7 +7,7 @@ namespace GameFramework.EnvironmentSystems {
     /// Unityにある環境設定
     /// </summary>
     [Serializable]
-    public struct EnvironmentDefaultSettings {
+    public class EnvironmentDefaultSettings {
         public Color subtractiveShadowColor;
         public AmbientMode ambientMode;
         public Color ambientSkyColor;
@@ -104,7 +104,7 @@ namespace GameFramework.EnvironmentSystems {
             newSettings.ambientGroundColor = Color.Lerp(ambientGroundColor, target.ambientGroundColor, ratio);
             newSettings.ambientIntensity = Mathf.Lerp(ambientIntensity, target.ambientIntensity, ratio);
             newSettings.reflectionIntensity = Mathf.Lerp(reflectionIntensity, target.reflectionIntensity, ratio);
-
+            
             newSettings.fogColor = Color.Lerp(fogColor, target.fogColor, ratio);
             newSettings.fogDensity = Mathf.Lerp(fogDensity, target.fogDensity, ratio);
             newSettings.fogStartDistance = Mathf.Lerp(fogStartDistance, target.fogStartDistance, ratio);
