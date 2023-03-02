@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using GameFramework.AssetSystems;
 using GameFramework.Core;
@@ -110,6 +111,13 @@ namespace SampleGame {
         /// 廃棄時処理
         /// </summary>
         protected override void OnDestroyInternal() {
+            Services.Instance.Clear();
+        }
+
+        /// <summary>
+        /// アプリケーション終了時の処理
+        /// </summary>
+        private void OnApplicationQuit() {
             Services.Instance.Clear();
         }
     }
