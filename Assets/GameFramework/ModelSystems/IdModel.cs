@@ -10,7 +10,7 @@ namespace GameFramework.ModelSystems
     /// Id管理によるモデル
     /// </summary>
     public abstract class IdModel<TKey, TModel> : IModel
-        where TModel : IdModel<TKey, TModel>, new()
+        where TModel : IdModel<TKey, TModel>
     {
         /// <summary>
         /// GenericTypeCache
