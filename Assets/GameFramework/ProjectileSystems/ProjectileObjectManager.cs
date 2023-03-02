@@ -196,22 +196,9 @@ namespace GameFramework.ProjectileSystems {
         /// 更新処理
         /// </summary>
         protected override void UpdateInternal() {
-            var deltaTime = LayeredTime.DeltaTime;
             if (_updateMode == UpdateMode.Update) {
-                // Projectileの更新
-                _projectilePlayer.Update(deltaTime);
-
-                // ProjectileObjectの更新
-                for (var i = _playingInfos.Count - 1; i >= 0; i--) {
-                    var info = _playingInfos[i];
-                    info.projectileObject.UpdateProjectile(deltaTime);
-
-                    // 再生完了していたらPoolに返却する
-                    if (!info.projectileObject.IsPlaying) {
-                        info.pool.Release(info.projectileObject);
-                        _playingInfos.RemoveAt(i);
-                    }
-                }
+                var deltaTime = LayeredTime.DeltaTime;
+                UpdateProjectileObjects(deltaTime);
             }
         }
 
@@ -219,9 +206,25 @@ namespace GameFramework.ProjectileSystems {
         /// 後更新処理
         /// </summary>
         protected override void LateUpdateInternal() {
-            var deltaTime = LayeredTime.DeltaTime;
             if (_updateMode == UpdateMode.LateUpdate) {
-                _projectilePlayer.Update(deltaTime);
+                var deltaTime = LayeredTime.DeltaTime;
+                UpdateProjectileObjects(deltaTime);
+            }
+        }
+
+        private void UpdateProjectileObjects(float deltaTime) {
+            _projectilePlayer.Update(deltaTime);
+
+            // ProjectileObjectの更新
+            for (var i = _playingInfos.Count - 1; i >= 0; i--) {
+                var info = _playingInfos[i];
+                info.projectileObject.UpdateProjectile(deltaTime);
+
+                // 再生完了していたらPoolに返却する
+                if (!info.projectileObject.IsPlaying) {
+                    info.pool.Release(info.projectileObject);
+                    _playingInfos.RemoveAt(i);
+                }
             }
         }
 

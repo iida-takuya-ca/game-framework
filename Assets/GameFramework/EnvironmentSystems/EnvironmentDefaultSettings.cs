@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace AlmaFramework.EnvironmentSystems {
+namespace GameFramework.EnvironmentSystems {
     /// <summary>
     /// Unityにある環境設定
     /// </summary>
