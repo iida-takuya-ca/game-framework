@@ -37,9 +37,11 @@ namespace GameFramework.Core {
             }
         }
         // 親階層を考慮したTimeScale
-        public float TimeScale => (_parent?.TimeScale ?? 1.0f) * _localTimeScale;
+        public float TimeScale => ParentTimeScale * _localTimeScale;
+        public float ParentTimeScale => _parent?.TimeScale ?? 1.0f;
         // 現フレームのDeltaTime
         public float DeltaTime => Time.deltaTime * TimeScale;
+        public float ParentDeltaTime => Time.deltaTime * ParentTimeScale;
 
         /// <summary>
         /// コンストラクタ
