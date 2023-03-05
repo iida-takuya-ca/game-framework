@@ -14,6 +14,19 @@
       "dependencies": {},
       "hash": "f0cd73cca9acfad23a17fca2102111d2de87a807"
     },
+    "com.daitokuamy.gameframework": {
+      "version": "file:com.daitokuamy.gameframework",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.daitokuamy.unityrenametool": {
+      "version": "https://github.com/DaitokuAmy/unity-rename-tool.git?path=/Packages/com.daitokuamy.unityrenametool",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "00ad7b5e8c93b7237ea5057d60283af782d42492"
+    },
     "com.harumak.unitydebugsheet": {
       "version": "https://github.com/Haruma-K/UnityDebugSheet.git?path=/Assets/UnityDebugSheet",
       "depth": 0,
