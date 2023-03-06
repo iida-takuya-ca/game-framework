@@ -25,8 +25,12 @@ namespace GameFramework.ProjectileSystems {
             public AnimationCurve depthCurve;
             [Tooltip("ねじりカーブ(-1〜1)")]
             public AnimationCurve rollCurve;
+            [Tooltip("ねじりオフセット")]
+            public float rollOffset;
             [Tooltip("到達時間")]
             public float duration;
+            [Tooltip("到達時間が[/m]か")]
+            public bool durationPerMeter;
         }
 
         private readonly Vector3 _startPoint;
@@ -36,9 +40,12 @@ namespace GameFramework.ProjectileSystems {
         private readonly float _frequency;
         private readonly AnimationCurve _depthCurve;
         private readonly AnimationCurve _rollCurve;
+        private readonly float _rollOffset;
         private readonly float _duration;
+        private readonly bool _durationPerMeter;
 
         private float _timer;
+        private float _totalDuration;
         private Vector3 _prevPosition;
 
         // 座標
@@ -63,10 +70,13 @@ namespace GameFramework.ProjectileSystems {
         /// <param name="frequency">周波数</param>
         /// <param name="depthCurve">奥行きカーブ(1でTargetPoint)</param>
         /// <param name="rollCurve">ねじれカーブ(-1～1)</param>
-        /// <param name="duration"></param>
+        /// <param name="rollOffset">ねじれオフセット</param>
+        /// <param name="duration">到達時間</param>
+        /// <param name="durationPerMeter">到達時間指定が[/m]か</param>
         public CurveProjectile(Vector3 startPoint, Vector3 endPoint, AnimationCurve vibrationCurve, float amplitude,
             float frequency,
-            AnimationCurve depthCurve, AnimationCurve rollCurve, float duration) {
+            AnimationCurve depthCurve, AnimationCurve rollCurve, float rollOffset, float duration,
+            bool durationPerMeter) {
             _startPoint = startPoint;
             _endPoint = endPoint;
             _vibrationCurve = vibrationCurve;
@@ -74,7 +84,9 @@ namespace GameFramework.ProjectileSystems {
             _frequency = frequency;
             _depthCurve = depthCurve;
             _rollCurve = rollCurve;
+            _rollOffset = rollOffset;
             _duration = duration;
+            _durationPerMeter = durationPerMeter;
 
             Position = _startPoint;
             Rotation = Quaternion.LookRotation(_endPoint - _startPoint);
@@ -87,16 +99,26 @@ namespace GameFramework.ProjectileSystems {
         public CurveProjectile(Context context)
             : this(context.startPoint, context.endPoint, context.vibrationCurve, context.amplitude, context.frequency,
                 context.depthCurve,
-                context.rollCurve, context.duration) {
+                context.rollCurve, context.rollOffset, context.duration, context.durationPerMeter) {
         }
 
         /// <summary>
         /// 飛翔開始
         /// </summary>
         void IProjectile.Start() {
+            var vector = _endPoint - _startPoint;
             Position = _startPoint;
-            Rotation = Quaternion.LookRotation(_endPoint - _startPoint);
-            _timer = _duration;
+            Rotation = Quaternion.LookRotation(vector);
+            if (_durationPerMeter) {
+                var distance = vector.magnitude;
+                _totalDuration = _duration * distance;
+                _timer = _totalDuration;
+            }
+            else {
+                _totalDuration = _duration;
+                _timer = _duration;
+            }
+
             _prevPosition = _startPoint;
         }
 
@@ -117,12 +139,12 @@ namespace GameFramework.ProjectileSystems {
             // 時間更新
             _timer -= deltaTime;
 
-            var ratio = Mathf.Clamp01(1 - _timer / _duration);
+            var ratio = Mathf.Clamp01(1 - _timer / _totalDuration);
 
             // 位置計算
             var vibration = _vibrationCurve.Evaluate(ratio * _frequency % 1.0f) * _amplitude;
             var depth = _depthCurve.Evaluate(ratio);
-            var roll = _rollCurve.Evaluate(ratio);
+            var roll = _rollCurve.Evaluate(ratio) + _rollOffset;
             var forward = vector.normalized;
             var right = Vector3.Cross(Vector3.up, forward).normalized;
             var up = Vector3.Cross(forward, right);

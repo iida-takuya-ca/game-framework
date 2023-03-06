@@ -18,6 +18,9 @@ namespace GameFramework.ProjectileSystems {
         /// 飛翔開始処理
         /// </summary>
         protected override void OnStartProjectile() {
+            StopParticle(_hitParticle);
+            StopParticle(_exitParticle);
+
             PlayParticle(_baseParticle);
         }
 
@@ -57,7 +60,7 @@ namespace GameFramework.ProjectileSystems {
 
             particle.Play();
         }
-        
+
         /// <summary>
         /// Particleを停止
         /// </summary>
