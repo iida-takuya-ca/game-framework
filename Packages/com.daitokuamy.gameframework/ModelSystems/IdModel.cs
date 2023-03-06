@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GameFramework.Core;
 using UnityEngine;
 
 namespace GameFramework.ModelSystems
@@ -73,8 +74,8 @@ namespace GameFramework.ModelSystems
                 }
                 
                 var model = (TModel)constructor.Invoke(new object[] { id });
-                model.OnCreatedInternal();
                 _models[id] = model;
+                model.OnCreatedInternal(model);
                 return model;
             }
 
@@ -178,7 +179,7 @@ namespace GameFramework.ModelSystems
         /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
-        protected virtual void OnCreatedInternal()
+        protected virtual void OnCreatedInternal(IScope scope)
         {
         }
 
