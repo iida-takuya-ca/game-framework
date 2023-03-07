@@ -47,12 +47,12 @@ namespace GameFramework.BodySystems {
         /// </summary>
         protected override void LateUpdateInternal(float deltaTime) {
             // 各種Transform更新
-            foreach (var constraint in _attachments) {
-                constraint.ManualUpdate();
+            foreach (var attachment in _attachments) {
+                attachment.ManualUpdate();
             }
 
-            foreach (var constraint in _customAttachments) {
-                constraint.ManualUpdate();
+            foreach (var attachment in _customAttachments) {
+                attachment.ManualUpdate();
             }
         }
 

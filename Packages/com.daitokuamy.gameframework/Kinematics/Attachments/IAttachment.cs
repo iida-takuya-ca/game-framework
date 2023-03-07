@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace GameFramework.Kinematics {
+﻿namespace GameFramework.Kinematics {
     /// <summary>
     /// Attachment用のInterface
     /// </summary>
