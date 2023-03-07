@@ -118,7 +118,7 @@ namespace GameFramework.Kinematics {
         /// 更新処理
         /// </summary>
         private void Update() {
-            if (_updateMode != Mode.Update && _updateMode != Mode.Manual && Application.isPlaying) {
+            if (_updateMode != Mode.Update) {
                 return;
             }
 
