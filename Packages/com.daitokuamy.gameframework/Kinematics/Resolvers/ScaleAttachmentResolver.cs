@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace GameFramework.Kinematics {
     /// <summary>
@@ -6,6 +7,7 @@ namespace GameFramework.Kinematics {
     /// </summary>
     public class ScaleAttachmentResolver : AttachmentResolver {
         // 設定
+        [Serializable]
         public class ResolverSettings {
             [Tooltip("スケールオフセット")]
             public Vector3 offsetScale = Vector3.one;

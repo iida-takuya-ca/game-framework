@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GameFramework.Kinematics {
     /// <summary>
@@ -26,6 +25,13 @@ namespace GameFramework.Kinematics {
         /// </summary>
         protected override void Initialize() {
             _resolver = new ScaleAttachmentResolver(transform);
+        }
+
+        /// <summary>
+        /// シリアライズ値更新時処理
+        /// </summary>
+        protected override void OnValidateInternal() {
+            Settings = _settings;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace GameFramework.Kinematics {
     /// <summary>
@@ -6,6 +7,7 @@ namespace GameFramework.Kinematics {
     /// </summary>
     public class LookAtAttachmentResolver : AttachmentResolver {
         // 追従設定
+        [Serializable]
         public class ResolverSettings {
             [Tooltip("制御空間")]
             public Space space = Space.Self;

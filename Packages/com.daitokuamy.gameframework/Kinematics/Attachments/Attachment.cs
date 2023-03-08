@@ -83,6 +83,12 @@ namespace GameFramework.Kinematics {
         protected abstract void Initialize();
 
         /// <summary>
+        /// シリアライズ値更新時処理
+        /// </summary>
+        protected virtual void OnValidateInternal() {
+        }
+
+        /// <summary>
         /// 更新処理(内部用)
         /// </summary>
         private void UpdateInternal() {
@@ -118,8 +124,16 @@ namespace GameFramework.Kinematics {
         /// 更新処理
         /// </summary>
         private void Update() {
-            if (_updateMode != Mode.Update) {
-                return;
+            if (Application.isPlaying) {
+                if (_updateMode != Mode.Update) {
+                    return;
+                }
+            }
+            else {
+                // 非再生時はManualUpdateをここで回す
+                if (_updateMode != Mode.Update && _updateMode != Mode.Manual) {
+                    return;
+                }
             }
 
             UpdateInternal();
@@ -141,6 +155,7 @@ namespace GameFramework.Kinematics {
         /// </summary>
         private void OnValidate() {
             Sources = _sources;
+            OnValidateInternal();
         }
     }
 }

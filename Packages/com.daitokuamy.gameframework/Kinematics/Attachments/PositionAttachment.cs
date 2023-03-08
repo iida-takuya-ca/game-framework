@@ -27,5 +27,12 @@ namespace GameFramework.Kinematics {
         protected override void Initialize() {
             _resolver = new PositionAttachmentResolver(transform);
         }
+
+        /// <summary>
+        /// シリアライズ値更新時処理
+        /// </summary>
+        protected override void OnValidateInternal() {
+            Settings = _settings;
+        }
     }
 }
