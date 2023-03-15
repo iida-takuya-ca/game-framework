@@ -23,7 +23,7 @@ namespace GameFramework.EntitySystems {
 
             Entity = entity;
             _attachScope = new DisposableScope();
-            AttachInternal();
+            AttachInternal(_attachScope);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Entityに追加された時の処理
         /// </summary>
-        protected virtual void AttachInternal() {
+        protected virtual void AttachInternal(IScope scope) {
         }
 
         /// <summary>
