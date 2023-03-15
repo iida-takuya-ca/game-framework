@@ -9,27 +9,24 @@ namespace GameFramework.ModelSystems {
     /// 自動割り当てId管理によるモデル
     /// </summary>
     public abstract class AutoIdModel<TModel> : IModel
-        where TModel : AutoIdModel<TModel>
-    {
+        where TModel : AutoIdModel<TModel> {
         /// <summary>
         /// GenericTypeCache
         /// </summary>
-        private static class TypeCache<T>
-        {
+        private static class TypeCache<T> {
             // コンストラクタ
             public static ConstructorInfo ConstructorInfo { get; }
-            
-            static TypeCache()
-            {
-                ConstructorInfo = typeof(T).GetConstructor( BindingFlags.NonPublic | BindingFlags.Instance, null, new [] { typeof(int) }, null);
+
+            static TypeCache() {
+                ConstructorInfo = typeof(T).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null,
+                    new[] { typeof(int) }, null);
             }
         }
-        
+
         /// <summary>
         /// モデル格納用ストレージ
         /// </summary>
-        private class Storage
-        {
+        private class Storage {
             private int _nextId = 1;
 
             // 管理対象のモデル
@@ -38,13 +35,10 @@ namespace GameFramework.ModelSystems {
             /// <summary>
             /// リセット処理
             /// </summary>
-            public void Reset()
-            {
-                for (var i = 0; i < _models.Count; i++)
-                {
+            public void Reset() {
+                for (var i = 0; i < _models.Count; i++) {
                     var model = _models[i];
-                    if (model == null)
-                    {
+                    if (model == null) {
                         continue;
                     }
 
@@ -59,17 +53,16 @@ namespace GameFramework.ModelSystems {
             /// <summary>
             /// モデルの生成
             /// </summary>
-            public TModel Create()
-            {
-                var constructor = TypeCache<TModel>.ConstructorInfo;
-                if (constructor == null)
-                {
-                    Debug.LogError($"Not found constructor. {typeof(TModel).Name}");
+            public T Create<T>()
+                where T : TModel {
+                var constructor = TypeCache<T>.ConstructorInfo;
+                if (constructor == null) {
+                    Debug.LogError($"Not found constructor. {typeof(T).Name}");
                     return null;
                 }
-                
+
                 var id = _nextId++;
-                var model = (TModel)constructor.Invoke(new object[] { id });
+                var model = (T)constructor.Invoke(new object[] { id });
                 _models.Add(model);
                 model.OnCreatedInternal(model);
                 return model;
@@ -79,31 +72,27 @@ namespace GameFramework.ModelSystems {
             /// モデルの取得
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
-            public TModel Get(int id)
-            {
-                if (id > _models.Count)
-                {
+            public T Get<T>(int id)
+                where T : TModel {
+                if (id > _models.Count) {
                     return null;
                 }
 
-                return _models[IdToIndex(id)];
+                return _models[IdToIndex(id)] as T;
             }
 
             /// <summary>
             /// モデルの削除
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
-            public void Delete(int id)
-            {
-                if (id > _models.Count)
-                {
+            public void Delete(int id) {
+                if (id > _models.Count) {
                     return;
                 }
 
                 var index = IdToIndex(id);
                 var model = _models[index];
-                if (model == null)
-                {
+                if (model == null) {
                     return;
                 }
 
@@ -114,8 +103,7 @@ namespace GameFramework.ModelSystems {
             /// <summary>
             /// IdをIndexに変換
             /// </summary>
-            private int IdToIndex(int id)
-            {
+            private int IdToIndex(int id) {
                 return id - 1;
             }
         }
@@ -130,74 +118,82 @@ namespace GameFramework.ModelSystems {
         public event Action OnExpired;
 
         /// <summary>
+        /// 取得処理(継承先Model用)
+        /// </summary>
+        /// <param name="id">識別キー</param>
+        public static T Get<T>(int id)
+            where T : TModel {
+            return s_storage.Get<T>(id);
+        }
+
+        /// <summary>
         /// 取得処理
         /// </summary>
         /// <param name="id">識別キー</param>
-        public static TModel Get(int id)
-        {
-            return s_storage.Get(id);
+        public static TModel Get(int id) {
+            return Get<TModel>(id);
+        }
+
+        /// <summary>
+        /// 生成処理(継承先Model用)
+        /// </summary>
+        public static T Create<T>()
+            where T : TModel {
+            return s_storage.Create<T>();
         }
 
         /// <summary>
         /// 生成処理
         /// </summary>
-        public static TModel Create()
-        {
-            return s_storage.Create();
+        public static TModel Create() {
+            return Create<TModel>();
         }
 
         /// <summary>
         /// 削除処理
         /// </summary>
         /// <param name="id">識別キー</param>
-        public static void Delete(int id)
-        {
+        public static void Delete(int id) {
             s_storage.Delete(id);
         }
 
         /// <summary>
         /// リセット処理
         /// </summary>
-        public static void Reset()
-        {
+        public static void Reset() {
             s_storage.Reset();
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Delete(Id);
         }
 
         /// <summary>
         /// 生成時処理(Override用)
         /// </summary>
-        protected virtual void OnCreatedInternal(IScope scope)
-        {
+        protected virtual void OnCreatedInternal(IScope scope) {
         }
 
         /// <summary>
         /// 削除時処理(Override用)
         /// </summary>
-        protected virtual void OnDeletedInternal()
-        {
+        protected virtual void OnDeletedInternal() {
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        protected AutoIdModel(int id)
-        {
+        protected AutoIdModel(int id) {
             Id = id;
         }
 
         /// <summary>
         /// 削除時処理
         /// </summary>
-        private void OnDeleted()
-        {
+        private void OnDeleted() {
             OnDeletedInternal();
             Id = default;
             OnExpired?.Invoke();
