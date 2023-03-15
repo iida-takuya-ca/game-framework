@@ -70,7 +70,6 @@ namespace SampleGame {
             var input = Services.Get<BattleInput>();
             var cameraController = Services.Get<CameraController>();
             var camera = cameraController.MainCamera;
-            var collisionManager = Services.Get<CollisionManager>();
             var projectileObjectManager = Services.Get<ProjectileObjectManager>();
 
             // 移動
@@ -87,6 +86,10 @@ namespace SampleGame {
             // テスト用にダメージ発生
             if (Keyboard.current.qKey.wasPressedThisFrame) {
                 _model.AddDamage(1);
+            }
+
+            if (Keyboard.current.vKey.wasPressedThisFrame) {
+                _actor.Vibrate();
             }
 
             if (Keyboard.current.tKey.wasPressedThisFrame) {

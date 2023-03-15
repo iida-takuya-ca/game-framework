@@ -18,6 +18,7 @@ namespace SampleGame {
         /// </summary>
         public interface ISetupData {
             RuntimeAnimatorController Controller { get; }
+            AnimationClip VibrateClip { get; }
             float AngularVelocity { get; }
             GameObject BulletPrefab { get; }
         }
@@ -39,6 +40,8 @@ namespace SampleGame {
         private string _currentStatus = "";
         // ステータスリスナー
         private StatusEventListener _statusEventListener;
+        // モーション制御クラス
+        private MotionController _motionController;
 
         // 移動制御用
         private MoveController _moveController;
@@ -53,8 +56,7 @@ namespace SampleGame {
             : base(body) {
             Data = setupData;
             _statusEventListener = body.GetComponent<StatusEventListener>();
-            var motionController = body.GetController<MotionController>();
-            _basePlayableProvider = motionController.Player.Change(setupData.Controller, 0.0f, false);
+            _motionController = body.GetController<MotionController>();
             _coroutineRunner = new CoroutineRunner();
             _moveController = new MoveController(body.Transform, setupData.AngularVelocity,
                 rate => { _basePlayableProvider.GetPlayable().SetFloat("speed", rate); });
@@ -128,6 +130,13 @@ namespace SampleGame {
         }
 
         /// <summary>
+        /// 振動の再生
+        /// </summary>
+        public void Vibrate() {
+            _motionController.Player.Change(1, new AnimationClipPlayableProvider(Data.VibrateClip, true), 0.2f);
+        }
+
+        /// <summary>
         /// 行動キャンセル
         /// </summary>
         public void CancelAction() {
@@ -138,9 +147,26 @@ namespace SampleGame {
         /// アクティブ時処理
         /// </summary>
         protected override void ActivateInternal(IScope scope) {
+            // 基本モーションの設定
+            _basePlayableProvider = _motionController.Player.Change(Data.Controller, 0.0f, false);
+            
+            // 加算モーションレイヤーの追加
+            _motionController.Player.BuildAdditionalLayers(new [] {
+                new MotionPlayer.LayerSetting {
+                    additive = true
+                }
+            });
+            
             _statusEventListener.EnterSubject
                 .TakeUntil(scope)
                 .Subscribe(x => { _currentStatus = x; });
+        }
+
+        /// <summary>
+        /// 非アクティブ時処理
+        /// </summary>
+        protected override void DeactivateInternal() {
+            _motionController.Player.ResetAdditionalLayers();
         }
 
         /// <summary>
