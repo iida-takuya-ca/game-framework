@@ -155,7 +155,10 @@ namespace GameFramework.Kinematics {
         /// </summary>
         private void OnValidate() {
             Sources = _sources;
-            OnValidateInternal();
+            try {
+                OnValidateInternal();
+            }
+            catch {}
         }
     }
 }
