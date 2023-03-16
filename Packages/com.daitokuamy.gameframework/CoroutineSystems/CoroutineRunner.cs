@@ -22,7 +22,7 @@ namespace GameFramework.CoroutineSystems {
             public bool isCompleted;
 
             public bool IsCanceled =>
-                isCanceled || (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested);
+                isCanceled || (cancellationToken.IsCancellationRequested);
             public bool IsDone => IsCanceled || exception != null || isCompleted;
         }
 
@@ -129,6 +129,8 @@ namespace GameFramework.CoroutineSystems {
                 var coroutine = coroutineInfo.coroutine;
 
                 if (coroutineInfo.IsCanceled) {
+                    // キャンセル通知
+                    coroutineInfo.onCanceled?.Invoke();
                     _cachedRemoveIndices.Add(i);
                     continue;
                 }
