@@ -22,7 +22,7 @@ namespace GameFramework.CoroutineSystems {
             public bool isCompleted;
 
             public bool IsCanceled =>
-                isCanceled || (cancellationToken.IsCancellationRequested);
+                isCanceled || cancellationToken.IsCancellationRequested;
             public bool IsDone => IsCanceled || exception != null || isCompleted;
         }
 
