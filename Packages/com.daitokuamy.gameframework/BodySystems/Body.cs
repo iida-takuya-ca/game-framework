@@ -23,6 +23,7 @@ namespace GameFramework.BodySystems {
         // 標準利用されるControllerのキャッシュ
         private LocatorController _locatorController;
         private ParentController _parentController;
+        private MeshController _meshController;
 
         // 解放スコープ
         public event Action OnExpired;
@@ -39,6 +40,11 @@ namespace GameFramework.BodySystems {
                     GameObject.SetActive(value);
                 }
             }
+        }
+        // 表示状態
+        public bool IsVisible {
+            get => _meshController.IsVisible;
+            set => _meshController.IsVisible = value;
         }
         // 制御対象のGameObject
         public GameObject GameObject { get; private set; }
@@ -257,6 +263,7 @@ namespace GameFramework.BodySystems {
 
             _locatorController = GetController<LocatorController>();
             _parentController = GetController<ParentController>();
+            _meshController = GetController<MeshController>();
         }
 
         /// <summary>

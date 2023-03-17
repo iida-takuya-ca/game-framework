@@ -92,6 +92,10 @@ namespace SampleGame {
                 _actor.Vibrate();
             }
 
+            if (Keyboard.current.zKey.wasPressedThisFrame) {
+                _actor.Body.IsVisible ^= true;
+            }
+
             if (Keyboard.current.tKey.wasPressedThisFrame) {
                 _gimmickController.GetAnimationGimmicks("Test").Resume();
             }

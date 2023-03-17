@@ -40,8 +40,13 @@ namespace GameFramework.Core {
         public float TimeScale => ParentTimeScale * _localTimeScale;
         public float ParentTimeScale => _parent?.TimeScale ?? 1.0f;
         // 現フレームのDeltaTime
-        public float DeltaTime => Time.deltaTime * TimeScale;
-        public float ParentDeltaTime => Time.deltaTime * ParentTimeScale;
+        public float DeltaTime => BaseDeltaTime * TimeScale;
+        public float ParentDeltaTime => BaseDeltaTime * ParentTimeScale;
+        // 固定DeltaTime(0以下の値を入れると変動DeltaTime)
+        public float FixedDeltaTime { get; set; } = 0.0f;
+
+        // ベースとなるDeltaTime
+        private float BaseDeltaTime => FixedDeltaTime <= float.Epsilon ? Time.deltaTime : FixedDeltaTime;
 
         /// <summary>
         /// コンストラクタ
