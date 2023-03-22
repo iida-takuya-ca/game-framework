@@ -97,10 +97,11 @@ namespace GameFramework.ProjectileSystems {
         /// <param name="hitLayerMask">当たり判定に使うLayerMask</param>
         /// <param name="hitCount">最大衝突回数(-1だと無限)</param>
         /// <param name="customData">当たり判定通知時に使うカスタムデータ</param>
+        /// <param name="checkHitFunc">当たりとして有効かの判定関数</param>
         /// <param name="onUpdatedTransform">座標の更新通知</param>
         /// <param name="onStopped">飛翔完了通知</param>
         public Handle Play(IRaycastCollisionListener listener, GameObject prefab, IProjectile projectile,
-            int hitLayerMask, int hitCount = -1, object customData = null,
+            int hitLayerMask, int hitCount = -1, object customData = null, Func<RaycastHitResult, bool> checkHitFunc = null,
             Action<Vector3, Quaternion> onUpdatedTransform = null,
             Action onStopped = null) {
             if (prefab == null) {
@@ -138,6 +139,9 @@ namespace GameFramework.ProjectileSystems {
 
             // コリジョン登録
             collisionHandle = _collisionManager.Register(raycastCollision, hitLayerMask, customData, result => {
+                if (checkHitFunc != null && !checkHitFunc.Invoke(result)) {
+                    return;
+                }
                 instance.OnHitCollision(result);
                 listener.OnHitRaycastCollision(result);
                 if (hitCount >= 0 && result.hitCount >= hitCount) {
@@ -164,17 +168,18 @@ namespace GameFramework.ProjectileSystems {
         /// <param name="hitLayerMask">当たり判定に使うLayerMask</param>
         /// <param name="hitCount">最大衝突回数(-1だと無限)</param>
         /// <param name="customData">当たり判定通知時に使うカスタムデータ</param>
+        /// <param name="checkHitFunc">当たりとして有効かの判定関数</param>
         /// <param name="onHitRaycastCollision">当たり判定発生時通知</param>
         /// <param name="onUpdatedTransform">座標の更新通知</param>
         /// <param name="onStopped">飛翔完了通知</param>
         public Handle Play(GameObject prefab, IProjectile projectile,
-            int hitLayerMask, int hitCount = -1, object customData = null,
+            int hitLayerMask, int hitCount = -1, object customData = null, Func<RaycastHitResult, bool> checkHitFunc = null,
             Action<RaycastHitResult> onHitRaycastCollision = null,
             Action<Vector3, Quaternion> onUpdatedTransform = null,
             Action onStopped = null) {
             var listener = new RaycastCollisionListener();
             listener.OnHitRaycastCollisionEvent += onHitRaycastCollision;
-            return Play(listener, prefab, projectile, hitLayerMask, hitCount, customData,
+            return Play(listener, prefab, projectile, hitLayerMask, hitCount, customData, checkHitFunc,
                 onUpdatedTransform, onStopped);
         }
 
@@ -194,7 +199,7 @@ namespace GameFramework.ProjectileSystems {
 
         /// <summary>
         /// 更新処理
-        /// </summary>
+        /// </summary>tile
         protected override void UpdateInternal() {
             if (_updateMode == UpdateMode.Update) {
                 var deltaTime = LayeredTime.DeltaTime;
