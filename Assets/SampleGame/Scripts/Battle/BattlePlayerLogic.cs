@@ -123,7 +123,7 @@ namespace SampleGame {
                 var velocity = -baseTrans.right * 5;
                 var projectile = new HomingProjectile(startPos, targetPos, velocity, 1.0f, 0.2f, 50.0f, 50.0f);
                 projectileObjectManager.Play(_actor.Data.BulletPrefab, projectile, LayerMask.GetMask("Default"), 1,
-                    null,
+                    null, null,
                     result => { Debug.Log($"Hit:[{result.hitCount}]{result.raycastHit.point}"); });
             }
         }
