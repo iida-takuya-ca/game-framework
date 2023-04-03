@@ -11,6 +11,13 @@ namespace GameFramework.BodySystems {
         private Dictionary<string, List<Gimmick>> _gimmicks = new Dictionary<string, List<Gimmick>>();
 
         /// <summary>
+        /// ギミックのキー一覧を取得
+        /// </summary>
+        public string[] GetKeys() {
+            return _gimmicks.Keys.ToArray();
+        }
+
+        /// <summary>
         /// ギミックの取得
         /// </summary>
         /// <param name="key">取得用のキー</param>
