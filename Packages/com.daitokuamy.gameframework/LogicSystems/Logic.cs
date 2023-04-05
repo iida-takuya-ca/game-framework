@@ -29,6 +29,9 @@ namespace GameFramework.LogicSystems {
 
             _disposed = true;
 
+            // Deactivateを実行
+            Deactivate();
+
             DisposeInternal();
             OnExpired?.Invoke();
             OnExpired = null;

@@ -60,21 +60,21 @@ namespace GameFramework.Kinematics {
         /// 自身のTransformからオフセットを設定する
         /// </summary>
         public void TransferOffset() {
-            Resolver.TransferOffset();
+            Resolver?.TransferOffset();
         }
 
         /// <summary>
         /// オフセットを初期化
         /// </summary>
         public void ResetOffset() {
-            Resolver.ResetOffset();
+            Resolver?.ResetOffset();
         }
 
         /// <summary>
         /// Transformを反映
         /// </summary>
         public void ApplyTransform() {
-            Resolver.Resolve();
+            Resolver?.Resolve();
         }
         
         /// <summary>
