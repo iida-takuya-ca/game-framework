@@ -306,6 +306,11 @@ namespace GameFramework.PlayableSystems {
                 return;
             }
 
+            // 現在再生中のProviderと同じならスキップ
+            if (layerInfo.currentPlayingInfo.provider == provider) {
+                return;
+            }
+
             // ブレンド中なら古い物は削除
             layerInfo.prevPlayingInfo.TryDispose();
 
