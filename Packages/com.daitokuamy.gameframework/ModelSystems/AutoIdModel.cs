@@ -74,11 +74,12 @@ namespace GameFramework.ModelSystems {
             /// <param name="id">モデルの識別キー</param>
             public T Get<T>(int id)
                 where T : TModel {
-                if (id > _models.Count) {
+                var index = IdToIndex(id);
+                if (index < 0 || index >= _models.Count) {
                     return null;
                 }
 
-                return _models[IdToIndex(id)] as T;
+                return _models[index] as T;
             }
 
             /// <summary>
@@ -86,11 +87,11 @@ namespace GameFramework.ModelSystems {
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
             public void Delete(int id) {
-                if (id > _models.Count) {
+                var index = IdToIndex(id);
+                if (index < 0 || index >= _models.Count) {
                     return;
                 }
-
-                var index = IdToIndex(id);
+                
                 var model = _models[index];
                 if (model == null) {
                     return;
