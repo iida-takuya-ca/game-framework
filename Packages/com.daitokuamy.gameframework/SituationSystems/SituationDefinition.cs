@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using GameFramework.Core;
 
 namespace GameFramework.SituationSystems {
@@ -34,6 +35,8 @@ namespace GameFramework.SituationSystems {
         public bool Back => _transitionInfo?.back ?? false;
         // 遷移状態
         public TransitionState TransitionState => _transitionInfo?.state ?? TransitionState.Invalid;
+        // IEnumerator用
+        object IEnumerator.Current => null;
 
         /// <summary>
         /// コンストラクタ
@@ -49,6 +52,16 @@ namespace GameFramework.SituationSystems {
         public TransitionHandle(Exception exception) {
             _transitionInfo = null;
             Exception = exception;
+        }
+
+        /// <inheritdoc/>
+        bool IEnumerator.MoveNext() {
+            return !IsDone;
+        }
+
+        /// <inheritdoc/>
+        void IEnumerator.Reset() {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using GameFramework.Core;
 
 namespace GameFramework.AssetSystems {
@@ -8,6 +9,8 @@ namespace GameFramework.AssetSystems {
     public struct SceneAssetHandle : IProcess {
         // 無効なSceneAssetHandle
         public static readonly SceneAssetHandle Empty = new SceneAssetHandle();
+        // IEnumerator用
+        object IEnumerator.Current => null;
 
         // 読み込み情報
         private ISceneAssetInfo _info;
@@ -39,6 +42,16 @@ namespace GameFramework.AssetSystems {
 
             _info.Dispose();
             _info = null;
+        }
+
+        /// <inheritdoc/>
+        bool IEnumerator.MoveNext() {
+            return !IsDone;
+        }
+
+        /// <inheritdoc/>
+        void IEnumerator.Reset() {
+            throw new NotImplementedException();
         }
     }
 }

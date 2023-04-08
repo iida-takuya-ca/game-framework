@@ -71,12 +71,6 @@ namespace GameFramework.CoroutineSystems {
             if (peek == null) {
                 _stack.Pop();
             }
-            else if (peek is IProcess process) {
-                if (process.IsDone) {
-                    _stack.Pop();
-                    Update();
-                }
-            }
             else if (peek is IEnumerator enumerator) {
                 if (enumerator.MoveNext()) {
                     _stack.Push(enumerator.Current);
