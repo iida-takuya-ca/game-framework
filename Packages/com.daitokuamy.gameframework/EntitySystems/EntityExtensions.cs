@@ -60,17 +60,17 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Actorの削除
         /// </summary>
-        public static Entity RemoveActor(this Entity source, Actor actor) {
+        public static Entity RemoveActor(this Entity source, Actor actor, bool dispose = true) {
             var component = source.AddOrGetComponent<ActorEntityComponent>();
-            return component.RemoveActor(actor);
+            return component.RemoveActor(actor, dispose);
         }
 
         /// <summary>
         /// Actorの全削除
         /// </summary>
-        public static Entity RemoveActors(this Entity source) {
+        public static Entity RemoveActors(this Entity source, bool dispose = true) {
             var component = source.AddOrGetComponent<ActorEntityComponent>();
-            return component.RemoveActors();
+            return component.RemoveActors(dispose);
         }
 
         /// <summary>
@@ -88,6 +88,14 @@ namespace GameFramework.EntitySystems {
         public static Entity AddLogic(this Entity source, EntityLogic logic) {
             var component = source.AddOrGetComponent<LogicEntityComponent>();
             return component.AddLogic(logic);
+        }
+
+        /// <summary>
+        /// Logicの削除
+        /// </summary>
+        public static Entity RemoveLogic(this Entity source, EntityLogic logic) {
+            var component = source.AddOrGetComponent<LogicEntityComponent>();
+            return component.RemoveLogic(logic);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace GameFramework.EntitySystems {
             public int priority;
             public IActor actor;
         }
-        
+
         // 優先度で並べたActor情報リスト
         private readonly List<ActorInfo> _sortedActorInfos = new List<ActorInfo>();
 
@@ -59,14 +59,17 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Actorの削除
         /// </summary>
-        public Entity RemoveActor(Actor actor) {
+        public Entity RemoveActor(Actor actor, bool dispose = true) {
             var count = _sortedActorInfos.RemoveAll(x => x.actor == actor);
             if (count <= 0) {
                 return Entity;
             }
 
             actor.Deactivate();
-            actor.Dispose();
+            if (dispose) {
+                actor.Dispose();
+            }
+
             RefreshActiveActors();
             return Entity;
         }
@@ -74,9 +77,12 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Actorの全削除
         /// </summary>
-        public Entity RemoveActors() {
+        public Entity RemoveActors(bool dispose = true) {
             foreach (var actorInfo in _sortedActorInfos) {
-                actorInfo.actor.Dispose();
+                ((Actor)actorInfo.actor).Deactivate();
+                if (dispose) {
+                    actorInfo.actor.Dispose();
+                }
             }
 
             _sortedActorInfos.Clear();
