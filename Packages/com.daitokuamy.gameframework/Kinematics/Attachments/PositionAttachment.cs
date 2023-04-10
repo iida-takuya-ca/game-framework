@@ -26,6 +26,7 @@ namespace GameFramework.Kinematics {
         /// </summary>
         protected override void Initialize() {
             _resolver = new PositionAttachmentResolver(transform);
+            _resolver.Settings = _settings;
         }
 
         /// <summary>
