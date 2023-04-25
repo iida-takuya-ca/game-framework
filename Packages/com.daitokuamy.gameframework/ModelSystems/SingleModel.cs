@@ -27,18 +27,19 @@ namespace GameFramework.ModelSystems {
         /// </summary>
         private class Storage {
             // 管理対象のモデル
-            private TModel _model;
+            private TModel _item;
+            public TModel Item => _item;
 
             /// <summary>
             /// リセット処理
             /// </summary>
             public void Reset() {
-                var model = _model;
+                var model = _item;
                 if (model == null) {
                     return;
                 }
 
-                _model = null;
+                _item = null;
                 model.OnDeleted();
             }
 
@@ -46,7 +47,7 @@ namespace GameFramework.ModelSystems {
             /// モデルの生成
             /// </summary>
             public TModel Create() {
-                if (_model != null) {
+                if (_item != null) {
                     Debug.LogError($"Already exists {typeof(TModel).Name}.");
                     return null;
                 }
@@ -58,7 +59,7 @@ namespace GameFramework.ModelSystems {
                 }
 
                 var model = (TModel)constructor.Invoke(new object[] { null });
-                _model = model;
+                _item = model;
                 model.OnCreatedInternal(model);
                 return model;
             }
@@ -67,25 +68,28 @@ namespace GameFramework.ModelSystems {
             /// モデルの取得
             /// </summary>
             public TModel Get() {
-                return _model;
+                return _item;
             }
 
             /// <summary>
             /// モデルの削除
             /// </summary>
             public void Delete() {
-                var model = _model;
+                var model = _item;
                 if (model == null) {
                     return;
                 }
 
-                _model = null;
+                _item = null;
                 model.OnDeleted();
             }
         }
 
         // インスタンス管理用クラス
         private static Storage s_storage = new Storage();
+
+        // 管理中Model
+        public static TModel Item => s_storage.Item;
 
         // スコープ通知用
         public event Action OnExpired;

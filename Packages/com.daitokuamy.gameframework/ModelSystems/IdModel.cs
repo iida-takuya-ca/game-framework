@@ -29,20 +29,21 @@ namespace GameFramework.ModelSystems {
         /// </summary>
         private class Storage {
             // 管理対象のモデル
-            private Dictionary<TKey, TModel> _models = new Dictionary<TKey, TModel>();
+            private Dictionary<TKey, TModel> _items = new Dictionary<TKey, TModel>();
+            public IReadOnlyCollection<TModel> Items => _items.Values;
 
             /// <summary>
             /// リセット処理
             /// </summary>
             public void Reset() {
-                var keys = _models.Keys.ToArray();
+                var keys = _items.Keys.ToArray();
                 for (var i = 0; i < keys.Length; i++) {
-                    var model = _models[keys[i]];
+                    var model = _items[keys[i]];
                     if (model == null) {
                         return;
                     }
 
-                    _models.Remove(keys[i]);
+                    _items.Remove(keys[i]);
                     model.OnDeleted();
                 }
             }
@@ -53,7 +54,7 @@ namespace GameFramework.ModelSystems {
             /// <param name="id">モデルの識別キー</param>
             public T Create<T>(TKey id)
                 where T : TModel {
-                if (_models.ContainsKey(id)) {
+                if (_items.ContainsKey(id)) {
                     Debug.LogError($"Already exists {typeof(T).Name}. key:{id}");
                     return null;
                 }
@@ -65,7 +66,7 @@ namespace GameFramework.ModelSystems {
                 }
 
                 var model = (T)constructor.Invoke(new object[] { id });
-                _models[id] = model;
+                _items[id] = model;
                 model.OnCreatedInternal(model);
                 return model;
             }
@@ -76,7 +77,7 @@ namespace GameFramework.ModelSystems {
             /// <param name="id">モデルの識別キー</param>
             public T Get<T>(TKey id)
                 where T : TModel {
-                if (!_models.TryGetValue(id, out var model)) {
+                if (!_items.TryGetValue(id, out var model)) {
                     return null;
                 }
 
@@ -88,17 +89,20 @@ namespace GameFramework.ModelSystems {
             /// </summary>
             /// <param name="id">モデルの識別キー</param>
             public void Delete(TKey id) {
-                if (!_models.TryGetValue(id, out var model)) {
+                if (!_items.TryGetValue(id, out var model)) {
                     return;
                 }
 
-                _models.Remove(id);
+                _items.Remove(id);
                 model.OnDeleted();
             }
         }
 
         // インスタンス管理用クラス
         private static Storage s_storage = new Storage();
+
+        // 管理中Modelリスト
+        public static IReadOnlyCollection<TModel> Items => s_storage.Items;
 
         // 識別ID
         public TKey Id { get; private set; }

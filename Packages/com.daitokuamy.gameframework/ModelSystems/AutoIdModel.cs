@@ -30,23 +30,24 @@ namespace GameFramework.ModelSystems {
             private int _nextId = 1;
 
             // 管理対象のモデル
-            private List<TModel> _models = new List<TModel>();
+            private List<TModel> _items = new List<TModel>();
+            public IReadOnlyCollection<TModel> Items => _items;
 
             /// <summary>
             /// リセット処理
             /// </summary>
             public void Reset() {
-                for (var i = 0; i < _models.Count; i++) {
-                    var model = _models[i];
+                for (var i = 0; i < _items.Count; i++) {
+                    var model = _items[i];
                     if (model == null) {
                         continue;
                     }
 
-                    _models[i] = null;
+                    _items[i] = null;
                     model.OnDeleted();
                 }
 
-                _models.Clear();
+                _items.Clear();
                 _nextId = 1;
             }
 
@@ -63,7 +64,7 @@ namespace GameFramework.ModelSystems {
 
                 var id = _nextId++;
                 var model = (T)constructor.Invoke(new object[] { id });
-                _models.Add(model);
+                _items.Add(model);
                 model.OnCreatedInternal(model);
                 return model;
             }
@@ -75,11 +76,11 @@ namespace GameFramework.ModelSystems {
             public T Get<T>(int id)
                 where T : TModel {
                 var index = IdToIndex(id);
-                if (index < 0 || index >= _models.Count) {
+                if (index < 0 || index >= _items.Count) {
                     return null;
                 }
 
-                return _models[index] as T;
+                return _items[index] as T;
             }
 
             /// <summary>
@@ -88,16 +89,16 @@ namespace GameFramework.ModelSystems {
             /// <param name="id">モデルの識別キー</param>
             public void Delete(int id) {
                 var index = IdToIndex(id);
-                if (index < 0 || index >= _models.Count) {
+                if (index < 0 || index >= _items.Count) {
                     return;
                 }
                 
-                var model = _models[index];
+                var model = _items[index];
                 if (model == null) {
                     return;
                 }
 
-                _models[index] = null;
+                _items[index] = null;
                 model.OnDeleted();
             }
 
@@ -111,6 +112,9 @@ namespace GameFramework.ModelSystems {
 
         // インスタンス管理用クラス
         private static Storage s_storage = new Storage();
+
+        // 管理中Modelリスト
+        public static IReadOnlyCollection<TModel> Items => s_storage.Items;
 
         // 識別ID
         public int Id { get; private set; }
