@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace GameFramework.Core {
@@ -29,11 +30,11 @@ namespace GameFramework.Core {
         }
 
         public static Permil operator +(Permil a, int b) {
-            return new Permil(a._value + b);
+            return new Permil(a._value + b * One);
         }
 
         public static Permil operator +(int a, Permil b) {
-            return new Permil(a + b._value);
+            return new Permil(a * One + b._value);
         }
 
         public static Permil operator -(Permil a, Permil b) {
@@ -49,11 +50,11 @@ namespace GameFramework.Core {
         }
 
         public static Permil operator -(Permil a, int b) {
-            return new Permil(a._value - b);
+            return new Permil(a._value - b * One);
         }
 
         public static Permil operator -(int a, Permil b) {
-            return new Permil(a - b._value);
+            return new Permil(a * One - b._value);
         }
 
         public static Permil operator *(Permil a, Permil b) {
@@ -69,11 +70,11 @@ namespace GameFramework.Core {
         }
 
         public static Permil operator *(Permil a, int b) {
-            return new Permil(a._value * b / One);
+            return new Permil(a._value * b);
         }
 
         public static Permil operator *(int a, Permil b) {
-            return new Permil(a * b._value / One);
+            return new Permil(a * b._value);
         }
 
         public static Permil operator /(Permil a, Permil b) {
@@ -89,19 +90,19 @@ namespace GameFramework.Core {
         }
 
         public static Permil operator /(Permil a, int b) {
-            return new Permil(a._value / b * One);
+            return new Permil(a._value / (b * One) * One);
         }
 
         public static Permil operator /(int a, Permil b) {
-            return new Permil(a / b._value * One);
+            return new Permil((a * One) / b._value * One);
         }
 
-        public static implicit operator Permil(int permil) {
-            return new Permil(permil);
+        public static implicit operator Permil(int value) {
+            return new Permil(value * One);
         }
 
         public static implicit operator int(Permil permil) {
-            return permil._value;
+            return permil._value / One;
         }
 
         public static implicit operator Permil(float value) {
@@ -115,8 +116,17 @@ namespace GameFramework.Core {
         #endregion
 
         /// <summary>
+        /// 整数値(permilではない)を元にPermilを作る
+        /// </summary>
+        /// <param name="value">Permilではないただのint値</param>
+        public static Permil CreateFromIntValue(int value) {
+            return new Permil(value * One);
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
+        /// <param name="permil">千分率の値(1000を1.0とした物)</param>
         public Permil(int permil) {
             _value = permil;
         }
@@ -124,29 +134,16 @@ namespace GameFramework.Core {
         /// <summary>
         /// コンストラクタ
         /// </summary>
+        /// <param name="value">1.0を基準とした浮動小数値</param>
         public Permil(float value) {
             _value = (int)(value * One);
-        }
-
-        /// <summary>
-        /// int型の値を千分率で掛ける
-        /// </summary>
-        public int Multiply(int value) {
-            return value * _value / One;
-        }
-
-        /// <summary>
-        /// int型の値を千分率で割る
-        /// </summary>
-        public int Divide(int value) {
-            return value / _value * One;
         }
 
         /// <summary>
         /// 文字列変換
         /// </summary>
         public override string ToString() {
-            return (_value / (float)One).ToString();
+            return (_value / (float)One).ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>

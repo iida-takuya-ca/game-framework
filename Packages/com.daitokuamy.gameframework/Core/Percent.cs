@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace GameFramework.Core {
@@ -29,11 +30,11 @@ namespace GameFramework.Core {
         }
 
         public static Percent operator +(Percent a, int b) {
-            return new Percent(a._value + b);
+            return new Percent(a._value + b * One);
         }
 
         public static Percent operator +(int a, Percent b) {
-            return new Percent(a + b._value);
+            return new Percent(a * One + b._value);
         }
 
         public static Percent operator -(Percent a, Percent b) {
@@ -49,11 +50,11 @@ namespace GameFramework.Core {
         }
 
         public static Percent operator -(Percent a, int b) {
-            return new Percent(a._value - b);
+            return new Percent(a._value - b * One);
         }
 
         public static Percent operator -(int a, Percent b) {
-            return new Percent(a - b._value);
+            return new Percent(a * One - b._value);
         }
 
         public static Percent operator *(Percent a, Percent b) {
@@ -69,11 +70,11 @@ namespace GameFramework.Core {
         }
 
         public static Percent operator *(Percent a, int b) {
-            return new Percent(a._value * b / One);
+            return new Percent(a._value * b);
         }
 
         public static Percent operator *(int a, Percent b) {
-            return new Percent(a * b._value / One);
+            return new Percent(a * b._value);
         }
 
         public static Percent operator /(Percent a, Percent b) {
@@ -89,19 +90,19 @@ namespace GameFramework.Core {
         }
 
         public static Percent operator /(Percent a, int b) {
-            return new Percent(a._value / b * One);
+            return new Percent(a._value / (b * One) * One);
         }
 
         public static Percent operator /(int a, Percent b) {
-            return new Percent(a / b._value * One);
+            return new Percent((a * One) / b._value * One);
         }
 
-        public static implicit operator Percent(int percent) {
-            return new Percent(percent);
+        public static implicit operator Percent(int value) {
+            return new Percent(value * One);
         }
 
         public static implicit operator int(Percent percent) {
-            return percent._value;
+            return percent._value / One;
         }
 
         public static implicit operator Percent(float value) {
@@ -115,8 +116,17 @@ namespace GameFramework.Core {
         #endregion
 
         /// <summary>
+        /// 整数値(percentではない)を元にPercentを作る
+        /// </summary>
+        /// <param name="value">Percentではないただのint値</param>
+        public static Percent CreateFromIntValue(int value) {
+            return new Percent(value * One);
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
+        /// <param name="percent">百分率の値(100を1.0とした物)</param>
         public Percent(int percent) {
             _value = percent;
         }
@@ -124,29 +134,16 @@ namespace GameFramework.Core {
         /// <summary>
         /// コンストラクタ
         /// </summary>
+        /// <param name="value">1.0を基準とした浮動小数値</param>
         public Percent(float value) {
             _value = (int)(value * One);
-        }
-
-        /// <summary>
-        /// int型の値を百分率で掛ける
-        /// </summary>
-        public int Multiply(int value) {
-            return value * _value / One;
-        }
-
-        /// <summary>
-        /// int型の値を百分率で割る
-        /// </summary>
-        public int Divide(int value) {
-            return value / _value * One;
         }
 
         /// <summary>
         /// 文字列変換
         /// </summary>
         public override string ToString() {
-            return (_value / (float)One).ToString();
+            return (_value / (float)One).ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>
