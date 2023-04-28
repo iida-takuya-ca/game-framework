@@ -12,7 +12,7 @@ namespace GameFramework.Core.Editor {
         /// GUI描画
         /// </summary>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-            var valueProp = property.FindPropertyRelative("_permilValue");
+            var valueProp = property.FindPropertyRelative("_value");
             var current = valueProp.intValue / (float)Permil.One;
 
             label.text += " (Permil)";
