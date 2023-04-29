@@ -15,6 +15,7 @@ MonoBehaviour:
   label: Track
   sequenceEvents:
   - {fileID: -3592940203893569571}
+  - {fileID: 2488815616933560863}
 --- !u!114 &-3592940203893569571
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -54,3 +55,28 @@ MonoBehaviour:
   tracks:
   - {fileID: -5653727750773252324}
   frameRate: 30
+--- !u!114 &2488815616933560863
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcb46fa971f280b4d8f7aa28f03ae59e, type: 3}
+  m_Name: BodyEffectRangeEvent
+  m_EditorClassIdentifier: 
+  label: "Body/\u30A8\u30D5\u30A7\u30AF\u30C8\u518D\u751F(Loop)"
+  active: 1
+  enterTime: 0
+  exitTime: 1.5
+  positionLocator: 
+  rotationLocator: 
+  context:
+    prefab: {fileID: 164126522019934283, guid: 2fd65f5e89652d04eaddcdd082f96f42, type: 3}
+    relativePosition: {x: 0, y: 0, z: 0}
+    constraintPosition: 0
+    relativeAngles: {x: 0, y: 0, z: 0}
+    constraintRotation: 0
+    localScale: {x: 0, y: 0, z: 0}

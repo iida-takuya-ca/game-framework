@@ -11,6 +11,10 @@ namespace GameFramework.VfxSystems {
         [SerializeField, Tooltip("衝撃設定")]
         private CinemachineImpulseSource _impulseSource;
 
+        // 再生速度
+        private float _speed = 1.0f;
+        // デフォルトの再生時間
+        private float _defaultDuration;
         // 再生中タイマー
         private float _timer = 0.0f;
 
@@ -33,6 +37,7 @@ namespace GameFramework.VfxSystems {
             }
             
             _impulseSource.enabled = true;
+            _impulseSource.m_ImpulseDefinition.m_ImpulseDuration = _defaultDuration / _speed;
             _impulseSource.GenerateImpulse();
             _timer = _impulseSource.m_ImpulseDefinition.m_ImpulseDuration;
         }
@@ -57,7 +62,14 @@ namespace GameFramework.VfxSystems {
         /// 再生速度の設定
         /// </summary>
         void IVfxComponent.SetSpeed(float speed) {
-            // 未対応
+            _speed = Mathf.Max(0.001f, speed);
+        }
+
+        /// <summary>
+        /// 生成時処理
+        /// </summary>
+        private void Awake() {
+            _defaultDuration = _impulseSource.m_ImpulseDefinition.m_ImpulseDuration;
         }
     }
 }

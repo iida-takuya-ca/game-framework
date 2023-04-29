@@ -38,7 +38,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   label: "\u30D5\u30E9\u30C3\u30B7\u30E5"
   active: 1
-  time: 0.7
+  time: 0.8
   positionLocator: 
   rotationLocator: 
   context:
@@ -86,7 +86,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   label: "\u632F\u52D5"
   active: 1
-  time: 0.7
+  time: 0.8
   positionLocator: 
   rotationLocator: 
   context:

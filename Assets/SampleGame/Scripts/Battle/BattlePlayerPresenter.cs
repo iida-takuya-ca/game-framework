@@ -116,6 +116,15 @@ namespace SampleGame {
                 _actor.Body.IsVisible ^= true;
             }
 
+            // テスト用にTimeScale変更
+            if (Keyboard.current.lKey.isPressed) {
+                _actor.Body.LayeredTime.LocalTimeScale = 0.25f;
+            }
+            else {
+                _actor.Body.LayeredTime.LocalTimeScale = 1.0f;
+            }
+
+            // テスト用にギミック再生
             if (Keyboard.current.tKey.wasPressedThisFrame) {
                 _gimmickController.GetAnimationGimmicks("Test").Resume();
             }
@@ -136,6 +145,7 @@ namespace SampleGame {
                 _gimmickController.GetAnimationGimmicks("Damage").Play();
             }
 
+            // テスト用に遠距離攻撃
             if (Keyboard.current.pKey.wasPressedThisFrame) {
                 var baseTrans = _actor.Body.Locators["Head"];
                 var startPos = baseTrans.TransformPoint(new Vector3(0.0f, 0.0f, 0.0f));

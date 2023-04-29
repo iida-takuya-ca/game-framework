@@ -134,7 +134,10 @@ namespace GameFramework.VfxSystems {
                 
                 if (_layeredTime != null) {
                     _layeredTime.OnChangedTimeScale -= OnChangedTimeScale;
-                } 
+                }
+                else {
+                    OnChangedTimeScale(1.0f);
+                }
             }
 
             /// <summary>
@@ -160,6 +163,10 @@ namespace GameFramework.VfxSystems {
 
                 if (first || _context.constraintRotation) {
                     UpdateRotation();
+                }
+
+                if (first) {
+                    UpdateScale();
                 }
                 
                 // 自動廃棄処理
