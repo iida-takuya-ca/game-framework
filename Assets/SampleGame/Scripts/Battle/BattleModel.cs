@@ -74,8 +74,8 @@ namespace SampleGame {
                 .Do(x => setupData = x)
                 .StartAsEnumerator(scope);
 
-            var actionDataList = new PlayerActorActionData[masterData.playerActorActionDataIds.Length];
-            yield return masterData.playerActorActionDataIds
+            var actionDataList = new PlayerActorActionData[masterData.playerActorGeneralActionDataIds.Length];
+            yield return masterData.playerActorGeneralActionDataIds
                 .Select((x, i) => new PlayerActorActionDataAssetRequest(x)
                     .LoadAsync(scope)
                     .Do(y => actionDataList[i] = y))

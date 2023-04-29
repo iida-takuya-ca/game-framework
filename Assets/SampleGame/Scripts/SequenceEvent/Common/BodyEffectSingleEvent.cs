@@ -2,6 +2,7 @@ using ActionSequencer;
 using GameFramework.BodySystems;
 using GameFramework.VfxSystems;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace SampleGame.SequenceEvents {
     /// <summary>

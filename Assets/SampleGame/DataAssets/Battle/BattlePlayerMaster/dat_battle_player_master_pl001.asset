@@ -16,7 +16,7 @@ MonoBehaviour:
   assetKey: pl002
   healthMax: 100
   playerActorSetupDataId: pl000
-  playerActorActionDataIds:
+  playerActorGeneralActionDataIds:
   - pl000_attack01
   - pl000_attack02
   - pl000_attack03

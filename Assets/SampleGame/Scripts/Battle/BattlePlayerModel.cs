@@ -8,10 +8,11 @@ namespace SampleGame {
     /// バトル用プレイヤーモデル
     /// </summary>
     public class BattlePlayerModel : AutoIdModel<BattlePlayerModel> {
-        public event Action<Tuple<BattlePlayerModel, int>> OnUpdatedHealth;
-        public event Action<Tuple<BattlePlayerModel, int>> OnDamaged;
-        public event Action<BattlePlayerModel> OnUpdated;
-        public event Action<BattlePlayerModel> OnDead;
+        public event Action<Tuple<BattlePlayerModel, int>> OnUpdatedHealthEvent;
+        public event Action<Tuple<BattlePlayerModel, int>> OnDamagedEvent;
+        public event Action<BattlePlayerModel> OnUpdatedEvent;
+        public event Action<BattlePlayerModel> OnDeadEvent;
+        public event Action<(BattlePlayerModel, PlayerActor.IActionData, int)> OnAttackEvent;
 
         public string Name { get; private set; } = "";
         public string AssetKey { get; private set; } = "";
@@ -23,26 +24,32 @@ namespace SampleGame {
 
         public IObservable<Tuple<BattlePlayerModel, int>> OnUpdatedHealthAsObservable() {
             return Observable.FromEvent<Tuple<BattlePlayerModel, int>>(
-                h => OnUpdatedHealth += h,
-                h => OnUpdatedHealth -= h);
+                h => OnUpdatedHealthEvent += h,
+                h => OnUpdatedHealthEvent -= h);
         }
 
         public IObservable<Tuple<BattlePlayerModel, int>> OnDamagedAsObservable() {
             return Observable.FromEvent<Tuple<BattlePlayerModel, int>>(
-                h => OnDamaged += h,
-                h => OnDamaged -= h);
+                h => OnDamagedEvent += h,
+                h => OnDamagedEvent -= h);
         }
 
         public IObservable<BattlePlayerModel> OnUpdatedAsObservable() {
             return Observable.FromEvent<BattlePlayerModel>(
-                h => OnUpdated += h,
-                h => OnUpdated -= h);
+                h => OnUpdatedEvent += h,
+                h => OnUpdatedEvent -= h);
         }
 
         public IObservable<BattlePlayerModel> OnDeadAsObservable() {
             return Observable.FromEvent<BattlePlayerModel>(
-                h => OnDead += h,
-                h => OnDead -= h);
+                h => OnDeadEvent += h,
+                h => OnDeadEvent -= h);
+        }
+
+        public IObservable<(BattlePlayerModel, PlayerActor.IActionData, int)> OnAttackEventAsObservable() {
+            return Observable.FromEvent<(BattlePlayerModel, PlayerActor.IActionData, int)>(
+                h => OnAttackEvent += h,
+                h => OnAttackEvent -= h);
         }
 
         /// <summary>
@@ -54,8 +61,8 @@ namespace SampleGame {
             HealthMax = healthMax;
             Health = HealthMax;
 
-            OnUpdatedHealth?.Invoke(new Tuple<BattlePlayerModel, int>(this, Health));
-            OnUpdated?.Invoke(this);
+            OnUpdatedHealthEvent?.Invoke(new Tuple<BattlePlayerModel, int>(this, Health));
+            OnUpdatedEvent?.Invoke(this);
         }
 
         /// <summary>
@@ -69,12 +76,27 @@ namespace SampleGame {
             var newHealth = Mathf.Clamp(Health - damage, 0, HealthMax);
             damage = Health - newHealth;
             Health = newHealth;
-            OnUpdatedHealth?.Invoke(new Tuple<BattlePlayerModel, int>(this, Health));
-            OnDamaged?.Invoke(new Tuple<BattlePlayerModel, int>(this, damage));
+            OnUpdatedHealthEvent?.Invoke(new Tuple<BattlePlayerModel, int>(this, Health));
+            OnDamagedEvent?.Invoke(new Tuple<BattlePlayerModel, int>(this, damage));
 
             if (IsDead) {
-                OnDead?.Invoke(this);
+                OnDeadEvent?.Invoke(this);
             }
+        }
+
+        /// <summary>
+        /// 汎用アクション実行
+        /// </summary>
+        public void GeneralAction(int index) {
+            if (IsDead) {
+                return;
+            }
+
+            if (index < 0 || index >= ActorModel.GeneralActions.Length) {
+                return;
+            }
+            
+            OnAttackEvent?.Invoke((this, ActorModel.GeneralActions[index], index));
         }
 
         /// <summary>

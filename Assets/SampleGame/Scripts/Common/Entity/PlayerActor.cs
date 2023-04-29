@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Threading;
 using ActionSequencer;
+using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
@@ -96,44 +98,27 @@ namespace SampleGame {
         }
 
         /// <summary>
-        /// アクションの再生
+        /// 汎用アクションの再生
         /// </summary>
-        public IObservable<Unit> PlayActionAsync(IActionData actionData) {
-            return Observable.Create<Unit>(observer => {
-                CancelAction();
-
-                return _coroutineRunner.StartCoroutineAsync(PlayActionRoutine(actionData, _actionScope),
-                        () => {
-                            if (!Body.IsValid) {
-                                return;
-                            }
-
-                            // 状態を戻す
-                            var motionController = Body.GetController<MotionController>();
-                            motionController.Player.Change(_basePlayableProvider, 0.2f);
-                        })
-                    .Subscribe(_ => {
-                        observer.OnNext(Unit.Default);
-                        observer.OnCompleted();
-                    })
-                    .ScopeTo(_actionScope);
-            });
+        public async UniTask PlayGeneralActionAsync(IActionData actionData, CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+            
+            await PlayActionAsync(PlayActionRoutine(actionData, _actionScope), () => {
+                if (Body.IsValid) {
+                    // 状態を戻す
+                    var motionController = Body.GetController<MotionController>();
+                    motionController.Player.Change(_basePlayableProvider, 0.2f);
+                }
+            }, ct);
         }
 
         /// <summary>
         /// ダメージの再生
         /// </summary>
-        public IObservable<Unit> DamageAsync(int damageIndex) {
-            return Observable.Create<Unit>(observer => {
-                CancelAction();
-
-                return _coroutineRunner.StartCoroutineAsync(PlayDamageRoutine(damageIndex))
-                    .Subscribe(_ => {
-                        observer.OnNext(Unit.Default);
-                        observer.OnCompleted();
-                    })
-                    .ScopeTo(_actionScope);
-            });
+        public async UniTask DamageAsync(int damageIndex, CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+            
+            await PlayActionAsync(PlayDamageRoutine(damageIndex), null, ct);
         }
 
         /// <summary>
@@ -199,6 +184,23 @@ namespace SampleGame {
             _coroutineRunner = null;
             _moveController = null;
             _sequenceController = null;
+        }
+
+        /// <summary>
+        /// アクションの再生
+        /// </summary>
+        private async UniTask PlayActionAsync(IEnumerator enumerator, Action onCancel, CancellationToken ct) {
+            CancelAction();
+            
+            var coroutine = _coroutineRunner.StartCoroutine(enumerator);
+            _actionScope.OnExpired += () => {
+                _coroutineRunner.StopCoroutine(coroutine);
+                onCancel?.Invoke();
+            };
+
+            ct.Register(CancelAction);
+
+            await UniTask.WaitUntil(() => coroutine.IsDone, cancellationToken: ct);
         }
 
         /// <summary>

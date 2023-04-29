@@ -1,3 +1,5 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.CollisionSystems;
 using GameFramework.ProjectileSystems;
@@ -33,18 +35,25 @@ namespace SampleGame {
         /// アクティブ時処理
         /// </summary>
         protected override void ActivateInternal(IScope scope) {
+            var ct = scope.ToCancellationToken();
             var input = Services.Get<BattleInput>();
             
             // SequenceEvent登録
             BindSequenceEventHandlers(scope);
 
+            //-- View反映系
+            // 攻撃
+            _model.OnAttackEventAsObservable()
+                .TakeUntil(scope)
+                .Subscribe(x => {
+                    _actor.PlayGeneralActionAsync(x.Item2, ct).Forget();
+                });
+            
             // ダメージ再生
             _model.OnDamagedAsObservable()
                 .TakeUntil(scope)
                 .Subscribe(x => {
-                    _actor.DamageAsync(Random.Range(0, 3))
-                        .Subscribe()
-                        .ScopeTo(scope);
+                    _actor.DamageAsync(Random.Range(0, 3), ct).Forget();
                 });
 
             // 死亡
@@ -52,14 +61,13 @@ namespace SampleGame {
                 .TakeUntil(scope)
                 .Subscribe(_ => { _actor.SetDeath(true); });
 
+            //-- 入力系
             // 攻撃
-            var actions = _model.ActorModel.Actions;
+            var actions = _model.ActorModel.GeneralActions;
             input.AttackSubject
                 .TakeUntil(scope)
                 .Subscribe(_ => {
-                    _actor.PlayActionAsync(actions[Random.Range(0, actions.Length)])
-                        .Subscribe()
-                        .ScopeTo(scope);
+                    _model.GeneralAction(Random.Range(0, actions.Length));
                 });
 
             // ジャンプ
@@ -87,6 +95,13 @@ namespace SampleGame {
             right.z = -forward.x;
             var moveDirection = forward * moveVector.y + right * moveVector.x;
             _actor.Move(moveDirection);
+            
+            // テスト用アクション入力
+            for (var i = 0; i < 9; i++) {
+                if (Keyboard.current[Key.Digit1 + i].wasPressedThisFrame) {
+                    _model.GeneralAction(i);
+                }
+            }
 
             // テスト用にダメージ発生
             if (Keyboard.current.qKey.wasPressedThisFrame) {

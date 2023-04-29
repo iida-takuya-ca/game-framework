@@ -11,6 +11,6 @@ namespace SampleGame {
         public string assetKey = "pl000";
         public int healthMax = 100;
         public string playerActorSetupDataId = "pl000";
-        public string[] playerActorActionDataIds;
+        public string[] playerActorGeneralActionDataIds;
     }
 }

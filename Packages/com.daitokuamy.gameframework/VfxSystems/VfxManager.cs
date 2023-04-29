@@ -129,8 +129,8 @@ namespace GameFramework.VfxSystems {
                     return;
                 }
 
-                Disposed = true;
                 Stop(true);
+                Disposed = true;
                 
                 if (_layeredTime != null) {
                     _layeredTime.OnChangedTimeScale -= OnChangedTimeScale;

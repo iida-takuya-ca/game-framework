@@ -8,7 +8,7 @@ namespace SampleGame {
     /// </summary>
     public class BattlePlayerActorModel : AutoIdModel<BattlePlayerActorModel> {
         public PlayerActorSetupData Setup { get; private set; }
-        public PlayerActorActionData[] Actions { get; private set; }
+        public PlayerActorActionData[] GeneralActions { get; private set; }
 
         public event Action<BattlePlayerActorModel> OnUpdated;
 
@@ -21,9 +21,9 @@ namespace SampleGame {
         /// <summary>
         /// 値の更新
         /// </summary>
-        public void Update(PlayerActorSetupData setupData, PlayerActorActionData[] actionDataList) {
+        public void Update(PlayerActorSetupData setupData, PlayerActorActionData[] generalActionDataList) {
             Setup = setupData;
-            Actions = actionDataList;
+            GeneralActions = generalActionDataList;
             OnUpdated?.Invoke(this);
         }
         
