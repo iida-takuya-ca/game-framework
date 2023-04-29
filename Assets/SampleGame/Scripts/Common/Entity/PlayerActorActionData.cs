@@ -1,3 +1,4 @@
+using ActionSequencer;
 using UnityEngine;
 
 namespace SampleGame {
@@ -9,7 +10,10 @@ namespace SampleGame {
     public class PlayerActorActionData : ScriptableObject, PlayerActor.IActionData {
         [Tooltip("アクション用のAnimatorController")]
         public RuntimeAnimatorController controller;
+        [Tooltip("アクション再生時に実行するSequenceClip")]
+        public SequenceClip sequenceClip;
 
         public RuntimeAnimatorController Controller => controller;
+        public SequenceClip SequenceClip => sequenceClip;
     }
 }

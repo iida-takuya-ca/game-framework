@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 53
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 432557ae87edc434a9a30d0c22cc5eae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sequenceEventTypeSettings:
+  - fullName: SampleGame.SequenceEvents.BodyEffectRangeEvent
+    label: "Body/\u30A8\u30D5\u30A7\u30AF\u30C8\u518D\u751F(Loop)"
+    color: {r: 0.5, g: 1, b: 0.5674157, a: 1}
+  - fullName: SampleGame.SequenceEvents.BodyEffectSingleEvent
+    label: "Body/\u30A8\u30D5\u30A7\u30AF\u30C8\u518D\u751F"
+    color: {r: 0.5019608, g: 1, b: 0.5686275, a: 1}

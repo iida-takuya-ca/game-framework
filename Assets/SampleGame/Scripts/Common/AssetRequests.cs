@@ -50,7 +50,7 @@ namespace SampleGame {
         /// <summary>
         /// Projectフォルダ相対パスを絶対パスにする
         /// </summary>
-        protected string GetPath(string relativePath) {
+        protected virtual string GetPath(string relativePath) {
             return $"Assets/SampleGame/{relativePath}";
         }
     }
@@ -128,14 +128,22 @@ namespace SampleGame {
     }
 
     /// <summary>
+    /// ActorAssetのAssetRequest基底
+    /// </summary>
+    public abstract class ActorAssetRequest<T> : AssetRequest<T>
+        where T : Object {
+        protected sealed override string GetPath(string relativePath) {
+            return base.GetPath($"ActorAssets/{relativePath}");
+        }
+    }
+
+    /// <summary>
     /// DataのAssetRequest基底
     /// </summary>
     public abstract class DataAssetRequest<T> : AssetRequest<T>
         where T : Object {
-        public override string Address { get; }
-
-        public DataAssetRequest(string relativePath) {
-            Address = GetPath($"Data/{relativePath}");
+        protected sealed override string GetPath(string relativePath) {
+            return base.GetPath($"DataAssets/{relativePath}");
         }
     }
 
@@ -151,18 +159,24 @@ namespace SampleGame {
     /// <summary>
     /// PlayerActorSetupDataのAssetRequest
     /// </summary>
-    public class PlayerActorSetupDataAssetRequest : DataAssetRequest<PlayerActorSetupData> {
-        public PlayerActorSetupDataAssetRequest(string assetKey)
-            : base($"PlayerActorSetup/dat_player_actor_setup_{assetKey}.asset") {
+    public class PlayerActorSetupDataAssetRequest : ActorAssetRequest<PlayerActorSetupData> {
+        public override string Address { get; }
+        
+        public PlayerActorSetupDataAssetRequest(string assetKey) {
+            var actorId = assetKey.Substring(0, "pl000".Length);
+            Address = GetPath($"Player/{actorId}/dat_player_actor_setup_{assetKey}.asset");
         }
     }
 
     /// <summary>
     /// PlayerActorActionDataのAssetRequest
     /// </summary>
-    public class PlayerActorActionDataAssetRequest : DataAssetRequest<PlayerActorActionData> {
-        public PlayerActorActionDataAssetRequest(string assetKey)
-            : base($"PlayerActorAction/dat_player_actor_action_{assetKey}.asset") {
+    public class PlayerActorActionDataAssetRequest : ActorAssetRequest<PlayerActorActionData> {
+        public override string Address { get; }
+        
+        public PlayerActorActionDataAssetRequest(string assetKey) {
+            var actorId = assetKey.Substring(0, "pl000".Length);
+            Address = GetPath($"Player/{actorId}/Actions/dat_player_actor_action_{assetKey}.asset");
         }
     }
 
@@ -170,8 +184,10 @@ namespace SampleGame {
     /// BattlePlayerMasterDataのAssetRequest
     /// </summary>
     public class BattlePlayerMasterDataAssetRequest : DataAssetRequest<BattlePlayerMasterData> {
-        public BattlePlayerMasterDataAssetRequest(string assetKey)
-            : base($"Battle/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset") {
+        public override string Address { get; }
+        
+        public BattlePlayerMasterDataAssetRequest(string assetKey) {
+            Address = GetPath($"Battle/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset");
         }
     }
 
@@ -179,8 +195,10 @@ namespace SampleGame {
     /// ModelViewerBodyDataのAssetRequest
     /// </summary>
     public class ModelViewerBodyDataRequest : DataAssetRequest<ModelViewerBodyData> {
-        public ModelViewerBodyDataRequest(string assetKey)
-            : base($"ModelViewer/Body/dat_model_viewer_body_{assetKey}.asset") {
+        public override string Address { get; }
+        
+        public ModelViewerBodyDataRequest(string assetKey) {
+            Address = GetPath($"ModelViewer/Body/dat_model_viewer_body_{assetKey}.asset");
         }
     }
 }

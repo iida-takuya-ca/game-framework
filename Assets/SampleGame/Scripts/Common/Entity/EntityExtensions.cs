@@ -57,7 +57,7 @@ namespace SampleGame {
             }, entity => {
                 var actor = new PlayerActor(entity.GetBody(), model.ActorModel.Setup);
                 actor.RegisterTask(TaskOrder.Actor);
-                var logic = new BattlePlayerLogic(actor, model);
+                var logic = new BattlePlayerPresenter(actor, model);
                 logic.RegisterTask(TaskOrder.Logic);
                 entity.AddActor(actor)
                     .AddLogic(logic);

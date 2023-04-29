@@ -7,6 +7,7 @@ using GameFramework.Kinematics;
 using GameFramework.ProjectileSystems;
 using GameFramework.SituationSystems;
 using GameFramework.TaskSystems;
+using GameFramework.VfxSystems;
 using UniRx;
 using UnityEngine;
 
@@ -50,7 +51,6 @@ namespace SampleGame {
         protected override IEnumerator SetupRoutineInternal(TransitionHandle handle, IScope scope) {
             yield return base.SetupRoutineInternal(handle, scope);
             
-            var taskRunner = Services.Get<TaskRunner>();
             var cameraController = Services.Get<CameraController>();
 
             // BattleModelの生成
@@ -58,6 +58,11 @@ namespace SampleGame {
             battleModel.RegisterTask(TaskOrder.Logic);
             yield return battleModel.SetupAsync()
                 .StartAsEnumerator(scope);
+            
+            // VfxManagerの生成
+            var vfxManager = new VfxManager();
+            ServiceContainer.Set(vfxManager);
+            vfxManager.RegisterTask(TaskOrder.Effect);
 
             // BodyManagerの生成
             var bodyManager = new BodyManager(new BodyBuilder());

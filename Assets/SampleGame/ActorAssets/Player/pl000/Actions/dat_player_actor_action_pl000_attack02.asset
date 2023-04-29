@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe1499b1821b0e64085edaa8f4cb20c7, type: 3}
+  m_Name: dat_player_actor_action_pl000_attack02
+  m_EditorClassIdentifier: 
+  controller: {fileID: 9100000, guid: c42da2c5bb989034ca222924a5bdc560, type: 2}
+  sequenceClip: {fileID: 11400000, guid: 6ad7d7fc7688a5946af987dce5a31d78, type: 2}

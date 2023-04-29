@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using ActionSequencer;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
@@ -28,12 +29,15 @@ namespace SampleGame {
         /// </summary>
         public interface IActionData {
             RuntimeAnimatorController Controller { get; }
+            SequenceClip SequenceClip { get; }
         }
 
         // 行動キャンセル通知用
         private DisposableScope _actionScope = new DisposableScope();
         // コルーチン実行用
         private CoroutineRunner _coroutineRunner;
+        // シーケンス再生用
+        private SequenceController _sequenceController;
         // AnimatorController制御用
         private AnimatorControllerPlayableProvider _basePlayableProvider;
         // 現在のステータス名
@@ -48,6 +52,8 @@ namespace SampleGame {
         
         // データ
         public ISetupData Data { get; private set; }
+        // 外部参照用のSequenceController
+        public IReadOnlySequenceController SequenceController => _sequenceController;
 
         /// <summary>
         /// コンストラクタ
@@ -58,6 +64,7 @@ namespace SampleGame {
             _statusEventListener = body.GetComponent<StatusEventListener>();
             _motionController = body.GetController<MotionController>();
             _coroutineRunner = new CoroutineRunner();
+            _sequenceController = new SequenceController();
             _moveController = new MoveController(body.Transform, setupData.AngularVelocity,
                 rate => { _basePlayableProvider.GetPlayable().SetFloat("speed", rate); });
         }
@@ -173,8 +180,11 @@ namespace SampleGame {
         /// 更新処理
         /// </summary>
         protected override void UpdateInternal() {
-            _moveController.Update(Body.LayeredTime.DeltaTime);
+            var deltaTime = Body.LayeredTime.DeltaTime;
+            
             _coroutineRunner.Update();
+            _moveController.Update(deltaTime);
+            _sequenceController.Update(deltaTime);
         }
 
         /// <summary>
@@ -182,10 +192,13 @@ namespace SampleGame {
         /// </summary>
         protected override void DisposeInternal() {
             CancelAction();
-            _moveController = null;
+            
             _coroutineRunner.Dispose();
-            _moveController?.Dispose();
+            _moveController.Dispose();
+            _sequenceController.Dispose();
+            _coroutineRunner = null;
             _moveController = null;
+            _sequenceController = null;
         }
 
         /// <summary>
@@ -200,12 +213,23 @@ namespace SampleGame {
             // アクション専用のControllerに変更
             var motionController = Body.GetController<MotionController>();
             motionController.Player.Change(actionData.Controller, 0.2f);
+            
+            // Sequence再生
+            var sequenceHandle = default(SequenceHandle);
+            if (actionData.SequenceClip != null) {
+                sequenceHandle = _sequenceController.Play(actionData.SequenceClip);
+            }
 
             // 最終アクションが終わるまで待つ
             yield return WaitCycleRoutine("LastAction", 1, cancelScope);
 
             // 元のControllerに戻す
             motionController.Player.Change(_basePlayableProvider, 0.2f);
+            
+            // Sequence完了を待つ
+            while (!sequenceHandle.IsDone) {
+                yield return null;
+            }
         }
 
         /// <summary>

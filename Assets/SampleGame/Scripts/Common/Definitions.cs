@@ -11,8 +11,8 @@ namespace SampleGame {
         Projectile,
         Collision,
         Camera,
-        Effect,
         UI,
+        Effect,
         PostSystem,
     }
     

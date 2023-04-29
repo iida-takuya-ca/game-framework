@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8591742924472959636
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54a1383fb71c1064b84cd29fe27821c1, type: 3}
+  m_Name: BodyEffectSingleEvent
+  m_EditorClassIdentifier: 
+  label: "Body/\u30A8\u30D5\u30A7\u30AF\u30C8\u518D\u751F"
+  active: 1
+  time: 0
+  positionLocator: 
+  rotationLocator: 
+  context:
+    prefab: {fileID: 3236134305560228765, guid: 8846565ee8656df4eb44a1325fe870da, type: 3}
+    relativePosition: {x: 0, y: 0, z: 0}
+    constraintPosition: 0
+    relativeAngles: {x: 0, y: 0, z: 0}
+    constraintRotation: 0
+    localScale: {x: 0, y: 0, z: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec08f2e03b1d49a8aa03fbf2f4ddcce, type: 3}
+  m_Name: dat_sequence_player_actor_action_pl000_attack03
+  m_EditorClassIdentifier: 
+  tracks:
+  - {fileID: 7952287914908441018}
+  frameRate: 30
+--- !u!114 &7952287914908441018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f3dc1b502acd48ad9608fc38cadbbcb, type: 3}
+  m_Name: SequenceTrack
+  m_EditorClassIdentifier: 
+  label: Track
+  sequenceEvents:
+  - {fileID: -8591742924472959636}

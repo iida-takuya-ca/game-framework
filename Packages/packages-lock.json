@@ -8,11 +8,11 @@
       "hash": "c7eedf85c79e2ce06658c8060ca38a282f2ca7ab"
     },
     "com.daitokuamy.actionsequencer": {
-      "version": "https://github.com/DaitokuAmy/action-sequencer.git?path=/Assets/ActionSequencer",
+      "version": "https://github.com/DaitokuAmy/action-sequencer.git?path=/Packages/com.daitokuamy.actionsequencer",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "f0cd73cca9acfad23a17fca2102111d2de87a807"
+      "hash": "cea765e0bdd9aaefb1e86ff3d3537c93b0df52b5"
     },
     "com.daitokuamy.gameframework": {
       "version": "file:com.daitokuamy.gameframework",
@@ -25,7 +25,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "00ad7b5e8c93b7237ea5057d60283af782d42492"
+      "hash": "ceeb8745ed2e9ee496834e30a0580e17737f3ad0"
     },
     "com.harumak.unitydebugsheet": {
       "version": "https://github.com/Haruma-K/UnityDebugSheet.git?path=/Assets/UnityDebugSheet",
