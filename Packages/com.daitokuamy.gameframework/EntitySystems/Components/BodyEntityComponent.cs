@@ -1,11 +1,17 @@
 using GameFramework.BodySystems;
 using GameFramework.Core;
+using UnityEngine;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
     /// BodyをEntityと紐づけるためのComponent
     /// </summary>
     public class BodyEntityComponent : EntityComponent {
+        // 最後に残っていたBodyのTransform情報
+        private Vector3? _lastPosition;
+        private Quaternion? _lastRotation;
+        private float? _lastScale;
+        
         // 現在のBody
         public Body Body { get; private set; } = null;
 
@@ -15,13 +21,30 @@ namespace GameFramework.EntitySystems {
         /// <param name="body">設定するBody</param>
         /// <param name="prevDispose">既に設定されているBodyをDisposeするか</param>
         public Entity SetBody(Body body, bool prevDispose = true) {
-            if (prevDispose) {
-                Body?.Dispose();
+            if (Body != null) {
+                _lastPosition = Body.Position;
+                _lastRotation = Body.Rotation;
+                _lastScale = Body.BaseScale;
+                
+                if (prevDispose) {
+                    Body?.Dispose();
+                }
             }
 
             Body = body;
+            
             if (Body != null) {
                 Body.IsActive = Entity.IsActive;
+                
+                if (_lastPosition.HasValue) {
+                    Body.Position = _lastPosition.Value;
+                }
+                if (_lastRotation.HasValue) {
+                    Body.Rotation = _lastRotation.Value;
+                }
+                if (_lastScale.HasValue) {
+                    Body.BaseScale = _lastScale.Value;
+                }
             }
 
             return Entity;

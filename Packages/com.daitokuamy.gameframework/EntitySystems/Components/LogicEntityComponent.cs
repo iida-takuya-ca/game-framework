@@ -31,8 +31,16 @@ namespace GameFramework.EntitySystems {
         }
 
         /// <summary>
+        /// ロジックが含まれているか
+        /// </summary>
+        public bool ContainsLogic(EntityLogic logic) {
+            return _logics.ContainsValue(logic);
+        }
+
+        /// <summary>
         /// ロジックの追加(Remove時に自動削除)
         /// </summary>
+        /// <param name="logic">追加するLogic</param>
         public Entity AddLogic(EntityLogic logic) {
             var type = logic.GetType();
             if (_logics.ContainsKey(type)) {
@@ -57,6 +65,8 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// ロジックの削除
         /// </summary>
+        /// <param name="logic">削除対象のLogic</param>
+        /// <param name="dispose">LogicをDisposeするか</param>
         public Entity RemoveLogic(EntityLogic logic, bool dispose = true) {
             var type = logic.GetType();
             if (!_logics.ContainsKey(type)) {
@@ -75,6 +85,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// ロジックの削除
         /// </summary>
+        /// <param name="dispose">LogicをDisposeするか</param>
         public Entity RemoveLogic<TLogic>(bool dispose = true)
             where TLogic : Logic {
             var type = typeof(TLogic);

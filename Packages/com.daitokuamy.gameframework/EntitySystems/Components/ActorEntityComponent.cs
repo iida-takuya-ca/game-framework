@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameFramework.Core;
 
 namespace GameFramework.EntitySystems {
@@ -34,11 +36,18 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         public TActor GetActor<TActor>()
             where TActor : Actor {
-            var type = typeof(TActor);
+            return GetActor(typeof(TActor)) as TActor;
+        }
+
+        /// <summary>
+        /// Actorの取得
+        /// </summary>
+        /// <param name="type">検索対象のType</param>
+        public Actor GetActor(Type type) {
             foreach (var actorInfo in _sortedActorInfos) {
                 var actor = actorInfo.actor;
                 if (type.IsInstanceOfType(actor)) {
-                    return (TActor)actor;
+                    return (Actor)actor;
                 }
             }
 
@@ -46,8 +55,40 @@ namespace GameFramework.EntitySystems {
         }
 
         /// <summary>
+        /// Actorを取得
+        /// </summary>
+        public TActor[] GetActors<TActor>()
+            where TActor : Actor {
+            var type = typeof(TActor);
+            return _sortedActorInfos
+                .Where(x => type.IsInstanceOfType(x.actor))
+                .Select(x => (TActor)x.actor)
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Actorの取得
+        /// </summary>
+        /// <param name="type">検索対象のType</param>
+        public Actor[] GetActors(Type type) {
+            return _sortedActorInfos
+                .Where(x => type.IsInstanceOfType(x.actor))
+                .Select(x => (Actor)x.actor)
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Actorが含まれているか
+        /// </summary>
+        public bool ContainsActor(Actor actor) {
+            return _sortedActorInfos.Exists(x => x.actor == actor);
+        }
+
+        /// <summary>
         /// Actorの追加
         /// </summary>
+        /// <param name="actor">追加するActor</param>
+        /// <param name="priority">Actorのアクティブ優先度</param>
         public Entity AddActor(Actor actor, int priority = 0) {
             var info = new ActorInfo { actor = actor, priority = priority };
             _sortedActorInfos.Add(info);
@@ -59,6 +100,8 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Actorの削除
         /// </summary>
+        /// <param name="actor">取り除くActor</param>
+        /// <param name="dispose">取り除く際にActorをDisposeするか</param>
         public Entity RemoveActor(Actor actor, bool dispose = true) {
             var count = _sortedActorInfos.RemoveAll(x => x.actor == actor);
             if (count <= 0) {
@@ -77,6 +120,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Actorの全削除
         /// </summary>
+        /// <param name="dispose">取り除く際にActorをDisposeするか</param>
         public Entity RemoveActors(bool dispose = true) {
             foreach (var actorInfo in _sortedActorInfos) {
                 ((Actor)actorInfo.actor).Deactivate();
