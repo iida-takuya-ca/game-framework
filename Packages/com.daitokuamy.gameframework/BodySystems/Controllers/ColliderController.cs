@@ -36,7 +36,7 @@ namespace GameFramework.BodySystems {
         /// コライダー情報の取得
         /// </summary>
         /// <param name="key">制御用キー</param>
-        public IReadOnlyCollection<Collider> GetColliders(string key) {
+        public IReadOnlyList<Collider> GetColliders(string key) {
             if (_colliderInfos.TryGetValue(key, out var result)) {
                 return result;
             }
