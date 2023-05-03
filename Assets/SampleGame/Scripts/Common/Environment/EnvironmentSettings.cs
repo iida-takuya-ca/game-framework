@@ -27,10 +27,8 @@ namespace SampleGame {
 
             var manager = Services.Get<EnvironmentManager>();
             if (manager != null) {
-                var context = new EnvironmentContext {
-                    DefaultSettings = _data.defaultSettings,
-                    Sun = _sun
-                };
+                var context = _data.CreateContext();
+                context.Sun = _sun;
                 _handle = manager.Push(context, _blendDuration);
             }
 

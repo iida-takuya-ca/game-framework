@@ -70,10 +70,9 @@ namespace SampleGame.Editor {
                 var data = _data.objectReferenceValue as EnvironmentContextData;
                 var sun = _sun.objectReferenceValue as Light;
                 if (data != null) {
-                    resolver.Apply(new EnvironmentContext {
-                        DefaultSettings = data.defaultSettings,
-                        Sun = sun
-                    });
+                    var context = data.CreateContext();
+                    context.Sun = sun;
+                    resolver.Apply(context);
                 }
             }
         }

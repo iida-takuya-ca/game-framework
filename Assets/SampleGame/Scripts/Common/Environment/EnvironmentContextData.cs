@@ -10,6 +10,13 @@ namespace SampleGame {
         [SerializeField]
         public EnvironmentDefaultSettings defaultSettings;
 
-        public EnvironmentDefaultSettings DefaultSettings => defaultSettings;
+        /// <summary>
+        /// コンテキストの作成
+        /// </summary>
+        public EnvironmentContext CreateContext() {
+            return new EnvironmentContext {
+                DefaultSettings = defaultSettings
+            };
+        }
     }
 }
