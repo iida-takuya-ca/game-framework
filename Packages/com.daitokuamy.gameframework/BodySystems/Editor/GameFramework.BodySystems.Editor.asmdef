@@ -2,7 +2,8 @@
     "name": "GameFramework.BodySystems.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:ff89bfa6c7558924ba1ed4cf64bd2d20"
+        "GUID:ff89bfa6c7558924ba1ed4cf64bd2d20",
+        "GUID:7f7d1af65c2641843945d409d28f2e20"
     ],
     "includePlatforms": [
         "Editor"
@@ -13,6 +14,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.animation.rigging",
+            "expression": "",
+            "define": "USE_ANIMATION_RIGGING"
+        }
+    ],
     "noEngineReferences": false
 }

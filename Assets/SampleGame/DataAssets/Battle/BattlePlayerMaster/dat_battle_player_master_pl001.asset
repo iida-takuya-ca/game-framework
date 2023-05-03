@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: dat_battle_player_master_pl001
   m_EditorClassIdentifier: 
   characterName: tarou
-  assetKey: pl002
+  assetKey: pl004
   healthMax: 100
   playerActorSetupDataId: pl000
   playerActorGeneralActionDataIds:

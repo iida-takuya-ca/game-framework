@@ -3,6 +3,9 @@ using GameFramework.Core;
 using GameFramework.TaskSystems;
 using UnityEngine;
 using Object = UnityEngine.Object;
+#if USE_ANIMATION_RIGGING
+using UnityEngine.Animations.Rigging;
+#endif
 
 namespace GameFramework.BodySystems {
     /// <summary>
@@ -152,6 +155,13 @@ namespace GameFramework.BodySystems {
 
                 go.AddComponent<T>();
             }
+            
+#if USE_ANIMATION_RIGGING
+            // RigBuilderがついている場合、RigController追加
+            if (gameObject.GetComponent<RigBuilder>() != null) {
+                body.AddController(new RigController());
+            }
+#endif
             
             // Rigidbodyがついている場合、ColliderController追加
             if (gameObject.GetComponent<Rigidbody>() != null) {
