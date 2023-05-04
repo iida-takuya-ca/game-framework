@@ -420,6 +420,7 @@ namespace GameFramework.VfxSystems {
                     var instance = Object.Instantiate(prefab, _rootTransform);
                     var vfxComponents = instance.GetComponentsInChildren<IVfxComponent>(true)
                         .ToList();
+                    _workParticleSystems.Clear();
                     FindRootParticleSystems(instance.transform, _workParticleSystems);
                     vfxComponents.AddRange(_workParticleSystems.Select(x => new ParticleSystemVfxComponent(x)));
                     instance.SetActive(false);
