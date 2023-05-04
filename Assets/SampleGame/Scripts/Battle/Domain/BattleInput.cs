@@ -8,15 +8,13 @@ namespace SampleGame {
     /// <summary>
     /// バトル用入力管理
     /// </summary>
-    public class BattleInput : MonoBehaviour, ITask {
+    public class BattleInput : TaskBehaviour {
         [SerializeField, Tooltip("入力ソース")]
         private PlayerInput _playerInput;
 
         private InputAction _moveAction;
         private InputAction _jumpAction;
         private InputAction _attackAction;
-
-        public bool IsActive => isActiveAndEnabled;
 
         private Subject<Unit> _jumpSubject = new Subject<Unit>();
         private Subject<Unit> _attackSubject = new Subject<Unit>();
@@ -31,7 +29,7 @@ namespace SampleGame {
         /// <summary>
         /// 更新処理
         /// </summary>
-        void ITask.Update() {
+        protected override void UpdateInternal() {
             MoveVector = _moveAction.ReadValue<Vector2>();
 
             if (_jumpAction.triggered) {
@@ -56,8 +54,8 @@ namespace SampleGame {
         /// 廃棄時処理
         /// </summary>
         private void OnDestroy() {
-            _jumpSubject.OnCompleted();
-            _attackSubject.OnCompleted();
+            _jumpSubject.SafeDispose();
+            _attackSubject.SafeDispose();
         }
     }
 }

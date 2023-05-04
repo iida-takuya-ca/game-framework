@@ -29,7 +29,7 @@ namespace SampleGame {
         /// <param name="scope"></param>
         protected override void ActivateInternal(IScope scope) {
             var cameraManager = Services.Get<CameraManager>();
-            _playerPoint = cameraManager.GetTargetPoint("PlayerPoint");
+            _playerPoint = cameraManager.GetTargetPoint("Player");
             _rootAnglePoint = cameraManager.GetTargetPoint("RootAngle");
         }
 

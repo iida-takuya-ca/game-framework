@@ -33,7 +33,7 @@ namespace GameFramework.CameraSystems {
             /// 廃棄時処理
             /// </summary>
             public void Dispose() {
-                ChangeController(null);
+                SetController(null);
             }
 
             /// <summary>
@@ -68,9 +68,9 @@ namespace GameFramework.CameraSystems {
             }
 
             /// <summary>
-            /// コントローラーの変更
+            /// コントローラーの設定
             /// </summary>
-            public void ChangeController(ICameraController controller) {
+            public void SetController(ICameraController controller) {
                 if (Controller != null) {
                     Controller.Dispose();
                     Controller = null;
@@ -172,18 +172,33 @@ namespace GameFramework.CameraSystems {
         }
 
         /// <summary>
-        /// CameraControllerの切り替え
+        /// CameraControllerの設定
         /// </summary>
         /// <param name="cameraName">対象のカメラ名</param>
         /// <param name="cameraController">設定するController</param>
-        public void ChangeCameraController(string cameraName, ICameraController cameraController) {
+        public void SetCameraController(string cameraName, ICameraController cameraController) {
             Initialize();
             
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
             
-            handler.ChangeController(cameraController);
+            handler.SetController(cameraController);
+        }
+
+        /// <summary>
+        /// CameraControllerの取得
+        /// </summary>
+        /// <param name="cameraName">対象のカメラ名</param>
+        public TCameraController GetCameraController<TCameraController>(string cameraName)
+            where TCameraController : class, ICameraController {
+            Initialize();
+            
+            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
+                return null;
+            }
+
+            return handler.Controller as TCameraController;
         }
 
         /// <summary>

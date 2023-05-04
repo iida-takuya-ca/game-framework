@@ -37,5 +37,17 @@ namespace SampleGame {
             var taskRunner = Services.Get<TaskRunner>();
             taskRunner.Unregister(source);
         }
+
+        /// <summary>
+        /// SubjectのComplete & Dispose
+        /// </summary>
+        public static void SafeDispose<T>(this Subject<T> source) {
+            if (source == null) {
+                return;
+            }
+            
+            source.OnCompleted();
+            source.Dispose();
+        }
     }
 }

@@ -165,12 +165,16 @@ namespace SampleGame {
         private void BindSequenceEventHandlers(IScope scope) {
             var sequenceController = _actor.SequenceController;
             var vfxManager = Services.Get<VfxManager>();
+            var cameraManager = Services.Get<CameraManager>();
             
             sequenceController.BindSignalEventHandler<BodyEffectSingleEvent, BodyEffectSingleEventHandler>(handler => {
                 handler.Setup(vfxManager, _actor.Body);
             });
             sequenceController.BindRangeEventHandler<BodyEffectRangeEvent, BodyEffectRangeEventHandler>(handler => {
                 handler.Setup(vfxManager, _actor.Body);
+            });
+            sequenceController.BindRangeEventHandler<CameraRangeEvent, CameraRangeEventHandler>(handler => {
+                handler.Setup(cameraManager);
             });
 
             scope.OnExpired += () => sequenceController.ResetEventHandlers();

@@ -16,6 +16,7 @@ MonoBehaviour:
   sequenceEvents:
   - {fileID: -3592940203893569571}
   - {fileID: 2488815616933560863}
+  - {fileID: 7271644832260823171}
 --- !u!114 &-3592940203893569571
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -80,3 +81,20 @@ MonoBehaviour:
     relativeAngles: {x: 0, y: 0, z: 0}
     constraintRotation: 0
     localScale: {x: 0, y: 0, z: 0}
+--- !u!114 &7271644832260823171
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8885fbb0af659d2408cd270b09e21ff1, type: 3}
+  m_Name: CameraRangeEvent
+  m_EditorClassIdentifier: 
+  label: "\u5171\u901A/\u30AB\u30E1\u30E9\u5207\u66FF"
+  active: 1
+  enterTime: 0
+  exitTime: 1.5
+  cameraName: Action_0
