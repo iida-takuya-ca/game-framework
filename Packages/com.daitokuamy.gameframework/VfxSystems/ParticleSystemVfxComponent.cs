@@ -9,9 +9,9 @@ namespace GameFramework.VfxSystems {
         private ParticleSystem _rootParticleSystem;
         // 含まれているParticleSystem
         private ParticleSystem[] _particleSystems;
-        
+
         // 再生中か
-        bool IVfxComponent.IsPlaying => _rootParticleSystem != null && _rootParticleSystem.IsAlive(true); 
+        bool IVfxComponent.IsPlaying => _rootParticleSystem != null && _rootParticleSystem.IsAlive(true);
 
         /// <summary>
         /// コンストラクタ
@@ -37,7 +37,7 @@ namespace GameFramework.VfxSystems {
             if (_rootParticleSystem == null) {
                 return;
             }
-            
+
             _rootParticleSystem.Play(true);
         }
 
@@ -48,7 +48,7 @@ namespace GameFramework.VfxSystems {
             if (_rootParticleSystem == null) {
                 return;
             }
-            
+
             _rootParticleSystem.Stop(true);
         }
 
@@ -59,7 +59,7 @@ namespace GameFramework.VfxSystems {
             if (_rootParticleSystem == null) {
                 return;
             }
-            
+
             _rootParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
 

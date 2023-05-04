@@ -61,7 +61,7 @@ namespace GameFramework.EntitySystems {
 
             return Entity;
         }
-        
+
         /// <summary>
         /// ロジックの削除
         /// </summary>
@@ -79,9 +79,10 @@ namespace GameFramework.EntitySystems {
             if (dispose) {
                 logic.Dispose();
             }
+
             return Entity;
         }
-        
+
         /// <summary>
         /// ロジックの削除
         /// </summary>

@@ -48,18 +48,19 @@ namespace GameFramework.BodySystems {
             if (_initialized) {
                 return;
             }
-            
+
             // Gimmick取得用辞書登録
             _gimmicks.Clear();
-            
+
             foreach (var info in _gimmickInfos) {
                 if (!_gimmicks.TryGetValue(info.key, out var list)) {
                     list = new List<Gimmick>();
                     _gimmicks[info.key] = list;
                 }
+
                 list.Add(info.gimmick);
             }
-            
+
             _initialized = true;
         }
     }

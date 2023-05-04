@@ -55,7 +55,7 @@ namespace GameFramework.VfxSystems {
                 if (_playingInfo == null) {
                     return;
                 }
-                
+
                 _playingInfo.Play();
             }
 
@@ -66,7 +66,7 @@ namespace GameFramework.VfxSystems {
                 if (_playingInfo == null) {
                     return;
                 }
-                
+
                 _playingInfo.Stop(immediate);
             }
 
@@ -77,7 +77,7 @@ namespace GameFramework.VfxSystems {
                 if (_playingInfo == null) {
                     return;
                 }
-                
+
                 _playingInfo.Dispose();
                 _playingInfo = null;
             }
@@ -131,7 +131,7 @@ namespace GameFramework.VfxSystems {
 
                 Stop(true);
                 Disposed = true;
-                
+
                 if (_layeredTime != null) {
                     _layeredTime.OnChangedTimeScale -= OnChangedTimeScale;
                 }
@@ -156,7 +156,7 @@ namespace GameFramework.VfxSystems {
                     var component = ObjectInfo.components[i];
                     component.Update(deltaTime);
                 }
-                
+
                 if (first || _context.constraintPosition) {
                     UpdatePosition();
                 }
@@ -168,7 +168,7 @@ namespace GameFramework.VfxSystems {
                 if (first) {
                     UpdateScale();
                 }
-                
+
                 // 自動廃棄処理
                 if (_autoDispose && !IsPlaying()) {
                     Dispose();
@@ -216,7 +216,7 @@ namespace GameFramework.VfxSystems {
                 if (Disposed) {
                     return;
                 }
-                
+
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
                     var component = ObjectInfo.components[i];
                     component.Play();
@@ -230,7 +230,7 @@ namespace GameFramework.VfxSystems {
                 if (Disposed) {
                     return;
                 }
-                
+
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
                     var component = ObjectInfo.components[i];
                     if (immediate) {
@@ -249,7 +249,7 @@ namespace GameFramework.VfxSystems {
                 if (Disposed) {
                     return false;
                 }
-                
+
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
                     var component = ObjectInfo.components[i];
                     if (component.IsPlaying) {
@@ -267,7 +267,7 @@ namespace GameFramework.VfxSystems {
                 if (Disposed) {
                     return;
                 }
-                
+
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
                     var component = ObjectInfo.components[i];
                     component.SetSpeed(timeScale);
@@ -343,16 +343,17 @@ namespace GameFramework.VfxSystems {
 
                 // 廃棄
                 info.Dispose();
-                
+
                 // Poolに戻す
                 _playingInfos.RemoveAt(i);
                 ReturnObjectInfo(info.ObjectInfo);
             }
-            
+
             // Poolを全部削除
             foreach (var pool in _objectPools.Values) {
                 pool.Dispose();
             }
+
             _objectPools.Clear();
         }
 
@@ -361,7 +362,7 @@ namespace GameFramework.VfxSystems {
         /// </summary>
         protected override void DisposeInternal() {
             Clear();
-            
+
             if (_rootTransform != null) {
                 Object.Destroy(_rootTransform.gameObject);
             }
@@ -374,10 +375,10 @@ namespace GameFramework.VfxSystems {
             // 再生中情報の更新
             for (var i = _playingInfos.Count - 1; i >= 0; i--) {
                 var info = _playingInfos[i];
-                
+
                 // 更新処理
                 info.Update();
-                
+
                 // 廃棄対象ならPoolに戻す
                 if (info.Disposed) {
                     _playingInfos.RemoveAt(i);

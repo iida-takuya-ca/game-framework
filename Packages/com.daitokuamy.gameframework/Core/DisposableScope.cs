@@ -7,7 +7,7 @@ namespace GameFramework.Core {
     public class DisposableScope : IScope, IDisposable {
         // 廃棄済みか
         public bool Disposed { get; private set; }
-        
+
         // スコープ終了通知
         public event Action OnExpired;
 

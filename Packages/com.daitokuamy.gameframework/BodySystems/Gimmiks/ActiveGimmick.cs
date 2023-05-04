@@ -5,7 +5,7 @@ namespace GameFramework.BodySystems {
     public abstract class ActiveGimmick : Gimmick {
         // 現在アクティブ状態か
         public bool IsActive { get; private set; }
-        
+
         /// <summary>
         /// アクティブ化
         /// </summary>
@@ -34,7 +34,7 @@ namespace GameFramework.BodySystems {
         /// アクティブ化処理
         /// </summary>
         protected abstract void ActivateInternal();
-        
+
         /// <summary>
         /// 非アクティブ化処理
         /// </summary>

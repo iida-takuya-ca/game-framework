@@ -36,6 +36,7 @@ namespace GameFramework.Kinematics {
                     Initialize();
                     _initialized = true;
                 }
+
                 _sources = value;
                 if (Resolver != null) {
                     Resolver.Sources = _sources;
@@ -76,7 +77,7 @@ namespace GameFramework.Kinematics {
         public void ApplyTransform() {
             Resolver?.Resolve();
         }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -158,7 +159,8 @@ namespace GameFramework.Kinematics {
             try {
                 OnValidateInternal();
             }
-            catch {}
+            catch {
+            }
         }
     }
 }

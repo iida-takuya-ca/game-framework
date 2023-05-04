@@ -24,7 +24,7 @@ namespace GameFramework.PlayableSystems {
             if (_initialized) {
                 return;
             }
-            
+
             _initialized = true;
             _playable = CreatePlayable(animator, graph);
             _playable.SetInputCount(1);
@@ -63,17 +63,19 @@ namespace GameFramework.PlayableSystems {
         /// Playableの生成
         /// </summary>
         protected abstract AnimationScriptPlayable CreatePlayable(Animator animator, PlayableGraph graph);
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>
         /// <param name="playable">Jobを保持しているPlayable</param>
         /// <param name="deltaTime">変位時間</param>
-        protected virtual void UpdateInternal(AnimationScriptPlayable playable, float deltaTime) {}
+        protected virtual void UpdateInternal(AnimationScriptPlayable playable, float deltaTime) {
+        }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        protected virtual void DisposeInternal() {}
+        protected virtual void DisposeInternal() {
+        }
     }
 }

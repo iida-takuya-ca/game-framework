@@ -14,12 +14,12 @@ namespace GameFramework.CollisionSystems {
 
         // 衝突済みのCollider
         private readonly List<Collider> _hitColliders = new List<Collider>();
-        
+
         // 開始位置
         public Vector3 Start { get; set; }
         // 終了位置
         public Vector3 End { get; set; }
-        
+
         /// <summary>
         /// コンストラクタ
         /// </summary>

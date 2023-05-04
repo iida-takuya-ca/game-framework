@@ -9,7 +9,7 @@ namespace GameFramework.BodySystems {
         public static ActiveGimmick[] GetActiveGimmicks(this GimmickController source, string key) {
             return source.GetGimmicks<ActiveGimmick>(key);
         }
-        
+
         /// <summary>
         /// Activate操作
         /// </summary>
@@ -18,7 +18,7 @@ namespace GameFramework.BodySystems {
                 gimmick.Activate();
             }
         }
-        
+
         /// <summary>
         /// Deactivate操作
         /// </summary>
@@ -27,14 +27,14 @@ namespace GameFramework.BodySystems {
                 gimmick.Deactivate();
             }
         }
-        
+
         /// <summary>
         /// AnimationGimmickを取得
         /// </summary>
         public static AnimationGimmick[] GetAnimationGimmicks(this GimmickController source, string key) {
             return source.GetGimmicks<AnimationGimmick>(key);
         }
-        
+
         /// <summary>
         /// Play操作
         /// </summary>
@@ -43,7 +43,7 @@ namespace GameFramework.BodySystems {
                 gimmick.Play(reverse);
             }
         }
-        
+
         /// <summary>
         /// Resume操作
         /// </summary>
@@ -52,14 +52,14 @@ namespace GameFramework.BodySystems {
                 gimmick.Resume(reverse);
             }
         }
-        
+
         /// <summary>
         /// InvokeGimmickを取得
         /// </summary>
         public static InvokeGimmick[] GetInvokeGimmicks(this GimmickController source, string key) {
             return source.GetGimmicks<InvokeGimmick>(key);
         }
-        
+
         /// <summary>
         /// Invoke操作
         /// </summary>
@@ -68,14 +68,14 @@ namespace GameFramework.BodySystems {
                 gimmick.Invoke();
             }
         }
-        
+
         /// <summary>
         /// ChangeGimmickを取得
         /// </summary>
         public static ChangeGimmick<T>[] GetChangeGimmicks<T>(this GimmickController source, string key) {
             return source.GetGimmicks<ChangeGimmick<T>>(key);
         }
-        
+
         /// <summary>
         /// Change操作
         /// </summary>

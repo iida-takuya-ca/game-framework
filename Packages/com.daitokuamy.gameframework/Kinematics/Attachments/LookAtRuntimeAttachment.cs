@@ -9,7 +9,7 @@ namespace GameFramework.Kinematics {
 
         // Transform制御用インスタンス
         protected override AttachmentResolver Resolver => _resolver;
-        
+
         // 追従設定
         public LookAtAttachmentResolver.ResolverSettings Settings {
             get => _resolver.Settings;

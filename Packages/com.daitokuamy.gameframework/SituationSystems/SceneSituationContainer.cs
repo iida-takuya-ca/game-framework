@@ -6,7 +6,7 @@ namespace GameFramework.SituationSystems {
     /// </summary>
     public class SceneSituationContainer : SituationContainer, ILateUpdatableTask, ITaskEventHandler {
         private TaskRunner _taskRunner;
-    
+
         // アクティブか
         bool ITask.IsActive => true;
 

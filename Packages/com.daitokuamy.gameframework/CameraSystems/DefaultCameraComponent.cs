@@ -20,7 +20,7 @@ namespace GameFramework.CameraSystems {
         public DefaultCameraComponent(CinemachineVirtualCameraBase virtualCamera) {
             VirtualCamera = virtualCamera;
         }
-        
+
         /// <summary>
         /// アクティブ化
         /// </summary>
@@ -32,7 +32,7 @@ namespace GameFramework.CameraSystems {
             if (((ICameraComponent)this).IsActive) {
                 return;
             }
-            
+
             VirtualCamera.gameObject.SetActive(true);
         }
 
@@ -47,7 +47,7 @@ namespace GameFramework.CameraSystems {
             if (!((ICameraComponent)this).IsActive) {
                 return;
             }
-            
+
             VirtualCamera.gameObject.SetActive(false);
         }
     }

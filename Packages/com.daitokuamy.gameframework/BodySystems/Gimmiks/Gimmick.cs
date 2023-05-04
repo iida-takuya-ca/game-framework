@@ -13,7 +13,7 @@ namespace GameFramework.BodySystems {
         public void UpdateGimmick(float deltaTime) {
             UpdateInternal(deltaTime);
         }
-        
+
         /// <summary>
         /// 後更新処理
         /// </summary>
@@ -21,41 +21,46 @@ namespace GameFramework.BodySystems {
         public void LateUpdateGimmick(float deltaTime) {
             LateUpdateInternal(deltaTime);
         }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected virtual void InitializeInternal() {}
-        
+        protected virtual void InitializeInternal() {
+        }
+
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        protected virtual void DisposeInternal() {}
+        protected virtual void DisposeInternal() {
+        }
 
         /// <summary>
         /// 更新処理
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
-        protected virtual void UpdateInternal(float deltaTime) {}
+        protected virtual void UpdateInternal(float deltaTime) {
+        }
 
         /// <summary>
         /// 後更新処理
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
-        protected virtual void LateUpdateInternal(float deltaTime) {}
-        
+        protected virtual void LateUpdateInternal(float deltaTime) {
+        }
+
         /// <summary>
         /// Validate処理
         /// </summary>
-        protected virtual void OnValidateInternal() {}
-        
+        protected virtual void OnValidateInternal() {
+        }
+
         /// <summary>
         /// Validate処理
         /// </summary>
         private void OnValidate() {
             // Inspectorに表示しない
             hideFlags |= HideFlags.HideInInspector;
-            
+
             OnValidateInternal();
         }
 

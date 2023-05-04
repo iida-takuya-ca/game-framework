@@ -11,7 +11,7 @@ namespace GameFramework.VfxSystems {
         private Animator _animator;
         [SerializeField, Tooltip("再生するクリップ")]
         private AnimationClip _animationClip;
-        
+
         // 再生に使うPlayableGraph
         private PlayableGraph _playableGraph;
         // AnimationClip用のPlayable
@@ -35,13 +35,13 @@ namespace GameFramework.VfxSystems {
             var time = _animationClipPlayable.GetTime() + deltaTime;
             _animationClipPlayable.SetTime(time);
             _playableGraph.Evaluate();
-            
+
             // Loopでなければ、自動で終わる
             if (!_animationClip.isLooping && time >= _animationClip.length) {
                 _isPlaying = false;
             }
         }
-        
+
         /// <summary>
         /// 再生
         /// </summary>
@@ -49,7 +49,7 @@ namespace GameFramework.VfxSystems {
             if (!_playableGraph.IsValid()) {
                 return;
             }
-            
+
             _animationClipPlayable.SetTime(0.0f);
             _playableGraph.Play();
             _isPlaying = true;
@@ -62,7 +62,7 @@ namespace GameFramework.VfxSystems {
             if (!_playableGraph.IsValid()) {
                 return;
             }
-            
+
             _animationClipPlayable.SetTime(_animationClip.length);
             _playableGraph.Evaluate();
             _playableGraph.Stop();
@@ -76,7 +76,7 @@ namespace GameFramework.VfxSystems {
             if (!_playableGraph.IsValid()) {
                 return;
             }
-            
+
             _animationClipPlayable.SetTime(_animationClip.length);
             _playableGraph.Evaluate();
             _playableGraph.Stop();
@@ -97,7 +97,7 @@ namespace GameFramework.VfxSystems {
                 Debug.LogWarning($"Invalid serialize data. : {gameObject.name}");
                 return;
             }
-            
+
             // Graph構築
             _playableGraph = PlayableGraph.Create($"{nameof(AnimationClipVfxComponent)} - {gameObject.name}");
             _playableGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);

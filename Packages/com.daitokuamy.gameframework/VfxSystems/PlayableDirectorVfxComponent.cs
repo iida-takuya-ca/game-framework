@@ -26,7 +26,7 @@ namespace GameFramework.VfxSystems {
             _playableDirector.time += deltaTime;
             _playableDirector.Evaluate();
         }
-        
+
         /// <summary>
         /// 再生
         /// </summary>
@@ -45,7 +45,7 @@ namespace GameFramework.VfxSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             _playableDirector.time = _playableDirector.duration;
             _playableDirector.Evaluate();
             _playableDirector.Stop();
@@ -58,7 +58,7 @@ namespace GameFramework.VfxSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             _playableDirector.time = _playableDirector.duration;
             _playableDirector.Evaluate();
             _playableDirector.Stop();
@@ -78,7 +78,7 @@ namespace GameFramework.VfxSystems {
                 Debug.LogWarning($"Invalid serialize data. : {gameObject.name}");
                 return;
             }
-            
+
             _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
             _playableDirector.playOnAwake = false;
             _playableDirector.Stop();

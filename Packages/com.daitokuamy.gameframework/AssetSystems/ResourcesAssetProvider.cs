@@ -34,7 +34,7 @@ namespace GameFramework.AssetSystems {
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
             private SceneHolder _sceneHolder;
-            
+
             bool ISceneAssetInfo.IsDone => true;
             SceneHolder ISceneAssetInfo.SceneHolder => _sceneHolder;
             Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
@@ -42,7 +42,7 @@ namespace GameFramework.AssetSystems {
             public SceneAssetInfo() {
                 _sceneHolder = new SceneHolder();
             }
-            
+
             public void Dispose() {
                 // Unloadはしない
             }
@@ -92,7 +92,7 @@ namespace GameFramework.AssetSystems {
             if (index >= 0) {
                 address = address.Substring(index + "/Resources/".Length);
             }
-            
+
             // 拡張子を削除
             var extension = Path.GetExtension(address);
             if (!string.IsNullOrEmpty(extension)) {

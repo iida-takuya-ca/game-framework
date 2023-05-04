@@ -10,7 +10,7 @@ namespace GameFramework.CollisionSystems {
         Vector3 Start { get; set; }
         // 終了位置
         Vector3 End { get; set; }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>

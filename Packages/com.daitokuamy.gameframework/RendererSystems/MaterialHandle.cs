@@ -9,7 +9,7 @@ namespace GameFramework.RendererSystems {
     /// </summary>
     public struct MaterialHandle {
         private MaterialInstance[] _infos;
-        
+
         // 有効なハンドルか
         public bool IsValid => _infos != null && _infos.Length > 0;
 

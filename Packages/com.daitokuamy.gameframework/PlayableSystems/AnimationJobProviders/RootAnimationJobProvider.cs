@@ -45,7 +45,7 @@ namespace GameFramework.PlayableSystems {
                 }
             }
         }
-        
+
         // ルート移動速度のオフセット
         public Vector3 VelocityOffset {
             get => _vectorProperties.IsCreated ? _vectorProperties[2] : Vector3.zero;
@@ -65,7 +65,7 @@ namespace GameFramework.PlayableSystems {
                 }
             }
         }
-        
+
         // ルート角速度のオフセット
         public Vector3 AngularVelocityOffset {
             get => _vectorProperties.IsCreated ? _vectorProperties[3] : Vector3.zero;
@@ -75,7 +75,7 @@ namespace GameFramework.PlayableSystems {
                 }
             }
         }
-        
+
         /// <summary>
         /// Playableの生成
         /// </summary>

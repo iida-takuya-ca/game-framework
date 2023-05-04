@@ -14,7 +14,7 @@ namespace GameFramework.BodySystems {
 
         private PlayableGraph _graph;
         private AnimationClipPlayable _animationClipPlayable;
-        
+
         // トータル時間
         public override float Duration => _animationClip != null ? _animationClip.length : 0.0f;
         // ループ再生するか
@@ -31,7 +31,7 @@ namespace GameFramework.BodySystems {
             _graph.Play();
             _graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
         }
-        
+
         /// <summary>
         /// 廃棄時処理
         /// </summary>

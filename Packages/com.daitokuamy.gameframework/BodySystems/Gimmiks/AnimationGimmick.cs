@@ -13,14 +13,14 @@ namespace GameFramework.BodySystems {
 
         [SerializeField, Tooltip("更新モード")]
         private UpdateMode _updateMode = UpdateMode.LateUpdate;
-        
+
         // 現在時間
         private float _time;
         // 再生中か
         private bool _playing;
         // 逆再生状態か
         private bool _reverse;
-        
+
         // トータル時間
         public abstract float Duration { get; }
         // ループ再生するか
@@ -73,10 +73,10 @@ namespace GameFramework.BodySystems {
             if (!_playing || Duration <= float.Epsilon) {
                 return;
             }
-            
+
             // 反映
             Evaluate(Mathf.Clamp(_time, 0.0f, Duration));
-            
+
             // 再生完了チェック
             if (_reverse) {
                 if (_time <= 0.0f) {
@@ -100,10 +100,11 @@ namespace GameFramework.BodySystems {
                     else {
                         _playing = false;
                     }
+
                     _playing = false;
                 }
             }
-            
+
             // 時間更新
             _time += _reverse ? -deltaTime : deltaTime;
         }

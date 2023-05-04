@@ -32,7 +32,7 @@ namespace GameFramework.Kinematics {
         private TargetInfo[] _targetInfos = Array.Empty<TargetInfo>();
         // Weightが正規化済みか
         private bool _normalized = false;
-        
+
         // 制御対象
         public Transform Owner { get; private set; }
         // ターゲットリスト

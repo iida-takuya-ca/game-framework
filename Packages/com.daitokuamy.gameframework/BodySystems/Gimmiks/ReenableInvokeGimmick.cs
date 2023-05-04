@@ -7,7 +7,7 @@ namespace GameFramework.BodySystems {
     public class ReenableInvokeGimmick : InvokeGimmick {
         [SerializeField, Tooltip("再生対象リスト")]
         private MonoBehaviour[] _targets;
-        
+
         /// <summary>
         /// 実行処理
         /// </summary>

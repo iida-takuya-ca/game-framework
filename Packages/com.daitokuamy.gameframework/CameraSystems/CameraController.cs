@@ -21,34 +21,33 @@ namespace GameFramework.CameraSystems {
         /// 非アクティブ化
         /// </summary>
         void Deactivate();
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
         void Update(float deltaTime);
     }
-    
+
     /// <summary>
     /// カメラ制御用コントローラー
     /// </summary>
     public abstract class CameraController<TComponent> : ICameraController
         where TComponent : class, ICameraComponent {
-
         private DisposableScope _scope = new();
         private DisposableScope _activeScope = new();
 
         private bool _isActive;
-        
+
         // 制御に使うCameraComponent
         protected TComponent Component { get; private set; }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
         void ICameraController.Initialize(ICameraComponent component) {
             Component = component as TComponent;
-            
+
             InitializeInternal(_scope);
         }
 
@@ -59,7 +58,7 @@ namespace GameFramework.CameraSystems {
             if (_scope == null || _scope.Disposed) {
                 return;
             }
-            
+
             ((ICameraController)this).Deactivate();
             DisposeInternal();
             _scope.Dispose();
@@ -89,7 +88,7 @@ namespace GameFramework.CameraSystems {
             _activeScope.Clear();
             DeactivateInternal();
         }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>
@@ -109,13 +108,13 @@ namespace GameFramework.CameraSystems {
         /// </summary>
         protected virtual void DisposeInternal() {
         }
-        
+
         /// <summary>
         /// アクティブ時処理
         /// </summary>
         protected virtual void ActivateInternal(IScope scope) {
         }
-        
+
         /// <summary>
         /// 非アクティブ時処理
         /// </summary>

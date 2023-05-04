@@ -10,12 +10,12 @@ namespace GameFramework.VfxSystems {
         /// 更新処理
         /// </summary>
         void Update(float deltaTime);
-        
+
         /// <summary>
         /// 再生
         /// </summary>
         void Play();
-        
+
         /// <summary>
         /// 停止
         /// </summary>

@@ -60,7 +60,7 @@ namespace GameFramework.BodySystems {
             _additiveMeshRoot = new GameObject("AdditiveMeshRoot").transform;
             _additiveMeshRoot.gameObject.layer = Body.GameObject.layer;
             _additiveMeshRoot.SetParent(Body.Transform, false);
-            
+
             // Rendererの回収
             RefreshRenderers();
         }
@@ -102,7 +102,7 @@ namespace GameFramework.BodySystems {
                 referenceCount++;
                 _boneReferenceCounts[bone] = referenceCount;
             }
-            
+
             // Rendererの回収
             RefreshRenderers();
 
@@ -129,7 +129,7 @@ namespace GameFramework.BodySystems {
             DeleteBones(mergedInfo);
             // キャッシュクリア
             _mergedInfos.Remove(target);
-            
+
             // Rendererの回収
             RefreshRenderers();
 
@@ -334,7 +334,7 @@ namespace GameFramework.BodySystems {
             // Rendererの取得
             _renderers.Clear();
             _renderers.AddRange(Body.GetComponentsInChildren<Renderer>(true));
-            
+
             // 表示状態の反映
             SetVisible(_isVisible);
         }

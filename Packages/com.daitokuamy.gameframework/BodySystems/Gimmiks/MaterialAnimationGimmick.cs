@@ -17,12 +17,12 @@ namespace GameFramework.BodySystems {
         private float _duration = 1.0f;
         [SerializeField, Tooltip("ループ再生するか")]
         private bool _looping;
-        
+
         // マテリアル制御ハンドル
         private MaterialHandle _materialHandle;
         // プロパティのID
         private int _propertyId;
-        
+
         // トータル時間
         public override float Duration => _duration;
         // ループ再生するか

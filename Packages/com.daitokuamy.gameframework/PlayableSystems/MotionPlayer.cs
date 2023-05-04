@@ -20,7 +20,7 @@ namespace GameFramework.PlayableSystems {
             [Tooltip("アバターマスク")]
             public AvatarMask avatarMask;
         }
-        
+
         /// <summary>
         /// 再生中Provider情報
         /// </summary>
@@ -121,11 +121,12 @@ namespace GameFramework.PlayableSystems {
         public void Dispose() {
             // JobConnector削除
             JobConnector.Dispose();
-            
+
             // Layerの削除
             foreach (var layerInfo in _additiveLayerInfos) {
                 DestroyLayerInfo(layerInfo);
             }
+
             _additiveLayerInfos.Clear();
             DestroyLayerInfo(_baseLayerInfo);
             _baseLayerInfo = null;
@@ -255,11 +256,12 @@ namespace GameFramework.PlayableSystems {
                 DestroyLayerInfo(_additiveLayerInfos[i]);
                 _layerMixer.DisconnectInput(i + 1);
             }
+
             _additiveLayerInfos.Clear();
-            
+
             // LayerMixerの数をそろえる
             _layerMixer.SetInputCount(layerSettings.Length + 1);
-            
+
             // 加算用Layerの追加
             for (var i = 0; i < layerSettings.Length; i++) {
                 // LayerInfoを作成
@@ -272,8 +274,9 @@ namespace GameFramework.PlayableSystems {
                 if (layerSettings[i].avatarMask != null) {
                     _layerMixer.SetLayerMaskFromAvatarMask(index, layerSettings[i].avatarMask);
                 }
+
                 _layerMixer.SetInputWeight(i + 1, 1.0f);
-                
+
                 _additiveLayerInfos.Add(layerInfo);
             }
         }
@@ -299,7 +302,7 @@ namespace GameFramework.PlayableSystems {
             }
 
             var layerInfo = GetLayerInfo(layerIndex);
-            
+
             // 無効なLayerIndex
             if (layerInfo == null) {
                 Debug.LogError($"Layer is not found. [{layerIndex}]");
@@ -369,13 +372,13 @@ namespace GameFramework.PlayableSystems {
         /// <param name="weight">再生ウェイト</param>
         public void SetLayerWeight(int layerIndex, float weight) {
             var layerInfo = GetLayerInfo(layerIndex);
-            
+
             // 無効なLayerIndex
             if (layerInfo == null) {
                 Debug.LogError($"Layer is not found. [{layerIndex}]");
                 return;
             }
-            
+
             // ウェイトの設定
             _layerMixer.SetInputWeight(layerIndex, weight);
         }
@@ -400,7 +403,7 @@ namespace GameFramework.PlayableSystems {
             if (layerIndex < 0 || layerIndex > _additiveLayerInfos.Count) {
                 return null;
             }
-            
+
             return layerIndex == 0 ? _baseLayerInfo : _additiveLayerInfos[layerIndex - 1];
         }
 
@@ -420,13 +423,14 @@ namespace GameFramework.PlayableSystems {
             if (layerInfo == null) {
                 return;
             }
+
             _baseLayerInfo = new LayerInfo();
             _baseLayerInfo.mixer = AnimationMixerPlayable.Create(_graph, 2);
-            
+
             // 再生中のPlayableをクリア
             layerInfo.prevPlayingInfo.TryDispose();
             layerInfo.currentPlayingInfo.TryDispose();
-            
+
             // Mixerの削除
             layerInfo.mixer.Destroy();
         }

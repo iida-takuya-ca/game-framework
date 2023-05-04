@@ -10,7 +10,7 @@ namespace GameFramework.CollisionSystems {
         /// コリジョンの中央位置
         /// </summary>
         Vector3 Center { get; set; }
-        
+
         /// <summary>
         /// 更新処理
         /// </summary>

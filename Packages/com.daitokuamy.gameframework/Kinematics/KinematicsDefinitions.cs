@@ -10,7 +10,7 @@ namespace GameFramework.Kinematics {
         Rotation = 1 << 1,
         Scale = 1 << 2,
     }
-    
+
     /// <summary>
     /// 定数定義
     /// </summary>

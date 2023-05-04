@@ -11,7 +11,7 @@ namespace GameFramework.EntitySystems {
         private Vector3? _lastPosition;
         private Quaternion? _lastRotation;
         private float? _lastScale;
-        
+
         // 現在のBody
         public Body Body { get; private set; } = null;
 
@@ -25,23 +25,25 @@ namespace GameFramework.EntitySystems {
                 _lastPosition = Body.Position;
                 _lastRotation = Body.Rotation;
                 _lastScale = Body.BaseScale;
-                
+
                 if (prevDispose) {
                     Body?.Dispose();
                 }
             }
 
             Body = body;
-            
+
             if (Body != null) {
                 Body.IsActive = Entity.IsActive;
-                
+
                 if (_lastPosition.HasValue) {
                     Body.Position = _lastPosition.Value;
                 }
+
                 if (_lastRotation.HasValue) {
                     Body.Rotation = _lastRotation.Value;
                 }
+
                 if (_lastScale.HasValue) {
                     Body.BaseScale = _lastScale.Value;
                 }

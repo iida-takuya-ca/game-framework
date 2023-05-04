@@ -13,7 +13,7 @@ namespace GameFramework.BodySystems {
         private RendererMaterial[] _targets;
         [SerializeField, Tooltip("Materialの制御タイプ")]
         private MaterialInstance.ControlType _controlType = MaterialInstance.ControlType.PropertyBlock;
-        
+
         // マテリアル制御ハンドル
         private MaterialHandle _materialHandle;
         // プロパティのID

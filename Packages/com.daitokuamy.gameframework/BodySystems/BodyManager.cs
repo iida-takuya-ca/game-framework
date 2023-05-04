@@ -155,14 +155,14 @@ namespace GameFramework.BodySystems {
 
                 go.AddComponent<T>();
             }
-            
+
 #if USE_ANIMATION_RIGGING
             // RigBuilderがついている場合、RigController追加
             if (gameObject.GetComponent<RigBuilder>() != null) {
                 body.AddController(new RigController());
             }
 #endif
-            
+
             // Rigidbodyがついている場合、ColliderController追加
             if (gameObject.GetComponent<Rigidbody>() != null) {
                 TryAddComponent<ColliderController>(gameObject);

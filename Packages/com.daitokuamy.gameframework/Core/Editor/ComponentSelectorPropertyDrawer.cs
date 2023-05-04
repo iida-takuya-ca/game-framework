@@ -6,8 +6,7 @@ namespace GameFramework.Core.Editor {
     /// ComponentSelectorAttribute用のインスペクタ拡張
     /// </summary>
     [CustomPropertyDrawer(typeof(ComponentSelectorAttribute))]
-    public class ComponentSelectorPropertyDrawer : PropertyDrawer
-    {
+    public class ComponentSelectorPropertyDrawer : PropertyDrawer {
         /// <summary>
         /// GUI描画
         /// </summary>
@@ -17,10 +16,10 @@ namespace GameFramework.Core.Editor {
             var space = 2;
             rightRect.xMin = rightRect.xMax - 22;
             leftRect.xMax = rightRect.xMin - space;
-            
+
             // 通常のシリアライズ描画
             EditorGUI.PropertyField(leftRect, property, label);
-            
+
             // 補助メニュー
             var component = property.objectReferenceValue as Component;
             using (new EditorGUI.DisabledScope(component == null)) {
@@ -37,6 +36,7 @@ namespace GameFramework.Core.Editor {
                             property.serializedObject.ApplyModifiedProperties();
                         });
                     }
+
                     menu.ShowAsContext();
                 }
             }

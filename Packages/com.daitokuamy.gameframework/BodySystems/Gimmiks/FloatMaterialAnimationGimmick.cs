@@ -12,7 +12,7 @@ namespace GameFramework.BodySystems {
         private float _end;
         [SerializeField, Tooltip("カーブ")]
         private AnimationCurve _curve = AnimationCurve.Linear(0, 0, 1, 1);
-        
+
         /// <summary>
         /// 値の更新
         /// </summary>

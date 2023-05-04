@@ -9,10 +9,10 @@ namespace GameFramework.PlayableSystems {
     /// </summary>
     public interface IAnimationJobProvider : IDisposable {
         // 初期化済みか
-        bool IsInitialized { get;  }
+        bool IsInitialized { get; }
         // 廃棄済みか
-        bool IsDisposed { get;  }
-        
+        bool IsDisposed { get; }
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -24,7 +24,7 @@ namespace GameFramework.PlayableSystems {
         /// 更新処理
         /// </summary>
         void Update(float deltaTime);
-        
+
         /// <summary>
         /// Playableの取得
         /// </summary>

@@ -41,7 +41,7 @@ namespace GameFramework.AssetSystems {
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
             private SceneHolder _sceneHolder;
-            
+
             bool ISceneAssetInfo.IsDone => true;
             SceneHolder ISceneAssetInfo.SceneHolder => _sceneHolder;
             Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
@@ -49,7 +49,7 @@ namespace GameFramework.AssetSystems {
             public SceneAssetInfo() {
                 _sceneHolder = new SceneHolder();
             }
-            
+
             public void Dispose() {
                 // Unloadはしない
             }
@@ -62,7 +62,7 @@ namespace GameFramework.AssetSystems {
 #if UNITY_EDITOR
             // Address > Path変換
             var path = GetAssetPath<T>(address);
-            
+
             // 読み込み処理
             var asset = AssetDatabase.LoadAssetAtPath<T>(path);
             var info = new AssetInfo<T>(asset);

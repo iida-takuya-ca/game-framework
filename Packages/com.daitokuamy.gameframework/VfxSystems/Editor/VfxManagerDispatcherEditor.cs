@@ -17,7 +17,7 @@ namespace GameFramework.VfxSystems.Editor {
             if (vfxManger == null) {
                 return;
             }
-            
+
             // Poolのリセット
             using (new GUILayout.HorizontalScope()) {
                 GUILayout.Label("Reset Pool", GUILayout.Width(EditorGUIUtility.labelWidth));

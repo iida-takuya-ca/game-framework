@@ -23,13 +23,13 @@ namespace GameFramework.CameraSystems {
                 BlendDefinition = blendDefinition;
             }
         }
-        
+
         /// <summary>
         /// カメラハンドリング用クラス
         /// </summary>
         private class CameraHandler : IDisposable {
             private int _activateCount;
-            
+
             public string Name { get; }
             public ICameraComponent Component { get; }
             public ICameraController Controller { get; private set; }
@@ -55,7 +55,7 @@ namespace GameFramework.CameraSystems {
             /// </summary>
             public void Activate() {
                 _activateCount++;
-                
+
                 ApplyActiveStatus();
             }
 
@@ -68,7 +68,7 @@ namespace GameFramework.CameraSystems {
                 if (_activateCount < 0) {
                     Debug.LogWarning($"activateCount is minus. [{Name}]");
                 }
-                
+
                 ApplyActiveStatus();
             }
 
@@ -152,7 +152,7 @@ namespace GameFramework.CameraSystems {
         /// <param name="blendDefinition">上書き用ブレンド設定</param>
         public void Activate(string cameraName, CinemachineBlendDefinition blendDefinition) {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
@@ -168,7 +168,7 @@ namespace GameFramework.CameraSystems {
         /// <param name="cameraName">アクティブ化するカメラ名</param>
         public void Activate(string cameraName) {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
@@ -185,7 +185,7 @@ namespace GameFramework.CameraSystems {
         /// <param name="blendDefinition">上書き用ブレンド設定</param>
         public void Deactivate(string cameraName, CinemachineBlendDefinition blendDefinition) {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
@@ -201,7 +201,7 @@ namespace GameFramework.CameraSystems {
         /// <param name="cameraName">非アクティブ化するカメラ名</param>
         public void Deactivate(string cameraName) {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
@@ -218,7 +218,7 @@ namespace GameFramework.CameraSystems {
         public TCameraComponent GetCameraComponent<TCameraComponent>(string cameraName)
             where TCameraComponent : class, ICameraComponent {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return default;
             }
@@ -233,11 +233,11 @@ namespace GameFramework.CameraSystems {
         /// <param name="cameraController">設定するController</param>
         public void SetCameraController(string cameraName, ICameraController cameraController) {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
-            
+
             handler.SetController(cameraController);
         }
 
@@ -248,7 +248,7 @@ namespace GameFramework.CameraSystems {
         public TCameraController GetCameraController<TCameraController>(string cameraName)
             where TCameraController : class, ICameraController {
             Initialize();
-            
+
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return null;
             }
@@ -279,16 +279,16 @@ namespace GameFramework.CameraSystems {
             }
 
             _disposed = true;
-            
+
             // Cameraの設定を戻す
             CinemachineCore.GetBlendOverride -= GetBlend;
-            _brain.m_UpdateMethod = _defaultUpdateMethod; 
-            
+            _brain.m_UpdateMethod = _defaultUpdateMethod;
+
             // カメラ情報を廃棄
             foreach (var pair in _cameraHandlers) {
                 pair.Value.Dispose();
             }
-            
+
             _cameraHandlers.Clear();
             _targetPoints.Clear();
         }
@@ -312,12 +312,12 @@ namespace GameFramework.CameraSystems {
         /// </summary>
         protected override void LateUpdateInternal() {
             var deltaTime = LayeredTime.DeltaTime;
-            
+
             // Controllerの更新
             foreach (var pair in _cameraHandlers) {
                 pair.Value.Update(deltaTime);
             }
-            
+
             // Brainの更新
             CinemachineCore.UniformDeltaTimeOverride = deltaTime;
             _brain.ManualUpdate();
@@ -333,7 +333,7 @@ namespace GameFramework.CameraSystems {
                 Debug.LogWarning("Not found virtual camera root.");
                 return;
             }
-            
+
             // 1階層下の仮想カメラを元にカメラ情報を構築
             foreach (Transform child in _virtualCameraRoot.transform) {
                 var vcam = child.GetComponent<CinemachineVirtualCameraBase>();
@@ -364,14 +364,14 @@ namespace GameFramework.CameraSystems {
         /// </summary>
         private void CreateTargetPoints() {
             _targetPoints.Clear();
-            
+
             foreach (Transform targetPoint in _targetPointRoot.transform) {
                 var targetPointName = targetPoint.name;
                 if (_targetPoints.ContainsKey(targetPointName)) {
                     targetPoint.gameObject.SetActive(false);
                     continue;
                 }
-                
+
                 _targetPoints[targetPointName] = targetPoint;
             }
         }
@@ -388,7 +388,7 @@ namespace GameFramework.CameraSystems {
             // Cameraに対するBlend情報を探す
             _toCameraBlends.TryGetValue(toCamera, out var toBlend);
             _fromCameraBlends.TryGetValue(toCamera, out var fromBlend);
-            
+
             // Toが優先
             if (toBlend != null) {
                 return toBlend.BlendDefinition;
@@ -414,10 +414,10 @@ namespace GameFramework.CameraSystems {
             _defaultUpdateMethod = _brain.m_UpdateMethod;
             _brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.ManualUpdate;
             CinemachineCore.GetBlendOverride += GetBlend;
-            
+
             CreateCameraHandlers();
             CreateTargetPoints();
-            
+
             // デフォルトのカメラをActivate
             Activate(_defaultCameraName);
         }

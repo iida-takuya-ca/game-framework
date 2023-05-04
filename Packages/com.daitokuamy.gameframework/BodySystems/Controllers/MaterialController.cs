@@ -59,7 +59,7 @@ namespace GameFramework.BodySystems {
                     if (!info.IsValid) {
                         continue;
                     }
-                    
+
                     if (!_materialInfos.TryGetValue(info.key, out var list)) {
                         list = new List<MaterialInstance>();
                         _materialInfos.Add(info.key, list);

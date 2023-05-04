@@ -14,7 +14,7 @@ namespace GameFramework.CollisionSystems {
 
         // 衝突済みのCollider
         private readonly List<Collider> _hitColliders = new List<Collider>();
-        
+
         // 中心座標
         public abstract Vector3 Center { get; set; }
 

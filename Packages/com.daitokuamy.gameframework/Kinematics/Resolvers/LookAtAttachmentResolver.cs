@@ -26,7 +26,8 @@ namespace GameFramework.Kinematics {
         /// コンストラクタ
         /// </summary>
         public LookAtAttachmentResolver(Transform owner)
-            : base(owner) { }
+            : base(owner) {
+        }
 
         /// <summary>
         /// Transformを反映

@@ -23,7 +23,8 @@ namespace GameFramework.Kinematics {
         /// </summary>
         /// <param name="owner">制御対象のTransform</param>
         public RotationAttachmentResolver(Transform owner)
-            : base(owner) { }
+            : base(owner) {
+        }
 
         /// <summary>
         /// Transformを反映

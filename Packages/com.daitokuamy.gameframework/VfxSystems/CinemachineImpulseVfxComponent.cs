@@ -27,7 +27,7 @@ namespace GameFramework.VfxSystems {
         void IVfxComponent.Update(float deltaTime) {
             _timer -= deltaTime;
         }
-        
+
         /// <summary>
         /// 再生
         /// </summary>
@@ -35,7 +35,7 @@ namespace GameFramework.VfxSystems {
             if (_impulseSource == null) {
                 return;
             }
-            
+
             _impulseSource.enabled = true;
             _impulseSource.m_ImpulseDefinition.m_ImpulseDuration = _defaultDuration / _speed;
             _impulseSource.GenerateImpulse();

@@ -9,7 +9,7 @@ namespace GameFramework.ProjectileSystems {
         Vector3 Position { get; }
         // 姿勢
         Quaternion Rotation { get; }
-        
+
         /// <summary>
         /// 飛翔開始
         /// </summary>
@@ -20,7 +20,7 @@ namespace GameFramework.ProjectileSystems {
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
         bool Update(float deltaTime);
-        
+
         /// <summary>
         /// 飛翔終了
         /// </summary>

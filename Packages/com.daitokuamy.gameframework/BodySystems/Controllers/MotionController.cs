@@ -50,11 +50,9 @@ namespace GameFramework.BodySystems {
             // RootScaleJobの初期化
             _rootAnimationJobProvider = new RootAnimationJobProvider();
             Player.JobConnector.SetProvider(_rootAnimationJobProvider);
-            
+
             // TimeScale監視
-            Body.LayeredTime.OnChangedTimeScale += scale => {
-                Player.SetSpeed(scale);
-            };
+            Body.LayeredTime.OnChangedTimeScale += scale => { Player.SetSpeed(scale); };
         }
 
         /// <summary>

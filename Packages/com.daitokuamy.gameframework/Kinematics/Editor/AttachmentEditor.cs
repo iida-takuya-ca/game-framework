@@ -138,6 +138,7 @@ namespace GameFramework.Kinematics.Editor {
             if (targetObj != null) {
                 elementName = $"{index}:{targetObj.name}";
             }
+
             EditorGUI.PropertyField(rect, element, new GUIContent(elementName), true);
         }
 

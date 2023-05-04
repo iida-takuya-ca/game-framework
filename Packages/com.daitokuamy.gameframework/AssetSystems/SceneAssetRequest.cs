@@ -22,7 +22,7 @@ namespace GameFramework.AssetSystems {
         public SceneAssetHandle LoadAsync(AssetManager assetManager, IScope unloadScope) {
             var address = Address;
             var handle = SceneAssetHandle.Empty;
-            
+
             // 読み込みに使用できるProviderを探し、それを使って読み込みを開始する
             for (var i = 0; i < ProviderIndices.Length; i++) {
                 var provider = assetManager.GetProvider(ProviderIndices[i]);

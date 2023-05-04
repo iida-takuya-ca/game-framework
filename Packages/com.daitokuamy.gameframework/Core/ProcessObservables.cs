@@ -21,6 +21,7 @@ namespace GameFramework.Core {
                         observer.OnNext(Unit.Default);
                         observer.OnCompleted();
                     }
+
                     return Disposable.Empty;
                 }
 
@@ -40,7 +41,7 @@ namespace GameFramework.Core {
                     });
             });
         }
-        
+
         /// <summary>
         /// IProcessのRx変換
         /// </summary>
@@ -54,6 +55,7 @@ namespace GameFramework.Core {
                         observer.OnNext(self.Result);
                         observer.OnCompleted();
                     }
+
                     return Disposable.Empty;
                 }
 

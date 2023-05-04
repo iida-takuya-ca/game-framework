@@ -62,7 +62,7 @@ namespace GameFramework.ProjectileSystems {
                 if (started) {
                     return;
                 }
-                
+
                 projectile?.Start();
                 started = true;
             }
@@ -80,7 +80,7 @@ namespace GameFramework.ProjectileSystems {
                 onStopped?.Invoke();
             }
         }
-        
+
         // 飛翔体再生情報リスト
         private List<PlayingInfo> _playingInfos = new List<PlayingInfo>();
         // リスト除外対象のワーク
@@ -101,7 +101,7 @@ namespace GameFramework.ProjectileSystems {
         public void Update(float deltaTime) {
             UpdatePlayingInfos(deltaTime);
         }
-        
+
         /// <summary>
         /// 飛翔体の開始
         /// </summary>

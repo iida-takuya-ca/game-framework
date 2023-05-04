@@ -32,6 +32,7 @@ namespace GameFramework.AssetSystems {
                 if (!_handle.IsValid()) {
                     return;
                 }
+
                 Addressables.Release(_handle);
             }
         }
@@ -41,7 +42,7 @@ namespace GameFramework.AssetSystems {
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
             private AsyncOperationHandle<SceneInstance> _handle;
-            
+
             bool ISceneAssetInfo.IsDone => _handle.IsDone;
             SceneHolder ISceneAssetInfo.SceneHolder => new SceneHolder { Scene = _handle.Result };
             Exception ISceneAssetInfo.Exception => _handle.OperationException;
@@ -49,11 +50,12 @@ namespace GameFramework.AssetSystems {
             public SceneAssetInfo(AsyncOperationHandle<SceneInstance> handle) {
                 _handle = handle;
             }
-            
+
             public void Dispose() {
                 if (!_handle.IsValid()) {
                     return;
                 }
+
                 Addressables.Release(_handle);
             }
         }

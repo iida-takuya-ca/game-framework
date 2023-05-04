@@ -19,7 +19,7 @@ namespace GameFramework.BodySystems {
             [Tooltip("座標設定時のオフセット角度")]
             public Vector3 offsetAngles;
         }
-    
+
         [SerializeField, Tooltip("ターゲット情報")]
         private TargetInfo[] _targetInfos;
 

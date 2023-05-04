@@ -49,7 +49,7 @@ namespace GameFramework.SituationSystems {
 
             // Systemの更新
             ((ISituation)this).SystemUpdate();
-            
+
             // UpdateはActive中のみ
             if (CurrentState == State.Active) {
                 ((ISituation)this).Update();

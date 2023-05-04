@@ -7,7 +7,7 @@ namespace GameFramework.BodySystems {
     public class ParticleSystemActiveGimmick : ActiveGimmick {
         [SerializeField, Tooltip("Active制御する対象")]
         private ParticleSystem[] _targets;
-        
+
         /// <summary>
         /// アクティブ化処理
         /// </summary>
@@ -16,6 +16,7 @@ namespace GameFramework.BodySystems {
                 if (ps == null) {
                     continue;
                 }
+
                 ps.Play(true);
             }
         }
@@ -28,6 +29,7 @@ namespace GameFramework.BodySystems {
                 if (ps == null) {
                     continue;
                 }
+
                 ps.Stop(true);
             }
         }

@@ -152,6 +152,7 @@ namespace GameFramework.CoroutineSystems {
                     else {
                         Debug.LogException(exception);
                     }
+
                     _cachedRemoveIndices.Add(i);
                 }
             }

@@ -7,7 +7,7 @@ namespace GameFramework.BodySystems {
     public class ParticleSystemInvokeGimmick : InvokeGimmick {
         [SerializeField, Tooltip("再生対象のParticleSystemリスト")]
         private ParticleSystem[] _targets;
-        
+
         /// <summary>
         /// 実行処理
         /// </summary>
@@ -17,6 +17,7 @@ namespace GameFramework.BodySystems {
                     Debug.LogWarning($"Not found particle system. {gameObject.name}");
                     continue;
                 }
+
                 target.Play(true);
             }
         }

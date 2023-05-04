@@ -14,7 +14,7 @@ namespace GameFramework.AssetSystems {
         /// シーンの読み込み情報
         /// </summary>
         SceneHolder SceneHolder { get; }
-        
+
         /// <summary>
         /// エラー
         /// </summary>

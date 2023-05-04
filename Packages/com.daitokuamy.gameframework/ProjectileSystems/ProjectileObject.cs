@@ -90,7 +90,7 @@ namespace GameFramework.ProjectileSystems {
             if (gameObject == null) {
                 return;
             }
-            
+
             if (gameObject.activeSelf == active) {
                 return;
             }

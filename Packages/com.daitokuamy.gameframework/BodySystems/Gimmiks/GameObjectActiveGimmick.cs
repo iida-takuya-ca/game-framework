@@ -7,7 +7,7 @@ namespace GameFramework.BodySystems {
     public class GameObjectActiveGimmick : ActiveGimmick {
         [SerializeField, Tooltip("Active制御する対象")]
         private GameObject[] _targets;
-        
+
         /// <summary>
         /// アクティブ化処理
         /// </summary>
@@ -16,6 +16,7 @@ namespace GameFramework.BodySystems {
                 if (obj == null) {
                     continue;
                 }
+
                 obj.SetActive(true);
             }
         }
@@ -28,6 +29,7 @@ namespace GameFramework.BodySystems {
                 if (obj == null) {
                     continue;
                 }
+
                 obj.SetActive(false);
             }
         }

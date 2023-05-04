@@ -6,8 +6,7 @@ namespace GameFramework.RendererSystems.Editor {
     /// HdrColorのGUI拡張
     /// </summary>
     [CustomPropertyDrawer(typeof(HdrColor))]
-    public class HdrColorPropertyDrawer : PropertyDrawer
-    {
+    public class HdrColorPropertyDrawer : PropertyDrawer {
         /// <summary>
         /// GUI描画
         /// </summary>

@@ -11,8 +11,7 @@ namespace GameFramework.CollisionSystems {
         /// <param name="start">開始位置</param>
         /// <param name="end">終了位置</param>
         public LineRaycastCollision(Vector3 start, Vector3 end)
-            : base(start, end)
-        {
+            : base(start, end) {
         }
 
         /// <summary>

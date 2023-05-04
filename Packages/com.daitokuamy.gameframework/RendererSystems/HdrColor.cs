@@ -8,7 +8,7 @@ namespace GameFramework.RendererSystems {
     [Serializable]
     public struct HdrColor {
         public Color color;
-        
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -22,7 +22,7 @@ namespace GameFramework.RendererSystems {
         public static implicit operator HdrColor(Color color) {
             return new HdrColor(color);
         }
-        
+
         /// <summary>
         /// Color型への暗黙変換
         /// </summary>

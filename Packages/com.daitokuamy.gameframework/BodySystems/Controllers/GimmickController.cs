@@ -30,7 +30,7 @@ namespace GameFramework.BodySystems {
 
             return list.OfType<T>().ToArray();
         }
-        
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -80,6 +80,7 @@ namespace GameFramework.BodySystems {
                         list = new List<Gimmick>();
                         _gimmicks[gimmickInfo.key] = list;
                     }
+
                     list.Add(gimmickInfo.gimmick);
                 }
             }

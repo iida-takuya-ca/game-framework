@@ -104,7 +104,7 @@ namespace GameFramework.SituationSystems {
         /// Active中以外でも処理される更新
         /// </summary>
         void SystemUpdate();
-        
+
         /// <summary>
         /// Active中以外でも処理される後更新
         /// </summary>

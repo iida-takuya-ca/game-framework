@@ -190,7 +190,7 @@ namespace GameFramework.EnvironmentSystems.Editor {
                     rect.y += lineOffsetUnit + lineHeight;
                     rect.height = lineHeight;
                 }
-                
+
                 EditorGUI.showMixedValue = _subtractiveShadowColor.hasMultipleDifferentValues;
                 EditorGUI.PropertyField(rect, _subtractiveShadowColor, Styles.SubtractiveShadowColor);
                 rect.y += lineOffsetUnit;

@@ -92,7 +92,7 @@ namespace GameFramework.ModelSystems {
                 if (index < 0 || index >= _items.Count) {
                     return;
                 }
-                
+
                 var model = _items[index];
                 if (model == null) {
                     return;

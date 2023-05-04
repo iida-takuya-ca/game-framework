@@ -6,8 +6,7 @@ namespace GameFramework.Core.Editor {
     /// Permil型用のPropertyDrawer
     /// </summary>
     [CustomPropertyDrawer(typeof(Permil))]
-    public class PermilPropertyDrawer : PropertyDrawer
-    {
+    public class PermilPropertyDrawer : PropertyDrawer {
         /// <summary>
         /// GUI描画
         /// </summary>
@@ -16,7 +15,7 @@ namespace GameFramework.Core.Editor {
             var current = valueProp.intValue / (float)Permil.One;
 
             label.text += " (Permil)";
-            
+
             using (var scope = new EditorGUI.ChangeCheckScope()) {
                 current = EditorGUI.FloatField(position, label, current);
                 if (scope.changed) {

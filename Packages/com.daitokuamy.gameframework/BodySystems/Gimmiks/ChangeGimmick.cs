@@ -13,12 +13,12 @@ namespace GameFramework.BodySystems {
 
         [SerializeField, Tooltip("更新モード")]
         private UpdateMode _updateMode = UpdateMode.LateUpdate;
-        
+
         // ターゲットの値
         private T _target;
         // 残り時間
         private float _timer;
-        
+
         /// <summary>
         /// 値の設定
         /// </summary>
@@ -61,11 +61,11 @@ namespace GameFramework.BodySystems {
             if (_timer < 0.0f) {
                 return;
             }
-            
+
             // 現在の値に対しての反映率
             var rate = _timer > float.Epsilon ? Mathf.Clamp01(deltaTime / _timer) : 1.0f;
             SetValue(_target, rate);
-            
+
             // 時間更新
             _timer -= deltaTime;
         }

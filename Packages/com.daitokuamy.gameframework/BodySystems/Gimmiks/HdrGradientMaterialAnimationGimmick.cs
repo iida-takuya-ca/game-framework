@@ -8,7 +8,7 @@ namespace GameFramework.BodySystems {
     public class HdrGradientMaterialAnimationGimmick : MaterialAnimationGimmick {
         [SerializeField, Tooltip("グラデーション"), ColorUsage(true, true)]
         private Gradient _gradient;
-        
+
         /// <summary>
         /// 値の更新
         /// </summary>

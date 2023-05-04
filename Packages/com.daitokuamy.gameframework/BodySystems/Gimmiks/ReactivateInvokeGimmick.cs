@@ -7,7 +7,7 @@ namespace GameFramework.BodySystems {
     public class ReactivateInvokeGimmick : InvokeGimmick {
         [SerializeField, Tooltip("再生対象リスト")]
         private GameObject[] _targets;
-        
+
         /// <summary>
         /// 実行処理
         /// </summary>
@@ -21,6 +21,7 @@ namespace GameFramework.BodySystems {
                 if (target.activeSelf) {
                     target.SetActive(false);
                 }
+
                 target.SetActive(true);
             }
         }

@@ -20,7 +20,7 @@ namespace GameFramework.AssetSystems {
         public AssetHandle<TAsset> LoadAsync(AssetManager assetManager, IScope unloadScope) {
             var address = Address;
             var handle = AssetHandle<TAsset>.Empty;
-            
+
             // 読み込みに使用できるProviderを探し、それを使って読み込みを開始する
             for (var i = 0; i < ProviderIndices.Length; i++) {
                 var provider = assetManager.GetProvider(ProviderIndices[i]);

@@ -13,7 +13,7 @@ namespace GameFramework.VfxSystems {
             FadeIn,
             FadeOut,
         }
-        
+
         // フェード情報
         [Serializable]
         private class FadeInfo {
@@ -22,7 +22,7 @@ namespace GameFramework.VfxSystems {
             [Tooltip("フェードカーブ")]
             public AnimationCurve weightCurve;
         }
-    
+
         [SerializeField, Tooltip("制御用Volume")]
         private Volume _volume;
         [SerializeField, Tooltip("フェードイン情報")]
@@ -33,7 +33,7 @@ namespace GameFramework.VfxSystems {
         private FadeType _fadeType;
         private float _fadeTime;
         private float _fadeStartWeight;
-        
+
         // 再生中か
         bool IVfxComponent.IsPlaying => _volume != null && _volume.enabled;
 
@@ -64,11 +64,12 @@ namespace GameFramework.VfxSystems {
                     if (_fadeType == FadeType.FadeOut) {
                         _volume.enabled = false;
                     }
+
                     _fadeType = FadeType.None;
                 }
             }
         }
-        
+
         /// <summary>
         /// 再生
         /// </summary>
@@ -91,7 +92,7 @@ namespace GameFramework.VfxSystems {
             if (_volume == null) {
                 return;
             }
-            
+
             _fadeType = FadeType.FadeOut;
             _fadeTime = 0.0f;
             _fadeStartWeight = _volume.weight;
@@ -104,7 +105,7 @@ namespace GameFramework.VfxSystems {
             if (_volume == null) {
                 return;
             }
-            
+
             _fadeType = FadeType.None;
             _fadeTime = 0.0f;
             _volume.weight = 0.0f;

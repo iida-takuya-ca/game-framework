@@ -7,9 +7,9 @@ namespace GameFramework.PlayableSystems {
     /// </summary>
     public interface IPlayableProvider : IDisposable {
         // 初期化済みか
-        bool IsInitialized { get;  }
+        bool IsInitialized { get; }
         // 廃棄済みか
-        bool IsDisposed { get;  }
+        bool IsDisposed { get; }
         // 自動廃棄するか
         bool AutoDispose { get; }
 
@@ -18,7 +18,7 @@ namespace GameFramework.PlayableSystems {
         /// </summary>
         /// <param name="graph">構築に使うGraph</param>
         void Initialize(PlayableGraph graph);
-        
+
         /// <summary>
         /// Playableの取得
         /// </summary>

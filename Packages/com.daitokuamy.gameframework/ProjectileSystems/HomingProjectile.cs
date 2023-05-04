@@ -78,8 +78,7 @@ namespace GameFramework.ProjectileSystems {
         /// <param name="context">初期化用パラメータ</param>
         public HomingProjectile(Context context)
             : this(context.startPoint, context.endPoint, context.startVelocity, context.propulsion, context.damping,
-                context.maxAcceleration, context.maxDistance)
-        {
+                context.maxAcceleration, context.maxDistance) {
         }
 
         /// <summary>
@@ -108,17 +107,17 @@ namespace GameFramework.ProjectileSystems {
             else {
                 acceleration *= _maxAcceleration;
             }
-            
+
             // 加速度を補間
             acceleration += forward * _propulsion - _velocity * _damping;
-            
+
             // 速度に反映
             _velocity += acceleration * deltaTime;
-            
+
             // 座標更新
-            var deltaPos = _velocity * deltaTime; 
+            var deltaPos = _velocity * deltaTime;
             Position += deltaPos;
-            
+
             // 向き更新
             if (deltaPos.sqrMagnitude > float.Epsilon) {
                 Rotation = Quaternion.LookRotation(deltaPos);

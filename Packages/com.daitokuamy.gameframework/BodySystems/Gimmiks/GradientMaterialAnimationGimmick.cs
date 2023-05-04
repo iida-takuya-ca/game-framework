@@ -8,7 +8,7 @@ namespace GameFramework.BodySystems {
     public class GradientMaterialAnimationGimmick : MaterialAnimationGimmick {
         [SerializeField, Tooltip("グラデーション")]
         private Gradient _gradient;
-        
+
         /// <summary>
         /// 値の更新
         /// </summary>

@@ -14,14 +14,14 @@ namespace GameFramework.BodySystems {
 
         // 制御対象のRig
         public Rig Rig {
-            get { 
+            get {
                 Initialize();
                 return _rig;
             }
         }
         // 制御対象のConstraintリスト
         public IReadOnlyList<IRigConstraint> Constraints {
-            get { 
+            get {
                 Initialize();
                 return _constraints;
             }

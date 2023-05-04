@@ -7,8 +7,7 @@ namespace GameFramework.RendererSystems.Editor {
     /// RendererMaterialのGUI拡張
     /// </summary>
     [CustomPropertyDrawer(typeof(RendererMaterial))]
-    public class RendererMaterialPropertyDrawer : PropertyDrawer
-    {
+    public class RendererMaterialPropertyDrawer : PropertyDrawer {
         /// <summary>
         /// GUI描画
         /// </summary>
@@ -19,7 +18,7 @@ namespace GameFramework.RendererSystems.Editor {
             var rect = position;
             var height = EditorGUIUtility.singleLineHeight;
             var unitOffset = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            
+
             rect.height = height;
             renderer.objectReferenceValue = EditorGUI.ObjectField(rect, renderer.displayName, renderer.objectReferenceValue, typeof(Renderer), true);
             var r = renderer.objectReferenceValue as Renderer;
@@ -41,7 +40,7 @@ namespace GameFramework.RendererSystems.Editor {
             var renderer = property.FindPropertyRelative("renderer");
             var height = EditorGUIUtility.singleLineHeight;
             var unitOffset = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            
+
             var totalHeight = height;
             if (renderer.objectReferenceValue is Renderer) {
                 totalHeight += unitOffset;

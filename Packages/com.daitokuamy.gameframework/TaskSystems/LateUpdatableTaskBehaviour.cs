@@ -64,7 +64,7 @@ namespace GameFramework.TaskSystems {
                 _taskRunner = null;
             }
         }
-        
+
         /// <summary>
         /// 生成時処理
         /// </summary>

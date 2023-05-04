@@ -16,22 +16,22 @@ namespace GameFramework.BodySystems.Editor {
         private ReorderableList _gimmickInfoList;
         // 選択中Gimmickのエディタ描画用
         private UnityEditor.Editor _selectedGimmickEditor;
-        
+
         /// <summary>
         /// インスペクタ描画
         /// </summary>
         public override void OnInspectorGUI() {
             serializedObject.Update();
-            
+
             _gimmickInfoList.DoLayoutList();
-            
+
             // 選択中のGimmickがあればInspector描画
             if (_selectedGimmickEditor != null) {
                 using (new EditorGUILayout.VerticalScope("Box")) {
                     _selectedGimmickEditor.OnInspectorGUI();
                 }
             }
-            
+
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -48,12 +48,10 @@ namespace GameFramework.BodySystems.Editor {
                 var gimmick = elementProp.FindPropertyRelative("gimmick").objectReferenceValue;
                 return gimmick as Gimmick;
             }
-            
+
             // ヘッダー描画
-            _gimmickInfoList.drawHeaderCallback += rect => {
-                EditorGUI.LabelField(rect, "Gimmicks");
-            };
-            
+            _gimmickInfoList.drawHeaderCallback += rect => { EditorGUI.LabelField(rect, "Gimmicks"); };
+
             // 要素描画処理
             _gimmickInfoList.drawElementCallback += (rect, index, isActive, isFocused) => {
                 var info = gimmickInfos.GetArrayElementAtIndex(index);
@@ -66,14 +64,14 @@ namespace GameFramework.BodySystems.Editor {
                     EditorGUI.ObjectField(r, info.FindPropertyRelative("gimmick").objectReferenceValue, typeof(Gimmick), true);
                 }
             };
-            
+
             // 要素追加処理
             _gimmickInfoList.onAddCallback += list => {
                 var gimmickParts = serializedObject.targetObject as GimmickParts;
                 if (gimmickParts == null) {
                     return;
                 }
-                
+
                 var menu = new GenericMenu();
                 var gimmickInfosProp = list.serializedProperty;
                 var gimmickTypes = TypeCache.GetTypesDerivedFrom<Gimmick>()
@@ -91,6 +89,7 @@ namespace GameFramework.BodySystems.Editor {
                     else if (t.IsSubclassOf(typeof(InvokeGimmick))) {
                         basePath = "Invoke/";
                     }
+
                     menu.AddItem(new GUIContent($"{basePath}{t.Name}"), false, () => {
                         serializedObject.Update();
                         gimmickInfosProp.InsertArrayElementAtIndex(gimmickInfosProp.arraySize);
@@ -102,16 +101,17 @@ namespace GameFramework.BodySystems.Editor {
                         _gimmickInfoList.Select(_gimmickInfoList.count - 1);
                     });
                 }
+
                 menu.ShowAsContext();
             };
-            
+
             // 要素削除処理
             _gimmickInfoList.onRemoveCallback += list => {
                 var gimmickParts = serializedObject.targetObject as GimmickParts;
                 if (gimmickParts == null) {
                     return;
                 }
-                
+
                 // 選択中の物を全て消す
                 var gimmickInfosProp = list.serializedProperty;
                 for (var i = list.selectedIndices.Count - 1; i >= 0; i--) {
@@ -121,15 +121,17 @@ namespace GameFramework.BodySystems.Editor {
                     if (gimmick != null) {
                         Undo.DestroyObjectImmediate(gimmick);
                     }
+
                     list.serializedProperty.DeleteArrayElementAtIndex(index);
                 }
+
                 list.ClearSelection();
                 if (_selectedGimmickEditor != null) {
                     DestroyImmediate(_selectedGimmickEditor);
                     _selectedGimmickEditor = null;
                 }
             };
-            
+
             // 要素選択状態変更
             _gimmickInfoList.onSelectCallback += list => {
                 if (_selectedGimmickEditor != null) {

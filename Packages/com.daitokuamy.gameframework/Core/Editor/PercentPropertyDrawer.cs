@@ -6,8 +6,7 @@ namespace GameFramework.Core.Editor {
     /// Percent型用のPropertyDrawer
     /// </summary>
     [CustomPropertyDrawer(typeof(Percent))]
-    public class PercentPropertyDrawer : PropertyDrawer
-    {
+    public class PercentPropertyDrawer : PropertyDrawer {
         /// <summary>
         /// GUI描画
         /// </summary>
@@ -16,7 +15,7 @@ namespace GameFramework.Core.Editor {
             var current = valueProp.intValue / (float)Percent.One;
 
             label.text += " (Percent)";
-            
+
             using (var scope = new EditorGUI.ChangeCheckScope()) {
                 current = EditorGUI.FloatField(position, label, current);
                 if (scope.changed) {

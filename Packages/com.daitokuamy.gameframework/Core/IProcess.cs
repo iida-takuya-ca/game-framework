@@ -11,7 +11,7 @@ namespace GameFramework.Core {
         // エラー内容
         Exception Exception { get; }
     }
-    
+
     /// <summary>
     /// 一連の処理を表すインターフェース
     /// </summary>

@@ -33,7 +33,7 @@ namespace GameFramework.PlayableSystems {
             if (_initialized) {
                 return;
             }
-            
+
             _initialized = true;
             _playable = CreatePlayable(graph);
         }
@@ -87,6 +87,7 @@ namespace GameFramework.PlayableSystems {
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        protected virtual void DisposeInternal() {}
+        protected virtual void DisposeInternal() {
+        }
     }
 }

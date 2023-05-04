@@ -142,6 +142,7 @@ namespace GameFramework.ProjectileSystems {
                 if (checkHitFunc != null && !checkHitFunc.Invoke(result)) {
                     return;
                 }
+
                 instance.OnHitCollision(result);
                 listener.OnHitRaycastCollision(result);
                 if (hitCount >= 0 && result.hitCount >= hitCount) {

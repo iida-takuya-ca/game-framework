@@ -59,8 +59,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Actorを追加
         /// </summary>
-        public static Entity AddActor(this Entity source, Actor actor, int priority = 0)
-        {
+        public static Entity AddActor(this Entity source, Actor actor, int priority = 0) {
             var component = source.AddOrGetComponent<ActorEntityComponent>();
             return component.AddActor(actor, priority);
         }

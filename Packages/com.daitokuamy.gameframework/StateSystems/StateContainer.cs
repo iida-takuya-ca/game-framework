@@ -128,7 +128,7 @@ namespace GameFramework.StateSystems {
             return default;
         }
     }
-    
+
     /// <summary>
     /// TState省略するタイプのStateContainer
     /// </summary>

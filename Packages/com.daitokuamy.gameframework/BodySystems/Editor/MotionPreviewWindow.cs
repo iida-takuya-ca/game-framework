@@ -25,7 +25,7 @@ namespace GameFramework.BodySystems.Editor {
         private PlayableGraph _graph;
         private AnimationPlayableOutput _output;
         private AnimationClipPlayable _clipPlayable;
-        
+
         // 再生時間管理用
         private float _seekTime;
         private bool _isPlaying;
@@ -34,7 +34,7 @@ namespace GameFramework.BodySystems.Editor {
 
         [MenuItem("Window/GameFramework/Motion Preview")]
         private static void Open() {
-            CreateWindow<MotionPreviewWindow>( ObjectNames.NicifyVariableName(nameof(MotionPreviewWindow)));
+            CreateWindow<MotionPreviewWindow>(ObjectNames.NicifyVariableName(nameof(MotionPreviewWindow)));
         }
 
         /// <summary>
@@ -42,11 +42,11 @@ namespace GameFramework.BodySystems.Editor {
         /// </summary>
         private void SetupPlayable() {
             CleanupPlayable();
-            
+
             if (!_graph.IsValid() || _previewClip == null) {
                 return;
             }
-            
+
             // 基本アニメーション構築
             _clipPlayable = AnimationClipPlayable.Create(_graph, _previewClip);
             _clipPlayable.SetApplyFootIK(false);
@@ -60,7 +60,7 @@ namespace GameFramework.BodySystems.Editor {
         /// </summary>
         private void CleanupPlayable() {
             Stop();
-            
+
             if (_clipPlayable.IsValid()) {
                 _clipPlayable.Destroy();
             }
@@ -72,7 +72,7 @@ namespace GameFramework.BodySystems.Editor {
         private void SetupRigBuilder() {
 #if USE_ANIMATION_RIGGING
             CleanupRigBuilder();
-            
+
             if (!_graph.IsValid() || _animator == null) {
                 return;
             }
@@ -112,7 +112,7 @@ namespace GameFramework.BodySystems.Editor {
             if (_animator == null) {
                 return;
             }
-            
+
             _graph = PlayableGraph.Create($"[{nameof(MotionPreviewWindow)}]{_animator.name}");
             _graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
             _output = AnimationPlayableOutput.Create(_graph, "Output", _animator);
@@ -158,7 +158,7 @@ namespace GameFramework.BodySystems.Editor {
             if (!_clipPlayable.IsValid()) {
                 return;
             }
-            
+
             _clipPlayable.SetTime(_seekTime);
         }
 
@@ -168,7 +168,7 @@ namespace GameFramework.BodySystems.Editor {
         private void ResetBones() {
             if (_animator != null) {
                 _animator.WriteDefaultValues();
-                
+
                 var renderers = _animator.GetComponentsInChildren<SkinnedMeshRenderer>(true);
                 var bones = new HashSet<Transform>();
                 foreach (var renderer in renderers) {
@@ -181,9 +181,10 @@ namespace GameFramework.BodySystems.Editor {
                     if (bone == null) {
                         return;
                     }
+
                     PrefabUtility.RevertObjectOverride(bone.transform, InteractionMode.AutomatedAction);
                 }
-                    
+
                 EditorUtility.SetDirty(_animator);
             }
         }
@@ -200,7 +201,7 @@ namespace GameFramework.BodySystems.Editor {
                 else {
                     GUILayout.Label(label, GUILayout.Width(labelWidth));
                 }
-                
+
                 if (GUILayout.Button(buttonName)) {
                     return true;
                 }
@@ -208,7 +209,7 @@ namespace GameFramework.BodySystems.Editor {
                 return false;
             }
         }
-        
+
         /// <summary>
         /// GUI描画
         /// </summary>
@@ -218,25 +219,26 @@ namespace GameFramework.BodySystems.Editor {
                 if (_animator != null) {
                     titleContent = new GUIContent($"[Preview]{_animator.name}");
                 }
+
                 if (scope.changed) {
                     SetupGraph();
                     SetupPlayable();
                     SetupRigBuilder();
                 }
             }
+
             using (var scope = new EditorGUI.ChangeCheckScope()) {
                 _previewClip = EditorGUILayout.ObjectField("PreviewClip", _previewClip, typeof(AnimationClip), true) as AnimationClip;
                 if (scope.changed) {
                     SetupPlayable();
                 }
             }
-            
+
             // Animation
             var enabledAnimation = _clipPlayable.IsValid();
             using (new EditorGUI.DisabledScope(!enabledAnimation)) {
                 var duration = _previewClip != null ? _previewClip.length : 1.0f;
-                using (var scope = new EditorGUI.ChangeCheckScope())
-                {
+                using (var scope = new EditorGUI.ChangeCheckScope()) {
                     _seekTime = EditorGUILayout.Slider("Time", _seekTime, 0.0f, duration);
                     if (scope.changed) {
                         ApplySeekTime();
@@ -303,9 +305,11 @@ namespace GameFramework.BodySystems.Editor {
                             Stop();
                         }
                     }
+
                     ApplySeekTime();
                     Repaint();
                 }
+
                 _prevTime = EditorApplication.timeSinceStartup;
             }
 

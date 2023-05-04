@@ -15,7 +15,7 @@ namespace GameFramework.VfxSystems {
 
         // 現在時間
         private float _time;
-        
+
         // 再生中か
         bool IVfxComponent.IsPlaying => _time < _duration;
 
@@ -31,7 +31,7 @@ namespace GameFramework.VfxSystems {
             var rate = Mathf.Clamp01(_time / _duration);
             _volume.weight = _weightCurve != null && _weightCurve.keys.Length > 1 ? _weightCurve.Evaluate(rate) : rate;
         }
-        
+
         /// <summary>
         /// 再生
         /// </summary>
