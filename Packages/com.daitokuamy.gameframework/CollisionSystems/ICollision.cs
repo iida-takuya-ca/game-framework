@@ -7,6 +7,11 @@ namespace GameFramework.CollisionSystems {
     /// </summary>
     public interface ICollision : IVisualizable {
         /// <summary>
+        /// コリジョンの中央位置
+        /// </summary>
+        Vector3 Center { get; set; }
+        
+        /// <summary>
         /// 更新処理
         /// </summary>
         /// <param name="layerMask">当たり判定の対象とするLayerMask</param>

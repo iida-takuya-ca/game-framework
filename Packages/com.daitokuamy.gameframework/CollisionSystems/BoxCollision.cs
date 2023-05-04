@@ -6,7 +6,7 @@ namespace GameFramework.CollisionSystems {
     /// </summary>
     public class BoxCollision : Collision {
         // 中心座標
-        public Vector3 Center { get; set; }
+        public override Vector3 Center { get; set; }
 
         // ハーフサイズ
         public Vector3 HalfExtents { get; set; }

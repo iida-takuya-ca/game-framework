@@ -244,6 +244,7 @@ namespace GameFramework.CollisionSystems {
                 }
 
                 // 衝突が発生していたら通知する
+                hitResult.center = info.collision.Center;
                 hitResult.customData = info.customData;
                 foreach (var result in _workResults) {
                     hitResult.collider = result;

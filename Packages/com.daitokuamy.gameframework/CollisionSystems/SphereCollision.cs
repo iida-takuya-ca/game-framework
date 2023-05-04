@@ -6,7 +6,7 @@ namespace GameFramework.CollisionSystems {
     /// </summary>
     public class SphereCollision : Collision {
         // 中心座標
-        public Vector3 Center { get; set; }
+        public override Vector3 Center { get; set; }
 
         // 半径
         public float Radius { get; set; }
