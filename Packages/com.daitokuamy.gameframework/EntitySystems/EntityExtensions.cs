@@ -49,6 +49,14 @@ namespace GameFramework.EntitySystems {
         }
 
         /// <summary>
+        /// Actorが含まれているか
+        /// </summary>
+        public static bool ContainsActor(this Entity source, Actor actor) {
+            var component = source.AddOrGetComponent<ActorEntityComponent>();
+            return component.ContainsActor(actor);
+        }
+
+        /// <summary>
         /// Actorを追加
         /// </summary>
         public static Entity AddActor(this Entity source, Actor actor, int priority = 0)
@@ -83,6 +91,14 @@ namespace GameFramework.EntitySystems {
         }
 
         /// <summary>
+        /// Logicが含まれているか
+        /// </summary>
+        public static bool ContainsLogic(this Entity source, EntityLogic logic) {
+            var component = source.AddOrGetComponent<LogicEntityComponent>();
+            return component.ContainsLogic(logic);
+        }
+
+        /// <summary>
         /// Logicを追加
         /// </summary>
         public static Entity AddLogic(this Entity source, EntityLogic logic) {
@@ -93,18 +109,18 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Logicの削除
         /// </summary>
-        public static Entity RemoveLogic(this Entity source, EntityLogic logic) {
+        public static Entity RemoveLogic(this Entity source, EntityLogic logic, bool dispose = true) {
             var component = source.AddOrGetComponent<LogicEntityComponent>();
-            return component.RemoveLogic(logic);
+            return component.RemoveLogic(logic, dispose);
         }
 
         /// <summary>
         /// Logicの削除
         /// </summary>
-        public static Entity RemoveLogic<TLogic>(this Entity source)
+        public static Entity RemoveLogic<TLogic>(this Entity source, bool dispose = true)
             where TLogic : EntityLogic {
             var component = source.AddOrGetComponent<LogicEntityComponent>();
-            return component.RemoveLogic<TLogic>();
+            return component.RemoveLogic<TLogic>(dispose);
         }
 
         /// <summary>
