@@ -12,6 +12,12 @@ namespace GameFramework.TaskSystems {
         public virtual bool IsActive => isActiveAndEnabled;
 
         /// <summary>
+        /// 生成時処理(override用)
+        /// </summary>
+        protected virtual void AwakeInternal() {
+        }
+
+        /// <summary>
         /// 廃棄処理(override用)
         /// </summary>
         protected virtual void OnDestroyInternal() {
@@ -57,6 +63,13 @@ namespace GameFramework.TaskSystems {
             if (taskRunner == _taskRunner) {
                 _taskRunner = null;
             }
+        }
+        
+        /// <summary>
+        /// 生成時処理
+        /// </summary>
+        private void Awake() {
+            AwakeInternal();
         }
 
         /// <summary>

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using GameFramework.AssetSystems;
 using GameFramework.Core;
 using UniRx;
@@ -19,32 +21,18 @@ namespace SampleGame {
         /// アセットの読み込み
         /// </summary>
         /// <param name="unloadScope">解放スコープ</param>
-        public IObservable<T> LoadAsync(IScope unloadScope) {
-            return Observable.Create<T>(observer => {
-                var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
-                if (!handle.IsValid) {
-                    observer.OnError(new KeyNotFoundException($"Load failed. {Address}"));
-                    return Disposable.Empty;
-                }
+        /// <param name="ct">読み込みキャンセル用</param>
+        public async UniTask<T> LoadAsync(IScope unloadScope, CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+            
+            var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
+            await handle.ToUniTask(cancellationToken:ct);
+            if (!handle.IsValid) {
+                Debug.LogException(new KeyNotFoundException($"Load failed. {Address}"));
+                return null;
+            }
 
-                if (handle.IsDone) {
-                    observer.OnNext(handle.Asset);
-                    observer.OnCompleted();
-                    return Disposable.Empty;
-                }
-                
-                // 読み込みを待つ
-                return Observable.EveryUpdate()
-                    .Subscribe(_ => {
-                        if (handle.Exception != null) {
-                            observer.OnError(handle.Exception);
-                        }
-                        else if (handle.IsDone) {
-                            observer.OnNext(handle.Asset);
-                            observer.OnCompleted();
-                        }
-                    });
-            });
+            return handle.Asset;
         }
 
         /// <summary>

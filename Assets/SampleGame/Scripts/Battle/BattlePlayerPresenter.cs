@@ -1,6 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
+using GameFramework.CameraSystems;
 using GameFramework.CollisionSystems;
 using GameFramework.ProjectileSystems;
 using GameFramework.Core;
@@ -81,8 +82,8 @@ namespace SampleGame {
         /// </summary>
         protected override void UpdateInternal() {
             var input = Services.Get<BattleInput>();
-            var cameraController = Services.Get<CameraController>();
-            var camera = cameraController.MainCamera;
+            var cameraManager = Services.Get<CameraManager>();
+            var camera = cameraManager.OutputCamera;
             var projectileObjectManager = Services.Get<ProjectileObjectManager>();
 
             // 移動

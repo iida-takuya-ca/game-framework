@@ -5,8 +5,9 @@ namespace GameFramework.Core {
     /// スコープ管理用インターフェース
     /// </summary>
     public class DisposableScope : IScope, IDisposable {
-        private bool _disposed;
-
+        // 廃棄済みか
+        public bool Disposed { get; private set; }
+        
         // スコープ終了通知
         public event Action OnExpired;
 
@@ -14,7 +15,7 @@ namespace GameFramework.Core {
         /// クリア処理
         /// </summary>
         public void Clear() {
-            if (_disposed) {
+            if (Disposed) {
                 return;
             }
 
@@ -26,11 +27,11 @@ namespace GameFramework.Core {
         /// 廃棄処理
         /// </summary>
         public void Dispose() {
-            if (_disposed) {
+            if (Disposed) {
                 return;
             }
 
-            _disposed = true;
+            Disposed = true;
             OnExpired?.Invoke();
             OnExpired = null;
         }

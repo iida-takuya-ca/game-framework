@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
@@ -16,44 +18,30 @@ namespace SampleGame {
         /// <param name="source">初期化対象のEntity</param>
         /// <param name="onCreateBody">Body生成</param>
         /// <param name="onSetupEntity">各種初期化処理</param>
-        public static IObservable<Entity> SetupAsync(this Entity source, Func<IObservable<Body>> onCreateBody,
-            Func<Entity, IObservable<Unit>> onSetupEntity) {
-            return Observable.Defer(() => {
-                // Entityの初期化
-                var bodyEntityComponent = source.AddOrGetComponent<BodyEntityComponent>();
-                source.AddOrGetComponent<LogicEntityComponent>();
-                source.AddOrGetComponent<ActorEntityComponent>();
-                source.AddOrGetComponent<ModelEntityComponent>();
+        public static async UniTask<Entity> SetupAsync(this Entity source, Func<UniTask<Body>> onCreateBody,
+            Action<Entity> onSetupEntity) {
+            // Bodyの生成
+            if (onCreateBody != null) {
+                var body = await onCreateBody.Invoke();
+                source.SetBody(body);
+            }
 
-                var streams = new List<IObservable<Unit>>();
+            // Body生成後の初期化
+            if (onSetupEntity != null) {
+                onSetupEntity.Invoke(source);
+            }
 
-                // Bodyの生成
-                if (onCreateBody != null) {
-                    streams.Add(Observable.Defer(() => onCreateBody.Invoke())
-                        .Do(body => bodyEntityComponent.SetBody(body))
-                        .AsUnitObservable()
-                    );
-                }
-
-                // Body生成後の初期化
-                if (onSetupEntity != null) {
-                    streams.Add(Observable.Defer(() => onSetupEntity.Invoke(source)));
-                }
-
-                return streams.Concat()
-                    .AsSingleUnitObservable()
-                    .Select(_ => source);
-            });
+            return source;
         }
 
         /// <summary>
         /// プレイヤーエンティティの初期化処理
         /// </summary>
-        public static IObservable<Entity> SetupPlayerAsync(this Entity source, BattlePlayerModel model, IScope scope) {
-            return source.SetupAsync(() => {
-                return new PlayerPrefabAssetRequest(model.AssetKey)
-                    .LoadAsync(scope)
-                    .Select(prefab => Services.Get<BodyManager>().CreateFromPrefab(prefab));
+        public static async UniTask<Entity> SetupPlayerAsync(this Entity source, BattlePlayerModel model, IScope unloadScope, CancellationToken ct) {
+            return await source.SetupAsync(async () => {
+                var prefab = await new PlayerPrefabAssetRequest(model.AssetKey)
+                    .LoadAsync(unloadScope, ct);
+                return Services.Get<BodyManager>().CreateFromPrefab(prefab);
             }, entity => {
                 var actor = new PlayerActor(entity.GetBody(), model.ActorModel.Setup);
                 actor.RegisterTask(TaskOrder.Actor);
@@ -61,7 +49,6 @@ namespace SampleGame {
                 logic.RegisterTask(TaskOrder.Logic);
                 entity.AddActor(actor)
                     .AddLogic(logic);
-                return Observable.ReturnUnit();
             });
         }
     }

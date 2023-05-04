@@ -1,12 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
+using GameFramework.CameraSystems;
 using GameFramework.CollisionSystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
-using GameFramework.Kinematics;
 using GameFramework.ProjectileSystems;
 using GameFramework.SituationSystems;
-using GameFramework.TaskSystems;
 using GameFramework.VfxSystems;
 using UniRx;
 using UnityEngine;
@@ -40,8 +42,6 @@ namespace SampleGame {
         private SituationContainer _situationContainer;
         // 生成したPlayerのEntity
         private Entity _playerEntity;
-        // カメラ方向を使ったRoot位置
-        private Transform _rootAngle;
 
         protected override string SceneAssetPath => "battle";
 
@@ -50,14 +50,32 @@ namespace SampleGame {
         /// </summary>
         protected override IEnumerator SetupRoutineInternal(TransitionHandle handle, IScope scope) {
             yield return base.SetupRoutineInternal(handle, scope);
-            
-            var cameraController = Services.Get<CameraController>();
+
+            var ct = scope.ToCancellationToken();
 
             // BattleModelの生成
-            var battleModel = BattleModel.Create();
-            battleModel.RegisterTask(TaskOrder.Logic);
-            yield return battleModel.SetupAsync()
-                .StartAsEnumerator(scope);
+            var battleModel = BattleModel.Create()
+                .ScopeTo(scope);
+            
+            // 読み込み処理
+            var playerMaster = default(BattlePlayerMasterData);
+            var playerActorSetup = default(PlayerActorSetupData);
+            var playerActionDataList = default(PlayerActorActionData[]);
+            var uniTask = LoadPlayerMasterAsync("pl001", scope, ct)
+                .ContinueWith(tuple => {
+                    playerMaster = tuple.Item1;
+                    playerActorSetup = tuple.Item2;
+                    playerActionDataList = tuple.Item3;
+                });
+            yield return uniTask.ToCoroutine();
+            
+            // PlayerModelの初期化
+            battleModel.PlayerModel.Update(playerMaster.name, playerMaster.assetKey, playerMaster.healthMax);
+            battleModel.PlayerModel.ActorModel.Update(playerActorSetup, playerActionDataList);
+            
+            // CameraManagerの初期化
+            var cameraManager = Services.Get<CameraManager>();
+            cameraManager.RegisterTask(TaskOrder.Camera);
             
             // VfxManagerの生成
             var vfxManager = new VfxManager();
@@ -79,34 +97,19 @@ namespace SampleGame {
             ServiceContainer.Set(projectileObjectManager);
             projectileObjectManager.RegisterTask(TaskOrder.Projectile);
             
-            // タスク登録
-            Services.Get<CameraController>().RegisterTask(TaskOrder.Camera);
+            // InputのTask登録
             Services.Get<BattleInput>().RegisterTask(TaskOrder.Input);
-
-            // RootAngle作成
-            _rootAngle = new GameObject("RootAngle").transform;
-            var rootAngleConstraint = cameraController.GetAttachment<ParentAttachment>("RootAngle");
-            rootAngleConstraint.Sources = new[] {
-                new AttachmentResolver.TargetSource {
-                    target = _rootAngle,
-                    weight = 1.0f
-                }
-            };
 
             // PlayerEntityの生成
             _playerEntity = new Entity();
-            _playerEntity.SetupPlayerAsync(battleModel.PlayerModel, scope)
-                .Subscribe(entity => {
-                    // CameraのAttachment設定
-                    var playerConstraint = cameraController.GetAttachment<ParentAttachment>("Player");
-                    playerConstraint.Sources = new[] {
-                        new AttachmentResolver.TargetSource {
-                            target = entity.GetBody().Transform,
-                            weight = 1.0f
-                        }
-                    };
-                })
+            yield return _playerEntity.SetupPlayerAsync(battleModel.PlayerModel, scope, ct)
+                .ToCoroutine();
+            
+            // CameraTargetPoint制御用Logic追加
+            var cameraTargetPointLogic = new CameraTargetPointLogic(_playerEntity, battleModel.AngleModel)
                 .ScopeTo(scope);
+            cameraTargetPointLogic.RegisterTask(TaskOrder.Logic);
+            cameraTargetPointLogic.Activate();
         }
 
         /// <summary>
@@ -114,13 +117,7 @@ namespace SampleGame {
         /// </summary>
         protected override void UpdateInternal() {
             base.UpdateInternal();
-
-            // todo:取り合えずここでRootAngle更新
-            var playerBody = _playerEntity.GetBody();
-            if (playerBody != null) {
-                _rootAngle.position = playerBody.Transform.position;
-            }
-
+            
             if (Input.GetKeyDown(KeyCode.Space)) {
                 MainSystem.Instance.Reboot(new BattleSceneSituation());
             }
@@ -144,6 +141,9 @@ namespace SampleGame {
                 Observable.TimerFrame(50)
                     .Subscribe(_ => handle.Dispose());
             }
+            
+            // BattleModel更新
+            BattleModel.Get().Update();
         }
 
         /// <summary>
@@ -154,10 +154,6 @@ namespace SampleGame {
             // PlayerEntity削除
             _playerEntity.Dispose();
 
-            // Cameraのタスク登録解除
-            var cameraController = Services.Get<CameraController>();
-            cameraController.UnregisterTask();
-
             // Inputのタスク登録解除
             var input = Services.Get<BattleInput>();
             input.UnregisterTask();
@@ -166,15 +162,34 @@ namespace SampleGame {
         }
 
         /// <summary>
-        /// 解放処理
+        /// PlayerMasterの読み込み
         /// </summary>
-        protected override void UnloadInternal(TransitionHandle handle) {
-            // BattleModel削除
-            var battleModel = BattleModel.Get();
-            battleModel.UnregisterTask();
-            BattleModel.Delete();
+        private async UniTask<(BattlePlayerMasterData, PlayerActorSetupData, PlayerActorActionData[])> LoadPlayerMasterAsync(string playerId, IScope unloadScope, CancellationToken ct) {
+            // マスター本体の読み込み
+            var masterData = 
+                await new BattlePlayerMasterDataAssetRequest(playerId)
+                    .LoadAsync(unloadScope, ct);
 
-            base.UnloadInternal(handle);
+            var setupData = default(PlayerActorSetupData);
+            var actionDataList = new PlayerActorActionData[masterData.playerActorGeneralActionDataIds.Length];
+
+            var tasks = new List<UniTask>();
+            // Actor初期化用データ読み込み
+            tasks.Add(new PlayerActorSetupDataAssetRequest(masterData.playerActorSetupDataId)
+                .LoadAsync(unloadScope, ct)
+                .ContinueWith(x => setupData = x));
+
+            // ActionData読み込み
+            tasks.AddRange(masterData.playerActorGeneralActionDataIds
+                .Select((x, i) => new PlayerActorActionDataAssetRequest(x)
+                    .LoadAsync(unloadScope, ct)
+                    .ContinueWith(actionData => {
+                        actionDataList[i] = actionData;
+                    })
+                ));
+
+            await UniTask.WhenAll(tasks);
+            return (masterData, setupData, actionDataList);
         }
     }
 }

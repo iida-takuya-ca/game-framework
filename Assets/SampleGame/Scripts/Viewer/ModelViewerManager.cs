@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.PlayableSystems;
 using GameFramework.Core;
@@ -31,18 +32,18 @@ namespace SampleGame {
             CleanupBody();
 
             _bodyScope = new DisposableScope();
+            var ct = _bodyScope.ToCancellationToken();
 
             var bodyManager = Services.Get<BodyManager>();
             
             new ModelViewerBodyDataRequest(bodyDataId)
-                .LoadAsync(_bodyScope)
-                .Subscribe(data => {
+                .LoadAsync(_bodyScope, ct)
+                .ContinueWith(data => {
                     CurrentBodyData = data;
                     // Bodyの生成
                     CurrentBody = bodyManager.CreateFromPrefab(data.prefab);
                     onCreated?.Invoke();
-                })
-                .ScopeTo(_bodyScope);
+                });
         }
 
         /// <summary>
