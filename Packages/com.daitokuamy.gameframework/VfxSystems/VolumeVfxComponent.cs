@@ -8,8 +8,11 @@ namespace GameFramework.VfxSystems {
     public class VolumeVfxComponent : MonoBehaviour, IVfxComponent {
         [SerializeField, Tooltip("制御用Volume")]
         private Volume _volume;
+        [SerializeField, Tooltip("再生遅延時間")]
+        private float _delay = 0.0f;
         [SerializeField, Tooltip("再生時間")]
         private float _duration = 1.0f;
+
         [SerializeField, Tooltip("Volume反映カーブ")]
         private AnimationCurve _weightCurve;
 
@@ -29,7 +32,7 @@ namespace GameFramework.VfxSystems {
 
             _time += deltaTime;
             var rate = Mathf.Clamp01(_time / _duration);
-            _volume.weight = _weightCurve != null && _weightCurve.keys.Length > 1 ? _weightCurve.Evaluate(rate) : rate;
+            _volume.weight = _time >= 0.0f ? (_weightCurve != null && _weightCurve.keys.Length > 1 ? _weightCurve.Evaluate(rate) : rate) : 0.0f;
         }
 
         /// <summary>
@@ -40,7 +43,7 @@ namespace GameFramework.VfxSystems {
                 return;
             }
 
-            _time = 0.0f;
+            _time = -_delay;
             _volume.enabled = true;
         }
 

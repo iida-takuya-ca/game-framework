@@ -10,22 +10,36 @@ namespace GameFramework.VfxSystems {
     public class CinemachineImpulseVfxComponent : MonoBehaviour, IVfxComponent {
         [SerializeField, Tooltip("衝撃設定")]
         private CinemachineImpulseSource _impulseSource;
+        [SerializeField, Tooltip("遅延時間")]
+        private float _delay = 0.0f;
 
         // 再生速度
         private float _speed = 1.0f;
         // デフォルトの再生時間
         private float _defaultDuration;
         // 再生中タイマー
-        private float _timer = 0.0f;
+        private float _time = 0.0f;
+        // 再生中フラグ
+        private bool _isPlaying;
 
         // 再生中か
-        bool IVfxComponent.IsPlaying => _timer > float.Epsilon;
+        bool IVfxComponent.IsPlaying => _isPlaying;
 
         /// <summary>
         /// 更新処理
         /// </summary>
         void IVfxComponent.Update(float deltaTime) {
-            _timer -= deltaTime;
+            _time += deltaTime;
+
+            if (_time >= 0.0f && !_impulseSource.enabled) {
+                _impulseSource.enabled = true;
+                _impulseSource.m_ImpulseDefinition.m_ImpulseDuration = _defaultDuration / _speed;
+                _impulseSource.GenerateImpulse();
+            }
+
+            if (_time >= _defaultDuration) {
+                _isPlaying = false;
+            }
         }
 
         /// <summary>
@@ -36,10 +50,8 @@ namespace GameFramework.VfxSystems {
                 return;
             }
 
-            _impulseSource.enabled = true;
-            _impulseSource.m_ImpulseDefinition.m_ImpulseDuration = _defaultDuration / _speed;
-            _impulseSource.GenerateImpulse();
-            _timer = _impulseSource.m_ImpulseDefinition.m_ImpulseDuration;
+            _time = -_delay;
+            _isPlaying = true;
         }
 
         /// <summary>
@@ -47,7 +59,8 @@ namespace GameFramework.VfxSystems {
         /// </summary>
         void IVfxComponent.Stop() {
             _impulseSource.enabled = false;
-            _timer = 0.0f;
+            _time = 0.0f;
+            _isPlaying = false;
         }
 
         /// <summary>
@@ -55,7 +68,8 @@ namespace GameFramework.VfxSystems {
         /// </summary>
         void IVfxComponent.StopImmediate() {
             _impulseSource.enabled = false;
-            _timer = 0.0f;
+            _time = 0.0f;
+            _isPlaying = false;
         }
 
         /// <summary>
