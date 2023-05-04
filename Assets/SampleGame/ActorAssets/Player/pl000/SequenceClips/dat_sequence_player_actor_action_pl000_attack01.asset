@@ -98,3 +98,25 @@ MonoBehaviour:
   enterTime: 0
   exitTime: 1.5
   cameraName: Action_0
+  toBlend:
+    active: 1
+    blendDefinition:
+      m_Style: 0
+      m_Time: 0
+      m_CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  fromBlend:
+    active: 0
+    blendDefinition:
+      m_Style: 0
+      m_Time: 0
+      m_CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4

@@ -11,6 +11,20 @@ namespace GameFramework.CameraSystems {
     /// </summary>
     public class CameraManager : LateUpdatableTaskBehaviour, IDisposable {
         /// <summary>
+        /// カメラブレンド情報
+        /// </summary>
+        private class CameraBlend {
+            public CinemachineBlendDefinition BlendDefinition { get; }
+
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            public CameraBlend(CinemachineBlendDefinition blendDefinition) {
+                BlendDefinition = blendDefinition;
+            }
+        }
+        
+        /// <summary>
         /// カメラハンドリング用クラス
         /// </summary>
         private class CameraHandler : IDisposable {
@@ -122,11 +136,31 @@ namespace GameFramework.CameraSystems {
         private Dictionary<string, CameraHandler> _cameraHandlers = new();
         // 基準Transform
         private Dictionary<string, Transform> _targetPoints = new();
+        // カメラブレンド情報
+        private Dictionary<ICinemachineCamera, CameraBlend> _toCameraBlends = new();
+        private Dictionary<ICinemachineCamera, CameraBlend> _fromCameraBlends = new();
 
         // 出力先のカメラ
         public Camera OutputCamera => _brain != null ? _brain.OutputCamera : null;
         // LayeredTime
         public LayeredTime LayeredTime { get; private set; } = new LayeredTime();
+
+        /// <summary>
+        /// カメラのアクティブ化(参照カウンタ有)
+        /// </summary>
+        /// <param name="cameraName">アクティブ化するカメラ名</param>
+        /// <param name="blendDefinition">上書き用ブレンド設定</param>
+        public void Activate(string cameraName, CinemachineBlendDefinition blendDefinition) {
+            Initialize();
+            
+            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
+                return;
+            }
+
+            _toCameraBlends[handler.Component.BaseCamera] = new CameraBlend(blendDefinition);
+
+            handler.Activate();
+        }
 
         /// <summary>
         /// カメラのアクティブ化(参照カウンタ有)
@@ -139,7 +173,26 @@ namespace GameFramework.CameraSystems {
                 return;
             }
 
+            _toCameraBlends[handler.Component.BaseCamera] = null;
+
             handler.Activate();
+        }
+
+        /// <summary>
+        /// カメラの非アクティブ化(参照カウンタ有)
+        /// </summary>
+        /// <param name="cameraName">非アクティブ化するカメラ名</param>
+        /// <param name="blendDefinition">上書き用ブレンド設定</param>
+        public void Deactivate(string cameraName, CinemachineBlendDefinition blendDefinition) {
+            Initialize();
+            
+            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
+                return;
+            }
+
+            _fromCameraBlends[handler.Component.BaseCamera] = new CameraBlend(blendDefinition);
+
+            handler.Deactivate();
         }
 
         /// <summary>
@@ -152,6 +205,8 @@ namespace GameFramework.CameraSystems {
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
                 return;
             }
+
+            _fromCameraBlends[handler.Component.BaseCamera] = null;
 
             handler.Deactivate();
         }
@@ -226,6 +281,7 @@ namespace GameFramework.CameraSystems {
             _disposed = true;
             
             // Cameraの設定を戻す
+            CinemachineCore.GetBlendOverride -= GetBlend;
             _brain.m_UpdateMethod = _defaultUpdateMethod; 
             
             // カメラ情報を廃棄
@@ -321,6 +377,31 @@ namespace GameFramework.CameraSystems {
         }
 
         /// <summary>
+        /// カメラのBlend値を取得(Callback)
+        /// </summary>
+        /// <param name="fromCamera">前のカメラ</param>
+        /// <param name="toCamera">次のカメラ</param>
+        /// <param name="defaultBlend">現在のBlend情報</param>
+        /// <param name="owner">CinemachineBrain</param>
+        private CinemachineBlendDefinition GetBlend(ICinemachineCamera fromCamera, ICinemachineCamera toCamera,
+            CinemachineBlendDefinition defaultBlend, MonoBehaviour owner) {
+            // Cameraに対するBlend情報を探す
+            _toCameraBlends.TryGetValue(toCamera, out var toBlend);
+            _fromCameraBlends.TryGetValue(toCamera, out var fromBlend);
+            
+            // Toが優先
+            if (toBlend != null) {
+                return toBlend.BlendDefinition;
+            }
+
+            if (fromBlend != null) {
+                return fromBlend.BlendDefinition;
+            }
+
+            return defaultBlend;
+        }
+
+        /// <summary>
         /// 初期化処理
         /// </summary>
         private void Initialize() {
@@ -332,6 +413,8 @@ namespace GameFramework.CameraSystems {
 
             _defaultUpdateMethod = _brain.m_UpdateMethod;
             _brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.ManualUpdate;
+            CinemachineCore.GetBlendOverride += GetBlend;
+            
             CreateCameraHandlers();
             CreateTargetPoints();
             

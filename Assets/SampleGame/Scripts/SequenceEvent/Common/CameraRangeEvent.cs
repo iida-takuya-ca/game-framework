@@ -1,4 +1,6 @@
+using System;
 using ActionSequencer;
+using Cinemachine;
 using GameFramework.CameraSystems;
 using UnityEngine;
 
@@ -7,8 +9,23 @@ namespace SampleGame.SequenceEvents {
     /// Camera切り替え再生イベント
     /// </summary>
     public class CameraRangeEvent : RangeSequenceEvent {
+        // ブレンド情報
+        [Serializable]
+        public struct Blend {
+            [Tooltip("Blendを上書きするか")]
+            public bool active;
+            [Tooltip("ブレンド情報")]
+            public CinemachineBlendDefinition blendDefinition;
+        }
+        
         [Tooltip("切り替えるカメラ名")]
         public string cameraName = "";
+        
+        [Header("ブレンド情報")]
+        [Tooltip("行き遷移時のBlend")]
+        public Blend toBlend;
+        [Tooltip("戻り遷移時のBlend")]
+        public Blend fromBlend;
     }
 
     /// <summary>
@@ -29,7 +46,12 @@ namespace SampleGame.SequenceEvents {
         /// </summary>
         protected override void OnEnter(CameraRangeEvent sequenceEvent) {
             if (_cameraManager != null) {
-                _cameraManager.Activate(sequenceEvent.cameraName);
+                if (sequenceEvent.toBlend.active) {
+                    _cameraManager.Activate(sequenceEvent.cameraName, sequenceEvent.toBlend.blendDefinition);
+                }
+                else {
+                    _cameraManager.Activate(sequenceEvent.cameraName);
+                }
             }
         }
 
@@ -38,7 +60,12 @@ namespace SampleGame.SequenceEvents {
         /// </summary>
         protected override void OnExit(CameraRangeEvent sequenceEvent) {
             if (_cameraManager != null) {
-                _cameraManager.Deactivate(sequenceEvent.cameraName);
+                if (sequenceEvent.fromBlend.active) {
+                    _cameraManager.Deactivate(sequenceEvent.cameraName, sequenceEvent.fromBlend.blendDefinition);
+                }
+                else {
+                    _cameraManager.Deactivate(sequenceEvent.cameraName);
+                }
             }
         }
 

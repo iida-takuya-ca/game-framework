@@ -6,7 +6,9 @@ namespace GameFramework.CameraSystems {
     /// </summary>
     public class DefaultCameraComponent : ICameraComponent {
         // アクティブ状態
-        public bool IsActive => VirtualCamera != null && VirtualCamera.gameObject.activeSelf;
+        bool ICameraComponent.IsActive => VirtualCamera != null && VirtualCamera.gameObject.activeSelf;
+        // 基本カメラ
+        ICinemachineCamera ICameraComponent.BaseCamera => VirtualCamera;
 
         // 制御対象の仮想カメラ
         public CinemachineVirtualCameraBase VirtualCamera { get; }
@@ -27,7 +29,7 @@ namespace GameFramework.CameraSystems {
                 return;
             }
 
-            if (IsActive) {
+            if (((ICameraComponent)this).IsActive) {
                 return;
             }
             
@@ -42,7 +44,7 @@ namespace GameFramework.CameraSystems {
                 return;
             }
 
-            if (!IsActive) {
+            if (!((ICameraComponent)this).IsActive) {
                 return;
             }
             
