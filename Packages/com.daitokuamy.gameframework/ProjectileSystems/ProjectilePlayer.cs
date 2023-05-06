@@ -146,6 +146,16 @@ namespace GameFramework.ProjectileSystems {
         /// Projectileの更新処理
         /// </summary>
         private void UpdatePlayingInfos(float deltaTime) {
+            // 不要なProjectileの再生情報をクリア
+            for (var i = _removePlayingInfos.Count - 1; i >= 0; i--) {
+                var playingInfo = _removePlayingInfos[i];
+                playingInfo.Stop();
+                _playingInfos.Remove(playingInfo);
+            }
+
+            _removePlayingInfos.Clear();
+            
+            // 更新処理
             for (var i = 0; i < _playingInfos.Count; i++) {
                 var playingInfo = _playingInfos[i];
 
@@ -162,18 +172,10 @@ namespace GameFramework.ProjectileSystems {
                     playingInfo.projectile.Rotation);
 
                 if (!continuation) {
-                    // 終了したらStop処理実行
-                    playingInfo.Stop();
+                    // 完了終了リストに追加(コリジョン判定などもあるので、1frame遅れて消す)
                     _removePlayingInfos.Add(playingInfo);
                 }
             }
-
-            // 不要なProjectileの再生情報をクリア
-            for (var i = _removePlayingInfos.Count - 1; i >= 0; i--) {
-                _playingInfos.Remove(_removePlayingInfos[i]);
-            }
-
-            _removePlayingInfos.Clear();
         }
     }
 }
