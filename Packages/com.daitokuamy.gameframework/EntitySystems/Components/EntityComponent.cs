@@ -1,6 +1,7 @@
 using System;
 using GameFramework.Core;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
@@ -17,6 +18,13 @@ namespace GameFramework.EntitySystems {
 
         // AttachされているEntity
         public Entity Entity { get; private set; } = null;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        [Preserve]
+        public EntityComponent() {
+        }
 
         /// <summary>
         /// 廃棄時処理
