@@ -154,6 +154,10 @@ namespace GameFramework.VfxSystems {
                 var deltaTime = _layeredTime != null ? _layeredTime.DeltaTime : Time.deltaTime;
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
                     var component = ObjectInfo.components[i];
+                    if (!component.IsPlaying) {
+                        continue;
+                    }
+                    
                     component.Update(deltaTime);
                 }
 

@@ -38,7 +38,7 @@ namespace GameFramework.VfxSystems {
             }
 
             if (_time >= _defaultDuration) {
-                _isPlaying = false;
+                ((IVfxComponent)this).Stop();
             }
         }
 
@@ -50,6 +50,7 @@ namespace GameFramework.VfxSystems {
                 return;
             }
 
+            _impulseSource.enabled = false;
             _time = -_delay;
             _isPlaying = true;
         }
@@ -58,6 +59,10 @@ namespace GameFramework.VfxSystems {
         /// 停止
         /// </summary>
         void IVfxComponent.Stop() {
+            if (_impulseSource == null) {
+                return;
+            }
+            
             _impulseSource.enabled = false;
             _time = 0.0f;
             _isPlaying = false;
@@ -67,6 +72,10 @@ namespace GameFramework.VfxSystems {
         /// 即時停止
         /// </summary>
         void IVfxComponent.StopImmediate() {
+            if (_impulseSource == null) {
+                return;
+            }
+            
             _impulseSource.enabled = false;
             _time = 0.0f;
             _isPlaying = false;
@@ -83,7 +92,11 @@ namespace GameFramework.VfxSystems {
         /// 生成時処理
         /// </summary>
         private void Awake() {
-            _defaultDuration = _impulseSource.m_ImpulseDefinition.m_ImpulseDuration;
+            if (_impulseSource != null) {
+                _defaultDuration = _impulseSource.m_ImpulseDefinition.m_ImpulseDuration;
+            }
+
+            _isPlaying = false;
         }
     }
 }
