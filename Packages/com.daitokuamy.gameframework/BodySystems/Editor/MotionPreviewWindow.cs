@@ -37,6 +37,29 @@ namespace GameFramework.BodySystems.Editor {
             CreateWindow<MotionPreviewWindow>(ObjectNames.NicifyVariableName(nameof(MotionPreviewWindow)));
         }
 
+        [MenuItem("CONTEXT/Animator/GameFramework/Motion Preview")]
+        private static void OpenFromContext(MenuCommand command) {
+            var window = CreateWindow<MotionPreviewWindow>(ObjectNames.NicifyVariableName(nameof(MotionPreviewWindow)));
+            window.Setup(command.context as Animator, null);
+        }
+
+        /// <summary>
+        /// 外部初期化用関数
+        /// </summary>
+        private void Setup(Animator animator, AnimationClip clip) {
+            _animator = animator;
+            _previewClip = clip;
+            
+            if (_animator != null) {
+                titleContent = new GUIContent($"[Preview]{_animator.name}");
+            }
+
+            
+            SetupGraph();
+            SetupPlayable();
+            SetupRigBuilder();
+        }
+
         /// <summary>
         /// Playableの初期化
         /// </summary>
@@ -231,6 +254,7 @@ namespace GameFramework.BodySystems.Editor {
                 _previewClip = EditorGUILayout.ObjectField("PreviewClip", _previewClip, typeof(AnimationClip), true) as AnimationClip;
                 if (scope.changed) {
                     SetupPlayable();
+                    SetupRigBuilder();
                 }
             }
 
