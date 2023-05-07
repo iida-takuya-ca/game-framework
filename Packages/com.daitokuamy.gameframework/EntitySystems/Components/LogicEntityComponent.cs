@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using GameFramework.LogicSystems;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
     /// LogicをEntityと紐づけるためのComponent
     /// </summary>
-    public class LogicEntityComponent : EntityComponent {
+    [Preserve]
+    public sealed class LogicEntityComponent : EntityComponent {
         // ロジックのキャッシュ
         private Dictionary<Type, EntityLogic> _logics = new Dictionary<Type, EntityLogic>();
 

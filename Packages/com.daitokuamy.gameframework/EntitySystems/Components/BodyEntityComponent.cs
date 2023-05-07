@@ -1,12 +1,14 @@
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
     /// BodyをEntityと紐づけるためのComponent
     /// </summary>
-    public class BodyEntityComponent : EntityComponent {
+    [Preserve]
+    public sealed class BodyEntityComponent : EntityComponent {
         // 最後に残っていたBodyのTransform情報
         private Vector3? _lastPosition;
         private Quaternion? _lastRotation;

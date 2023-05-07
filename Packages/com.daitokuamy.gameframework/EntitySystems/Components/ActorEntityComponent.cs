@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameFramework.Core;
+using UnityEngine.Scripting;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
     /// ActorをEntityと紐づけるためのComponent
     /// </summary>
-    public class ActorEntityComponent : EntityComponent {
+    [Preserve]
+    public sealed class ActorEntityComponent : EntityComponent {
         /// <summary>
         /// Actor管理情報
         /// </summary>

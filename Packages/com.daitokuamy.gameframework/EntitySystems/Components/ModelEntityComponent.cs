@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using GameFramework.ModelSystems;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace GameFramework.EntitySystems {
     /// <summary>
     /// ModelをEntityと紐づけるためのComponent
     /// </summary>
-    public class ModelEntityComponent : EntityComponent {
+    [Preserve]
+    public sealed class ModelEntityComponent : EntityComponent {
         // モデルのキャッシュ
         private Dictionary<Type, IModel> _models = new Dictionary<Type, IModel>();
 

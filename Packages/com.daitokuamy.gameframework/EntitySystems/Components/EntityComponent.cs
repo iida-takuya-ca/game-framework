@@ -7,6 +7,7 @@ namespace GameFramework.EntitySystems {
     /// <summary>
     /// Entity拡張用コンポーネント基底
     /// </summary>
+    [Preserve]
     public abstract class EntityComponent : IEntityComponent, IScope {
         // Attach中のScope
         private DisposableScope _attachScope = new DisposableScope();
@@ -18,13 +19,6 @@ namespace GameFramework.EntitySystems {
 
         // AttachされているEntity
         public Entity Entity { get; private set; } = null;
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        [Preserve]
-        public EntityComponent() {
-        }
 
         /// <summary>
         /// 廃棄時処理
