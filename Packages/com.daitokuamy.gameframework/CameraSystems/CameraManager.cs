@@ -387,7 +387,7 @@ namespace GameFramework.CameraSystems {
             CinemachineBlendDefinition defaultBlend, MonoBehaviour owner) {
             // Cameraに対するBlend情報を探す
             _toCameraBlends.TryGetValue(toCamera, out var toBlend);
-            _fromCameraBlends.TryGetValue(toCamera, out var fromBlend);
+            _fromCameraBlends.TryGetValue(fromCamera, out var fromBlend);
 
             // Toが優先
             if (toBlend != null) {
