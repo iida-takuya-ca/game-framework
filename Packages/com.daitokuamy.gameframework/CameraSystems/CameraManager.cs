@@ -73,15 +73,6 @@ namespace GameFramework.CameraSystems {
             }
 
             /// <summary>
-            /// 更新処理
-            /// </summary>
-            public void Update(float deltaTime) {
-                if (Controller != null) {
-                    Controller.Update(deltaTime);
-                }
-            }
-
-            /// <summary>
             /// コントローラーの設定
             /// </summary>
             public void SetController(ICameraController controller) {
@@ -119,29 +110,38 @@ namespace GameFramework.CameraSystems {
 
         [SerializeField, Tooltip("仮想カメラ用のBrain")]
         private CinemachineBrain _brain;
+
         [SerializeField, Tooltip("仮想カメラを配置しているRootObject")]
         private GameObject _virtualCameraRoot;
+
         [SerializeField, Tooltip("仮想カメラの基準Transformを配置しているRootObject")]
         private GameObject _targetPointRoot;
+
         [SerializeField, Tooltip("デフォルトで使用するカメラ名")]
         private string _defaultCameraName = "Default";
 
         // 初期化済みフラグ
         private bool _initialized;
+
         // 廃棄済みフラグ
         private bool _disposed;
+
         // Brainの初期状態のUpdateMethod
         private CinemachineBrain.UpdateMethod _defaultUpdateMethod;
+
         // カメラハンドリング用情報
         private Dictionary<string, CameraHandler> _cameraHandlers = new();
+
         // 基準Transform
         private Dictionary<string, Transform> _targetPoints = new();
+
         // カメラブレンド情報
         private Dictionary<ICinemachineCamera, CameraBlend> _toCameraBlends = new();
         private Dictionary<ICinemachineCamera, CameraBlend> _fromCameraBlends = new();
 
         // 出力先のカメラ
         public Camera OutputCamera => _brain != null ? _brain.OutputCamera : null;
+
         // LayeredTime
         public LayeredTime LayeredTime { get; private set; } = new LayeredTime();
 
@@ -315,7 +315,18 @@ namespace GameFramework.CameraSystems {
 
             // Controllerの更新
             foreach (var pair in _cameraHandlers) {
-                pair.Value.Update(deltaTime);
+                if (pair.Value.Controller == null) {
+                    continue;
+                }
+                pair.Value.Controller.Update(deltaTime);
+            }
+
+            // Componentの更新
+            foreach (var pair in _cameraHandlers) {
+                if (pair.Value.Component == null) {
+                    continue;
+                }
+                pair.Value.Component.Update(deltaTime);
             }
 
             // Brainの更新

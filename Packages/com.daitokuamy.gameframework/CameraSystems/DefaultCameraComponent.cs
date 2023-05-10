@@ -7,6 +7,7 @@ namespace GameFramework.CameraSystems {
     public class DefaultCameraComponent : ICameraComponent {
         // アクティブ状態
         bool ICameraComponent.IsActive => VirtualCamera != null && VirtualCamera.gameObject.activeSelf;
+
         // 基本カメラ
         ICinemachineCamera ICameraComponent.BaseCamera => VirtualCamera;
 
@@ -49,6 +50,12 @@ namespace GameFramework.CameraSystems {
             }
 
             VirtualCamera.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        void ICameraComponent.Update(float deltaTime) {
         }
     }
 }

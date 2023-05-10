@@ -7,6 +7,7 @@ namespace GameFramework.CameraSystems {
     public interface ICameraComponent {
         // アクティブ状態
         bool IsActive { get; }
+
         // 基本になるCinemachineCamera
         ICinemachineCamera BaseCamera { get; }
 
@@ -19,5 +20,10 @@ namespace GameFramework.CameraSystems {
         /// 非アクティブ化
         /// </summary>
         void Deactivate();
+
+        /// <summary>
+        /// 更新処理
+        /// </summary>
+        void Update(float deltaTime);
     }
 }
