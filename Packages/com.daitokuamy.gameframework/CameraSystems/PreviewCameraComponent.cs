@@ -47,6 +47,16 @@ namespace GameFramework.CameraSystems {
             get => _lookAtOffset;
             set => _lookAtOffset = value;
         }
+        // ニアクリップ
+        public float NearClip {
+            get => VirtualCamera.m_Lens.NearClipPlane;
+            set => VirtualCamera.m_Lens.NearClipPlane = Mathf.Clamp(value, 0.01f, FarClip);
+        }
+        // ファークリップ
+        public float FarClip {
+            get => VirtualCamera.m_Lens.FarClipPlane;
+            set => VirtualCamera.m_Lens.FarClipPlane = Mathf.Clamp(value, NearClip, float.MaxValue);
+        }
 
         /// <summary>
         /// カメラ更新処理
