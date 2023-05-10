@@ -30,7 +30,7 @@ namespace GameFramework.CameraSystems {
         // X角度
         public float AngleX {
             get => _angleX;
-            set => _angleX = Mathf.Clamp(value, -179.0f, 179.0f);
+            set => _angleX = Mathf.Clamp(value, -89.9f, 89.9f);
         }
         // Y角度
         public float AngleY {
@@ -64,9 +64,8 @@ namespace GameFramework.CameraSystems {
         protected override void UpdateInternal(float deltaTime) {
             // 距離と角度から姿勢を設定
             var basePosition = _lookAt != null ? _lookAt.position : Vector3.zero;
-            var rotation = Quaternion.Euler(_angleX, _angleY, 0.0f);
-            var relativePosition = rotation * Vector3.back * _distance;
-            basePosition += rotation * _lookAtOffset;
+            var relativePosition = Quaternion.Euler(_angleX, _angleY, 0.0f) * Vector3.back * _distance;
+            basePosition += Quaternion.Euler(0.0f, _angleY, 0.0f) * _lookAtOffset;
 
             VirtualCamera.transform.position = basePosition + relativePosition;
             VirtualCamera.transform.LookAt(basePosition);
