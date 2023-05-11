@@ -83,9 +83,11 @@ namespace GameFramework.ProjectileSystems {
             _projectilePlayer = new ProjectilePlayer();
 
             // Rootの生成
-            var rootObj = new GameObject("ProjectileObjectManager");
-            UnityEngine.Object.DontDestroyOnLoad(rootObj);
-            _rootTransform = rootObj.transform;
+            var root = new GameObject("ProjectileObjectManager", typeof(ProjectileObjectManagerDispatcher));
+            var dispatcher = root.GetComponent<ProjectileObjectManagerDispatcher>();
+            dispatcher.Setup(this);
+            UnityEngine.Object.DontDestroyOnLoad(root);
+            _rootTransform = root.transform;
         }
 
         /// <summary>
@@ -199,6 +201,27 @@ namespace GameFramework.ProjectileSystems {
         }
 
         /// <summary>
+        /// 再生しているエフェクトとPoolの状態をクリア
+        /// </summary>
+        public void Clear() {
+            // 再生状態を停止
+            _projectilePlayer.StopAll();
+
+            // Poolに返却
+            foreach (var info in _playingInfos) {
+                info.pool.Release(info.projectileObject);
+            }
+            _playingInfos.Clear();
+            
+            // Poolを削除
+            foreach (var pool in _objectPools.Values) {
+                pool.Dispose();
+            }
+
+            _objectPools.Clear();
+        }
+
+        /// <summary>
         /// 更新処理
         /// </summary>tile
         protected override void UpdateInternal() {
@@ -218,6 +241,9 @@ namespace GameFramework.ProjectileSystems {
             }
         }
 
+        /// <summary>
+        /// 飛翔体オブジェクトの更新
+        /// </summary>
         private void UpdateProjectileObjects(float deltaTime) {
             _projectilePlayer.Update(deltaTime);
 
@@ -240,10 +266,13 @@ namespace GameFramework.ProjectileSystems {
         protected override void DisposeInternal() {
             _projectilePlayer.Dispose();
 
+            // Poolに返却
             foreach (var info in _playingInfos) {
                 info.pool.Release(info.projectileObject);
             }
-
+            _playingInfos.Clear();
+            
+            // Poolを削除
             foreach (var pool in _objectPools.Values) {
                 pool.Dispose();
             }

@@ -17,7 +17,7 @@ namespace GameFramework.AssetSystems {
         /// </summary>
         /// <param name="assetManager">読み込みに使用するAssetManager</param>
         /// <param name="unloadScope">解放スコープ</param>
-        public AssetHandle<TAsset> LoadAsync(AssetManager assetManager, IScope unloadScope) {
+        public AssetHandle<TAsset> LoadAsync(AssetManager assetManager, IScope unloadScope = null) {
             var address = Address;
             var handle = AssetHandle<TAsset>.Empty;
 
@@ -37,8 +37,10 @@ namespace GameFramework.AssetSystems {
             }
 
             if (handle.IsValid) {
-                // 解放処理を仕込む
-                unloadScope.OnExpired += () => handle.Release();
+                if (unloadScope != null) {
+                    // 解放処理を仕込む
+                    unloadScope.OnExpired += () => handle.Release();
+                }
             }
             else {
                 Debug.LogError($"Not found provider. [{address}]");
