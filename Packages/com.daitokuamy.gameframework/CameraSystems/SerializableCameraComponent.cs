@@ -19,6 +19,13 @@ namespace GameFramework.CameraSystems {
         protected TCamera VirtualCamera => _virtualCamera;
         
         /// <summary>
+        /// 初期化処理
+        /// </summary>
+        void ICameraComponent.Initialize() {
+            InitializeInternal();
+        }
+        
+        /// <summary>
         /// カメラアクティブ時処理
         /// </summary>
         void ICameraComponent.Activate() {
@@ -59,6 +66,12 @@ namespace GameFramework.CameraSystems {
             }
             
             UpdateInternal(deltaTime);
+        }
+
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        protected virtual void InitializeInternal() {
         }
 
         /// <summary>

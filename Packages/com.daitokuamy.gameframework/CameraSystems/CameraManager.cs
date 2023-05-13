@@ -364,6 +364,7 @@ namespace GameFramework.CameraSystems {
                 if (component == null) {
                     component = new DefaultCameraComponent(vcam);
                 }
+                component.Initialize();
 
                 var handler = new CameraHandler(cameraName, component);
                 _cameraHandlers[cameraName] = handler;

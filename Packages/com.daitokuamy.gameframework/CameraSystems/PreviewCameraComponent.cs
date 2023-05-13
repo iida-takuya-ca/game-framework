@@ -8,14 +8,16 @@ namespace GameFramework.CameraSystems {
     public class PreviewCameraComponent : SerializableCameraComponent<CinemachineVirtualCamera> {
         [SerializeField, Tooltip("距離")]
         private float _distance = 10.0f;
-        [SerializeField, Tooltip("注視ターゲット")]
-        private Transform _lookAt;
-
-        // 角度
-        private float _angleX;
-        private float _angleY;
-        // 注視点オフセット
+        [SerializeField, Tooltip("注視点オフセット")]
         private Vector3 _lookAtOffset;
+        [SerializeField, Tooltip("X軸回転"), Range(-89.9f, 89.9f)]
+        private float _angleX;
+        [SerializeField, Tooltip("Y軸回転"), Range(0.0f, 360.0f)]
+        private float _angleY;
+
+        // Cinemachine用のキャッシュ
+        private CinemachineTransposer _transposer;
+        private CinemachineComposer _composer;
         
         // FOV
         public float Fov {
@@ -39,8 +41,8 @@ namespace GameFramework.CameraSystems {
         }
         // 注視対象
         public Transform LookAt {
-            get => _lookAt;
-            set => _lookAt = value;
+            get => VirtualCamera.LookAt;
+            set => VirtualCamera.LookAt = value;
         }
         // 注視点オフセット
         public Vector3 LookAtOffset {
@@ -59,16 +61,30 @@ namespace GameFramework.CameraSystems {
         }
 
         /// <summary>
+        /// 初期化処理
+        /// </summary>
+        protected override void InitializeInternal() {
+            // 基本的なコンポーネントは削除する
+            VirtualCamera.DestroyCinemachineComponent<CinemachineComponentBase>();
+        }
+
+        /// <summary>
         /// カメラ更新処理
         /// </summary>
         protected override void UpdateInternal(float deltaTime) {
-            // 距離と角度から姿勢を設定
-            var basePosition = _lookAt != null ? _lookAt.position : Vector3.zero;
+            var trans = VirtualCamera.transform;
+            var lookAt = VirtualCamera.LookAt;
+            
+            // 相対位置計算
             var relativePosition = Quaternion.Euler(_angleX, _angleY, 0.0f) * Vector3.back * _distance;
-            basePosition += Quaternion.Euler(0.0f, _angleY, 0.0f) * _lookAtOffset;
 
-            VirtualCamera.transform.position = basePosition + relativePosition;
-            VirtualCamera.transform.LookAt(basePosition);
+            // LookAtを元に位置を計算
+            var basePosition = lookAt != null ? lookAt.position : Vector3.zero;
+            basePosition += Quaternion.Euler(0.0f, _angleY, 0.0f) * _lookAtOffset;
+            
+            // 姿勢に反映
+            trans.position = basePosition + relativePosition;
+            trans.LookAt(basePosition);
         }
     }
 }

@@ -21,6 +21,12 @@ namespace GameFramework.CameraSystems {
         public DefaultCameraComponent(CinemachineVirtualCameraBase virtualCamera) {
             VirtualCamera = virtualCamera;
         }
+        
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        void ICameraComponent.Initialize(){
+        }
 
         /// <summary>
         /// アクティブ化

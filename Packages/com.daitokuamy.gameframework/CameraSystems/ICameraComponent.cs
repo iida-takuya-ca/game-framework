@@ -12,6 +12,11 @@ namespace GameFramework.CameraSystems {
         ICinemachineCamera BaseCamera { get; }
 
         /// <summary>
+        /// 初期化処理
+        /// </summary>
+        void Initialize();
+
+        /// <summary>
         /// アクティブ化
         /// </summary>
         void Activate();
