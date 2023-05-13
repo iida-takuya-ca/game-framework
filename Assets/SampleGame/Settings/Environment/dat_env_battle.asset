@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: dat_env_battle
   m_EditorClassIdentifier: 
   defaultSettings:
-    sun: {fileID: 0}
     subtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
     ambientMode: 1
-    ambientSkyColor: {r: 0.91237986, g: 0.9131333, b: 0.9528302, a: 1}
+    ambientSkyColor: {r: 1, g: 1, b: 1, a: 1}
     ambientEquatorColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
     ambientGroundColor: {r: 0.5424528, g: 0.5865548, b: 1, a: 1}
     ambientIntensity: 1

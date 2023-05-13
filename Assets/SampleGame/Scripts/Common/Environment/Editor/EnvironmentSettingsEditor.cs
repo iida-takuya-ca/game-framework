@@ -20,7 +20,9 @@ namespace SampleGame.Editor {
         public override void OnInspectorGUI() {
             base.OnInspectorGUI();
 
-            if (GUI.changed) {
+            var changed = GUI.changed || Event.current.commandName == "UndoRedoPerformed";
+
+            if (changed) {
                 ApplyDataEditor();
                 ApplyEnvironment();
             }
@@ -66,13 +68,9 @@ namespace SampleGame.Editor {
                 manager.SetDirty();
             }
             else {
-                var resolver = (IEnvironmentResolver)new EnvironmentResolver();
-                var data = _data.objectReferenceValue as EnvironmentContextData;
-                var sun = _sun.objectReferenceValue as Light;
-                if (data != null) {
-                    var context = data.CreateContext();
-                    context.Sun = sun;
-                    resolver.Apply(context);
+                var settings = target as EnvironmentSettings;
+                if (settings != null) {
+                    settings.ForceApplyEnvironment();
                 }
             }
         }

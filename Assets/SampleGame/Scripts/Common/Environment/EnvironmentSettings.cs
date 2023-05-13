@@ -18,10 +18,32 @@ namespace SampleGame {
         private EnvironmentHandle _handle;
 
         /// <summary>
+        /// 強制的に環境を上書きする(Debug用)
+        /// </summary>
+        public void ForceApplyEnvironment() {
+            var resolver = (IEnvironmentResolver)new EnvironmentResolver();
+            if (_data != null) {
+                var context = _data.CreateContext();
+                context.Sun = _sun;
+                resolver.Apply(context);
+            }
+
+            if (_sun != null) {
+                _sun.enabled = true;
+            }
+        }
+
+        /// <summary>
         /// アクティブ時処理
         /// </summary>
         private void OnEnable() {
             if (_data == null) {
+                return;
+            }
+
+            // 非再生中はActiveになった瞬間に反映
+            if (!Application.isPlaying) {
+                ForceApplyEnvironment();
                 return;
             }
 
