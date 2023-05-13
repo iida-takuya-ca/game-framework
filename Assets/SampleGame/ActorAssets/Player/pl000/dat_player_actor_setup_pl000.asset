@@ -16,3 +16,4 @@ MonoBehaviour:
   vibrateClip: {fileID: 1453985722396304077, guid: 6d57102141fc7184db95eafa963b4572, type: 3}
   angularVelocity: 360
   bulletPrefab: {fileID: 6348469947777406372, guid: 62f1c922c68302944a70560f3ed8b73f, type: 3}
+  auraPrefab: {fileID: 164126522019934283, guid: 2fd65f5e89652d04eaddcdd082f96f42, type: 3}

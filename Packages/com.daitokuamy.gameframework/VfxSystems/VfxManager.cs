@@ -40,11 +40,62 @@ namespace GameFramework.VfxSystems {
 
             // 再生中か
             public bool IsPlaying => _playingInfo != null && _playingInfo.IsPlaying();
+            // 制御座標
+            public Vector3 ContextPosition {
+                get {
+                    if (_playingInfo == null) {
+                        return Vector3.zero;
+                    }
+
+                    return _playingInfo.GetContextPosition();
+                }
+                set {
+                    if (_playingInfo == null) {
+                        return;
+                    }
+                    
+                    _playingInfo.SetContextPosition(value);
+                }
+            }
+            // 制御向き
+            public Quaternion ContextRotation {
+                get {
+                    if (_playingInfo == null) {
+                        return Quaternion.identity;
+                    }
+
+                    return _playingInfo.GetContextRotation();
+                }
+                set {
+                    if (_playingInfo == null) {
+                        return;
+                    }
+                    
+                    _playingInfo.SetContextRotation(value);
+                }
+            }
+            // 制御スケール
+            public Vector3 ContextLocalScale {
+                get {
+                    if (_playingInfo == null) {
+                        return Vector3.zero;
+                    }
+
+                    return _playingInfo.GetContextLocalScale();
+                }
+                set {
+                    if (_playingInfo == null) {
+                        return;
+                    }
+                    
+                    _playingInfo.SetContextLocalScale(value);
+                }
+            }
 
             /// <summary>
             /// コンストラクタ
             /// </summary>
-            public Handle(PlayingInfo playingInfo) {
+            internal Handle(PlayingInfo playingInfo) {
                 _playingInfo = playingInfo;
             }
 
@@ -62,12 +113,12 @@ namespace GameFramework.VfxSystems {
             /// <summary>
             /// 停止
             /// </summary>
-            public void Stop(bool immediate = false) {
+            public void Stop(bool immediate = false, bool autoDispose = false) {
                 if (_playingInfo == null) {
                     return;
                 }
 
-                _playingInfo.Stop(immediate);
+                _playingInfo.Stop(immediate, autoDispose);
             }
 
             /// <summary>
@@ -77,7 +128,7 @@ namespace GameFramework.VfxSystems {
                 if (_playingInfo == null) {
                     return;
                 }
-
+                
                 _playingInfo.Dispose();
                 _playingInfo = null;
             }
@@ -86,18 +137,18 @@ namespace GameFramework.VfxSystems {
         /// <summary>
         /// 再生中情報
         /// </summary>
-        public class PlayingInfo : IDisposable {
-            // 操作用の情報
-            private readonly Context _context;
+        internal class PlayingInfo : IDisposable {
             // 追従基準にするTransform
             private readonly Transform _positionRoot;
             private readonly Transform _rotationRoot;
             // TimeScale変更用LayeredTime
             private readonly LayeredTime _layeredTime;
+            // 操作用の情報
+            private Context _context;
             // 自動廃棄するか
             private bool _autoDispose;
-            // 初回更新フラグ
-            private bool _initialized;
+            // Transform更新フラグ
+            private bool _transformDirty;
 
             // 制御対象Object情報
             public ObjectInfo ObjectInfo { get; private set; }
@@ -129,7 +180,7 @@ namespace GameFramework.VfxSystems {
                     return;
                 }
 
-                Stop(true);
+                Stop(true, true);
                 Disposed = true;
 
                 if (_layeredTime != null) {
@@ -148,8 +199,8 @@ namespace GameFramework.VfxSystems {
                     return;
                 }
 
-                var first = !_initialized;
-                _initialized = true;
+                var dirty = _transformDirty;
+                _transformDirty = false;
 
                 var deltaTime = _layeredTime != null ? _layeredTime.DeltaTime : Time.deltaTime;
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
@@ -161,15 +212,15 @@ namespace GameFramework.VfxSystems {
                     component.Update(deltaTime);
                 }
 
-                if (first || _context.constraintPosition) {
+                if (dirty || _context.constraintPosition) {
                     UpdatePosition();
                 }
 
-                if (first || _context.constraintRotation) {
+                if (dirty || _context.constraintRotation) {
                     UpdateRotation();
                 }
 
-                if (first) {
+                if (dirty) {
                     UpdateScale();
                 }
 
@@ -230,10 +281,13 @@ namespace GameFramework.VfxSystems {
             /// <summary>
             /// 停止処理
             /// </summary>
-            public void Stop(bool immediate) {
+            public void Stop(bool immediate, bool autoDispose) {
                 if (Disposed) {
                     return;
                 }
+
+                // 停止時にAutoDisposeが指定されたら上書きする
+                _autoDispose |= autoDispose;
 
                 for (var i = 0; i < ObjectInfo.components.Length; i++) {
                     var component = ObjectInfo.components[i];
@@ -244,6 +298,75 @@ namespace GameFramework.VfxSystems {
                         component.Stop();
                     }
                 }
+            }
+
+            /// <summary>
+            /// 座標の取得
+            /// </summary>
+            public Vector3 GetContextPosition() {
+                if (Disposed) {
+                    return Vector3.zero;
+                }
+
+                return _context.relativePosition;
+            }
+
+            /// <summary>
+            /// 向きの取得
+            /// </summary>
+            public Quaternion GetContextRotation() {
+                if (Disposed) {
+                    return Quaternion.identity;
+                }
+
+                return Quaternion.Euler(_context.relativeAngles);
+            }
+
+            /// <summary>
+            /// スケールの取得
+            /// </summary>
+            public Vector3 GetContextLocalScale() {
+                if (Disposed) {
+                    return Vector3.one;
+                }
+
+                return _context.localScale;
+            }
+
+            /// <summary>
+            /// 座標の設定
+            /// </summary>
+            public void SetContextPosition(Vector3 position) {
+                if (Disposed) {
+                    return;
+                }
+
+                _context.relativePosition = position;
+                _transformDirty = true;
+            }
+
+            /// <summary>
+            /// 座標の設定
+            /// </summary>
+            public void SetContextRotation(Quaternion rotation) {
+                if (Disposed) {
+                    return;
+                }
+
+                _context.relativeAngles = rotation.eulerAngles;
+                _transformDirty = true;
+            }
+
+            /// <summary>
+            /// スケールの設定
+            /// </summary>
+            public void SetContextLocalScale(Vector3 localScale) {
+                if (Disposed) {
+                    return;
+                }
+
+                _context.localScale = localScale;
+                _transformDirty = true;
             }
 
             /// <summary>
@@ -317,22 +440,32 @@ namespace GameFramework.VfxSystems {
         }
 
         /// <summary>
-        /// 再生
+        /// インスタンスの取得(再生はコールせずに自分でハンドリングする)
+        /// ※使用が終わった場合、HandleをDisposeしてください
         /// </summary>
         /// <param name="context">再生に必要なコンテキスト</param>
         /// <param name="positionRoot">座標決定の基準にするTransform</param>
         /// <param name="rotationRoot">回転決定の基準にするTransform</param>
         /// <param name="layeredTime">再生速度をコントロールするためのLayeredTime</param>
-        /// <param name="autoDispose">再生停止時に自動削除するか</param>
-        public Handle Play(Context context, Transform positionRoot = null, Transform rotationRoot = null, LayeredTime layeredTime = null, bool autoDispose = true) {
-            // Instance生成
-            var objectInfo = GetObjectInfo(context.prefab);
+        public Handle Get(Context context, Transform positionRoot = null, Transform rotationRoot = null, LayeredTime layeredTime = null) {
+            // 再生情報の生成
+            var playingInfo = CreatePlayingInfo(context, positionRoot, rotationRoot, layeredTime, false);
+            // Handle化して返却
+            return new Handle(playingInfo);
+        }
 
-            // 再生情報の構築
-            var playingInfo = new PlayingInfo(objectInfo, context, positionRoot, rotationRoot, layeredTime, autoDispose);
-            _playingInfos.Add(playingInfo);
-            playingInfo.Play();
-
+        /// <summary>
+        /// 再生(再生完了時に自動的にHandleがDisposeされる)
+        /// </summary>
+        /// <param name="context">再生に必要なコンテキスト</param>
+        /// <param name="positionRoot">座標決定の基準にするTransform</param>
+        /// <param name="rotationRoot">回転決定の基準にするTransform</param>
+        /// <param name="layeredTime">再生速度をコントロールするためのLayeredTime</param>
+        public Handle Play(Context context, Transform positionRoot = null, Transform rotationRoot = null, LayeredTime layeredTime = null) {
+            // 再生情報の生成
+            var playingInfo = CreatePlayingInfo(context, positionRoot, rotationRoot, layeredTime, true);
+            // 再生
+            playingInfo?.Play();
             // Handle化して返却
             return new Handle(playingInfo);
         }
@@ -392,9 +525,36 @@ namespace GameFramework.VfxSystems {
         }
 
         /// <summary>
+        /// 再生情報の生成
+        /// </summary>
+        /// <param name="context">再生に必要なコンテキスト</param>
+        /// <param name="positionRoot">座標決定の基準にするTransform</param>
+        /// <param name="rotationRoot">回転決定の基準にするTransform</param>
+        /// <param name="layeredTime">再生速度をコントロールするためのLayeredTime</param>
+        /// <param name="autoDispose">再生完了時に自動で廃棄するか</param>
+        private PlayingInfo CreatePlayingInfo(Context context, Transform positionRoot, Transform rotationRoot, LayeredTime layeredTime, bool autoDispose) {
+            // Instance生成
+            var objectInfo = GetObjectInfo(context.prefab);
+            if (objectInfo == null) {
+                return null;
+            }
+
+            // 再生情報の構築
+            var playingInfo = new PlayingInfo(objectInfo, context, positionRoot, rotationRoot, layeredTime, autoDispose);
+            _playingInfos.Add(playingInfo);
+
+            return playingInfo;
+        }
+
+        /// <summary>
         /// ObjectInfoの取得
         /// </summary>
         private ObjectInfo GetObjectInfo(GameObject prefab) {
+            if (prefab == null) {
+                Debug.unityLogger.LogError(nameof(VfxManager), "prefab is null.");
+                return null;
+            }
+            
             // Poolが作られていなければ、ここで生成
             if (!_objectPools.TryGetValue(prefab, out var pool)) {
                 pool = CreatePool(prefab);
@@ -409,7 +569,7 @@ namespace GameFramework.VfxSystems {
         /// </summary>
         private void ReturnObjectInfo(ObjectInfo objectInfo) {
             if (!_objectPools.TryGetValue(objectInfo.prefab, out var pool)) {
-                Debug.LogWarning($"Not found object pool. {objectInfo.prefab.name}");
+                Debug.unityLogger.LogWarning(nameof(VfxManager), $"Not found object pool. {objectInfo.prefab.name}");
                 return;
             }
 
@@ -428,6 +588,12 @@ namespace GameFramework.VfxSystems {
                     FindRootParticleSystems(instance.transform, _workParticleSystems);
                     vfxComponents.AddRange(_workParticleSystems.Select(x => new ParticleSystemVfxComponent(x)));
                     instance.SetActive(false);
+                    
+                    // Componentを一度停止状態にしておく
+                    foreach (var component in vfxComponents) {
+                        component.StopImmediate();
+                    }
+                    
                     return new ObjectInfo {
                         prefab = prefab,
                         root = instance,

@@ -24,6 +24,7 @@ namespace SampleGame {
             AnimationClip VibrateClip { get; }
             float AngularVelocity { get; }
             GameObject BulletPrefab { get; }
+            GameObject AuraPrefab { get; }
         }
 
         /// <summary>

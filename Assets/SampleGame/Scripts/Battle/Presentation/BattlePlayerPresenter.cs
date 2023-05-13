@@ -19,6 +19,7 @@ namespace SampleGame {
         private PlayerActor _actor;
         private BattlePlayerModel _model;
         private GimmickController _gimmickController;
+        private VfxManager.Handle _auraVfxHandle;
 
         /// <summary>
         /// コンストラクタ
@@ -36,6 +37,17 @@ namespace SampleGame {
         protected override void ActivateInternal(IScope scope) {
             var ct = scope.ToCancellationToken();
             var input = Services.Get<BattleInput>();
+            var vfxManager = Services.Get<VfxManager>();
+            
+            var body = _actor.Body;
+            var context = new VfxManager.Context {
+                prefab = _actor.Data.AuraPrefab,
+                constraintPosition = true,
+                constraintRotation = true,
+                localScale = Vector3.one,
+            };
+            _auraVfxHandle = vfxManager.Get(context, body.Transform, body.Transform, body.LayeredTime);
+            _auraVfxHandle.ScopeTo(scope);
             
             // SequenceEvent登録
             BindSequenceEventHandlers(scope);
@@ -154,6 +166,19 @@ namespace SampleGame {
                 projectileObjectManager.Play(_actor.Data.BulletPrefab, projectile, LayerMask.GetMask("Default"), 1,
                     null, null,
                     result => { Debug.Log($"Hit:[{result.hitCount}]{result.raycastHit.point}"); });
+            }
+            
+            // テスト用にループエフェクト
+            if (Keyboard.current.oKey.isPressed) {
+                _auraVfxHandle.ContextPosition += Vector3.right * _actor.Body.DeltaTime;
+                if (!_auraVfxHandle.IsPlaying) {
+                    _auraVfxHandle.Play();
+                }
+            }
+            else {
+                if (_auraVfxHandle.IsPlaying) {
+                    _auraVfxHandle.Stop();
+                }
             }
         }
 
