@@ -6,7 +6,7 @@ namespace GameFramework.AssetSystems {
     /// <summary>
     /// シーンアセットリクエスト用ハンドル
     /// </summary>
-    public struct SceneAssetHandle : IProcess {
+    public struct SceneAssetHandle : IProcess<SceneHolder> {
         // 無効なSceneAssetHandle
         public static readonly SceneAssetHandle Empty = new SceneAssetHandle();
         // IEnumerator用
@@ -23,6 +23,8 @@ namespace GameFramework.AssetSystems {
         public Exception Exception => _info?.Exception ?? null;
         // 有効なハンドルか
         public bool IsValid => _info != null;
+        // 結果
+        SceneHolder IProcess<SceneHolder>.Result => SceneHolder;
 
         /// <summary>
         /// コンストラクタ

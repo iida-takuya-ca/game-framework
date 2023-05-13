@@ -1,75 +1,36 @@
 ﻿using System;
+using GameFramework.Core;
+using Object = UnityEngine.Object;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
     /// アセット格納クラス
     /// </summary>
-    public abstract class AssetStorage<T> : IAssetStorage
-        where T : AssetStorage<T>, new() {
-        private static T s_storage;
-
+    public abstract class AssetStorage : IDisposable {
         // アセット管理クラス
-        protected AssetManager AssetManager { get; private set; }
-        
+        private readonly AssetManager _assetManager;
+
         /// <summary>
-        /// ストレージの生成
+        /// コンストラクタ
         /// </summary>
-        public static T Create(AssetManager assetManager) {
-            if (s_storage == null) {
-                s_storage = new T();
-                ((IAssetStorage)s_storage).Initialize(assetManager);
-            }
-            
-            return s_storage;
+        /// <param name="assetManager">読み込みに使用するAssetManager</param>
+        public AssetStorage(AssetManager assetManager) {
+            _assetManager = assetManager;
         }
 
         /// <summary>
-        /// ストレージの取得
+        /// アセットの読み込み
         /// </summary>
-        public static T Get() {
-            return s_storage;
-        }
-
-        /// <summary>
-        /// 削除処理
-        /// </summary>
-        public static void Delete() {
-            if (s_storage == null) {
-                return;
-            }
-            
-            ((IDisposable)s_storage).Dispose();
-        }
-
-        /// <summary>
-        /// 初期化処理
-        /// </summary>
-        void IAssetStorage.Initialize(AssetManager assetManager) {
-            s_storage.AssetManager = assetManager;
-            InitializeInternal();
+        /// <param name="request">読み込みリクエスト</param>
+        /// <param name="unloadScope">アンロードトリガにするScope(NULL指定の場合は、自身でHandleをDispose)</param>
+        protected AssetHandle<TAsset> LoadAssetAsyncInternal<TAsset>(AssetRequest<TAsset> request, IScope unloadScope = null)
+            where TAsset : Object {
+            return request.LoadAsync(_assetManager, unloadScope);
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        void IDisposable.Dispose() {
-            DisposeInternal();
-            
-            if (this == s_storage) {
-                s_storage = null;
-            }
-        }
-
-        /// <summary>
-        /// 初期化処理(Override用)
-        /// </summary>
-        protected virtual void InitializeInternal() {
-        }
-
-        /// <summary>
-        /// 廃棄時処理(Override用)
-        /// </summary>
-        protected virtual void DisposeInternal() {
-        }
+        public abstract void Dispose();
     }
 }

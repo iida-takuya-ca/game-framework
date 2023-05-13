@@ -8,11 +8,10 @@ namespace GameFramework.AssetSystems {
     /// <summary>
     /// プリロード用アセットストレージ
     /// </summary>
-    public abstract class PreloadAssetStorage<TStorage, TAsset> : AssetStorage<TStorage>
-        where TStorage : PreloadAssetStorage<TStorage, TAsset>, new()
+    public class PreloadAssetStorage<TAsset> : AssetStorage
         where TAsset : Object {
         // 読み込み待ち情報
-        public struct Handle : IProcess {
+        public struct LoadHandle : IProcess {
             // 読み込み中のAssetHandleリスト
             private AssetHandle<TAsset>[] _assetHandles;
             
@@ -54,7 +53,7 @@ namespace GameFramework.AssetSystems {
             /// <summary>
             /// コンストラクタ
             /// </summary>
-            public Handle(AssetHandle<TAsset>[] assetHandles) {
+            public LoadHandle(AssetHandle<TAsset>[] assetHandles) {
                 _assetHandles = assetHandles;
             }
 
@@ -78,23 +77,23 @@ namespace GameFramework.AssetSystems {
         private readonly Dictionary<string, CacheInfo> _cacheInfos = new();
 
         /// <summary>
-        /// 読み込んだアセットの全解放
+        /// コンストラクタ
         /// </summary>
-        public static void Clear() {
-            Get().UnloadAssets();
+        /// <param name="assetManager">読み込みに使用するAssetManager</param>
+        public PreloadAssetStorage(AssetManager assetManager) : base(assetManager) {
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        protected override void DisposeInternal() {
+        public override void Dispose() {
             UnloadAssets();
         }
 
         /// <summary>
         /// 読み込み処理
         /// </summary>
-        protected Handle LoadAssetAsync(IEnumerable<AssetRequest<TAsset>> requests) {
+        public LoadHandle LoadAssetsAsync(IEnumerable<AssetRequest<TAsset>> requests) {
             var handles = new List<AssetHandle<TAsset>>();
             
             foreach (var request in requests) {
@@ -105,7 +104,7 @@ namespace GameFramework.AssetSystems {
                 }
                 else {
                     // ハンドルを取得してキャッシュ
-                    var handle = request.LoadAsync(AssetManager);
+                    var handle = LoadAssetAsyncInternal(request);
                     _cacheInfos[address] = new CacheInfo {
                         handle = handle
                     };
@@ -113,13 +112,13 @@ namespace GameFramework.AssetSystems {
                 }
             }
             
-            return new Handle(handles.ToArray());
+            return new LoadHandle(handles.ToArray());
         }
         
         /// <summary>
         /// 読み込み処理
         /// </summary>
-        protected Handle LoadAssetAsync(AssetRequest<TAsset> request) {
+        public LoadHandle LoadAssetAsync(AssetRequest<TAsset> request) {
             var handles = new AssetHandle<TAsset>[1];
             var address = request.Address;
             
@@ -128,20 +127,20 @@ namespace GameFramework.AssetSystems {
             }
             else {
                 // ハンドルを取得してキャッシュ
-                var handle = request.LoadAsync(AssetManager);
+                var handle = LoadAssetAsyncInternal(request);
                 _cacheInfos[address] = new CacheInfo {
                     handle = handle
                 };
                 handles[0] = handle;
             }
             
-            return new Handle(handles);
+            return new LoadHandle(handles);
         }
 
         /// <summary>
         /// 読み込み済みアセットの取得
         /// </summary>
-        protected TAsset GetAsset(string address) {
+        public TAsset GetAsset(string address) {
             if (!_cacheInfos.TryGetValue(address, out var cacheInfo)) {
                 return null;
             }
@@ -153,14 +152,14 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// 読み込み済みアセットの取得
         /// </summary>
-        protected TAsset GetAsset(AssetRequest<TAsset> request) {
+        public TAsset GetAsset(AssetRequest<TAsset> request) {
             return GetAsset(request.Address);
         }
 
         /// <summary>
         /// 解放処理
         /// </summary>
-        protected void UnloadAssets() {
+        public void UnloadAssets() {
             foreach (var info in _cacheInfos.Values) {
                 info.handle.Release();
             }

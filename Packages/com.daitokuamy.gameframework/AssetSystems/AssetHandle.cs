@@ -7,7 +7,7 @@ namespace GameFramework.AssetSystems {
     /// <summary>
     /// アセット用ハンドル
     /// </summary>
-    public struct AssetHandle<T> : IProcess
+    public struct AssetHandle<T> : IProcess<T>
         where T : Object {
         // 無効なAssetHandle
         public static readonly AssetHandle<T> Empty = new AssetHandle<T>();
@@ -25,6 +25,8 @@ namespace GameFramework.AssetSystems {
         public Exception Exception => _info?.Exception;
         // 有効なハンドルか
         public bool IsValid => _info != null;
+        // 結果
+        T IProcess<T>.Result => Asset;
 
         /// <summary>
         /// コンストラクタ

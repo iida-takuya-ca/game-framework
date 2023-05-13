@@ -1,5 +1,7 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using GameFramework.AssetSystems;
 using GameFramework.BodySystems;
 using GameFramework.PlayableSystems;
 using GameFramework.Core;
@@ -11,10 +13,12 @@ namespace SampleGame {
     /// <summary>
     /// モデルビューア管理用クラス
     /// </summary>
-    public class ModelViewerManager : LateUpdatableTaskBehaviour {
+    public class ModelViewerManager : LateUpdatableTaskBehaviour, IDisposable {
         [SerializeField, Tooltip("ビューア用のデータ")]
         private ModelViewerData _data;
 
+        // アセット格納用ストレージ
+        private PoolAssetStorage<ModelViewerBodyData> _bodyDataPoolAssetStorage;
         // Body生成中のScope
         private DisposableScope _bodyScope;
 
@@ -26,24 +30,59 @@ namespace SampleGame {
         public Body CurrentBody { get; private set; }
 
         /// <summary>
+        /// 初期化処理
+        /// </summary>
+        public async UniTask InitializeAsync(CancellationToken ct) {
+            var assetManager = Services.Get<AssetManager>();
+            _bodyDataPoolAssetStorage = new PoolAssetStorage<ModelViewerBodyData>(assetManager, 2);
+            
+            // 初期のBodyDataを読み込み
+            await SetupBodyAsync(_data.defaultBodyDataId, ct);
+        }
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        public void Dispose() {
+            if (_bodyDataPoolAssetStorage != null) {
+                _bodyDataPoolAssetStorage.Dispose();
+                _bodyDataPoolAssetStorage = null;
+            }
+        }
+
+        /// <summary>
         /// Bodyの生成
         /// </summary>
-        public void SetupBody(string bodyDataId, Action onCreated) {
+        public async UniTask SetupBodyAsync(string bodyDataId, CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+            
             CleanupBody();
 
-            _bodyScope = new DisposableScope();
-            var ct = _bodyScope.ToCancellationToken();
+            var data = await _bodyDataPoolAssetStorage.LoadAssetAsync(new ModelViewerBodyDataRequest(bodyDataId))
+                .ToUniTask(cancellationToken:ct);
 
-            var bodyManager = Services.Get<BodyManager>();
+            if (data == null) {
+                return;
+            }
             
-            new ModelViewerBodyDataRequest(bodyDataId)
-                .LoadAsync(_bodyScope, ct)
-                .ContinueWith(data => {
-                    CurrentBodyData = data;
-                    // Bodyの生成
-                    CurrentBody = bodyManager.CreateFromPrefab(data.prefab);
-                    onCreated?.Invoke();
-                });
+            // Bodyの生成
+            var bodyManager = Services.Get<BodyManager>();
+            CurrentBodyData = data;
+            CurrentBody = bodyManager.CreateFromPrefab(data.prefab);
+            
+            // ApplyRootMotionを切る
+            var animator = CurrentBody.GetComponent<Animator>();
+            if (animator != null) {
+                animator.applyRootMotion = false;
+            }
+            
+            // 位置初期化
+            CurrentBody.Position = Vector3.zero;
+            CurrentBody.Rotation = Quaternion.identity;
+            CurrentBody.BaseScale = 1.0f;
+            
+            // モーション適用
+            SetMotion(0);
         }
 
         /// <summary>
@@ -90,6 +129,14 @@ namespace SampleGame {
             }
 
             motionController.Player.Change(clip, 0.2f);
+        }
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        protected override void OnDestroyInternal() {
+            Dispose();
+            base.OnDestroyInternal();
         }
     }
 }

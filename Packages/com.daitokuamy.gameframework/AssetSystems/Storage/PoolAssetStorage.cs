@@ -6,8 +6,7 @@ namespace GameFramework.AssetSystems {
     /// <summary>
     /// プール管理用アセットストレージ
     /// </summary>
-    public abstract class PoolAssetStorage<TStorage, TAsset> : AssetStorage<TStorage>
-        where TStorage : PoolAssetStorage<TStorage, TAsset>, new()
+    public class PoolAssetStorage<TAsset> : AssetStorage
         where TAsset : Object {
         // キャッシュ情報
         private class CacheInfo {
@@ -30,23 +29,25 @@ namespace GameFramework.AssetSystems {
         }
 
         /// <summary>
-        /// 読み込んだアセットの全解放
+        /// コンストラクタ
         /// </summary>
-        public static void Clear() {
-            Get().UnloadAssets();
+        /// <param name="assetManager">読み込みに使用するAssetManager</param>
+        /// <param name="amount">同時キャッシュ数</param>
+        public PoolAssetStorage(AssetManager assetManager, int amount = 3) : base(assetManager) {
+            Amount = amount;
         }
 
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        protected override void DisposeInternal() {
+        public override void Dispose() {
             UnloadAssets();
         }
 
         /// <summary>
         /// 読み込み処理
         /// </summary>
-        protected AssetHandle<TAsset> LoadAssetAsync(AssetRequest<TAsset> request) {
+        public AssetHandle<TAsset> LoadAssetAsync(AssetRequest<TAsset> request) {
             var address = request.Address;
 
             // Addressのフェッチ
@@ -59,7 +60,7 @@ namespace GameFramework.AssetSystems {
 
             // キャッシュがない場合、LoadingStatusObserverを使って読み込み
             cacheInfo = new CacheInfo();
-            cacheInfo.handle = request.LoadAsync(AssetManager);
+            cacheInfo.handle = LoadAssetAsyncInternal(request);
             _cacheInfos[address] = cacheInfo;
             return cacheInfo.handle;
         }
@@ -67,7 +68,7 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// 読み込み済みアセットの取得
         /// </summary>
-        protected TAsset GetAsset(string address) {
+        public TAsset GetAsset(string address) {
             if (!_cacheInfos.TryGetValue(address, out var cacheInfo)) {
                 return null;
             }
@@ -78,14 +79,14 @@ namespace GameFramework.AssetSystems {
         /// <summary>
         /// 読み込み済みアセットの取得
         /// </summary>
-        protected TAsset GetAsset(AssetRequest<TAsset> request) {
+        public TAsset GetAsset(AssetRequest<TAsset> request) {
             return GetAsset(request.Address);
         }
 
         /// <summary>
         /// 解放処理
         /// </summary>
-        protected void UnloadAssets() {
+        public void UnloadAssets() {
             var keys = _cacheInfos.Keys.ToArray();
 
             foreach (var key in keys) {
