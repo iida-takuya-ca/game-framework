@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
-using UniRx;
 
 namespace SampleGame {
     /// <summary>
@@ -37,7 +35,7 @@ namespace SampleGame {
         /// <summary>
         /// プレイヤーエンティティの初期化処理
         /// </summary>
-        public static async UniTask<Entity> SetupPlayerAsync(this Entity source, BattlePlayerModel model, IScope unloadScope, CancellationToken ct) {
+        public static async UniTask<Entity> SetupPlayerAsync(this Entity source, Battle.BattlePlayerModel model, IScope unloadScope, CancellationToken ct) {
             return await source.SetupAsync(async () => {
                 var prefab = await new PlayerPrefabAssetRequest(model.AssetKey)
                     .LoadAsync(unloadScope, ct);
@@ -45,7 +43,7 @@ namespace SampleGame {
             }, entity => {
                 var actor = new PlayerActor(entity.GetBody(), model.ActorModel.Setup);
                 actor.RegisterTask(TaskOrder.Actor);
-                var logic = new BattlePlayerPresenter(actor, model);
+                var logic = new Battle.BattlePlayerPresenter(actor, model);
                 logic.RegisterTask(TaskOrder.Logic);
                 entity.AddActor(actor)
                     .AddLogic(logic);

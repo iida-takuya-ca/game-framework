@@ -2,7 +2,7 @@ using System;
 using GameFramework.ModelSystems;
 using UniRx;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// バトル用プレイヤーのアクター情報をまとめたモデル
     /// </summary>

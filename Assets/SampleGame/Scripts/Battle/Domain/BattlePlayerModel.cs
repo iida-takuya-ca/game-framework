@@ -3,7 +3,7 @@ using GameFramework.ModelSystems;
 using UniRx;
 using UnityEngine;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// バトル用プレイヤーモデル
     /// </summary>

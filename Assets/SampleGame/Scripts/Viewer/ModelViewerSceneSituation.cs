@@ -1,12 +1,11 @@
-using System;
 using System.Collections;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.CameraSystems;
 using GameFramework.Core;
 using GameFramework.SituationSystems;
 using UnityDebugSheet.Runtime.Core.Scripts;
+using SampleGame.Viewer;
 
 namespace SampleGame {
     /// <summary>
@@ -31,6 +30,8 @@ namespace SampleGame {
             
             var cameraManager = Services.Get<CameraManager>();
             cameraManager.RegisterTask(TaskOrder.Camera);
+            cameraManager.SetCameraController("Default", new ModelViewerCameraController());
+            
             var viewerManager = Services.Get<ModelViewerManager>();
             viewerManager.RegisterTask(TaskOrder.Logic);
             yield return viewerManager.InitializeAsync(ct)
@@ -89,9 +90,6 @@ namespace SampleGame {
                 // 初期状態反映
                 SetupMotionPage(viewerManager.CurrentBodyData);
             });
-            
-            // デフォルトは表示状態
-            debugSheet.Show();
         }
 
         /// <summary>

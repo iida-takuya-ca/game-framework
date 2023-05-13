@@ -653,7 +653,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1305087310}
-  m_LocalRotation: {x: -0.000000018723478, y: -0.12025789, z: -0.0000000022681064, w: 0.9927427}
+  m_LocalRotation: {x: -0.000000017608286, y: -0.12025789, z: -0.0000000021330153, w: 0.9927427}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -714,7 +714,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _virtualCamera: {fileID: 1305087312}
   _distance: 3
-  _lookAtOffset: {x: -0.55, y: 1, z: 0}
+  _lookAtOffset: {x: 0, y: 1, z: 0}
   _angleX: 0
   _angleY: 180
 --- !u!1 &1510686078

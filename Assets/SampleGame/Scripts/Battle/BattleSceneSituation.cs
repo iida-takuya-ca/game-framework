@@ -12,6 +12,7 @@ using GameFramework.SituationSystems;
 using GameFramework.VfxSystems;
 using UniRx;
 using UnityEngine;
+using SampleGame.Battle;
 
 namespace SampleGame {
     /// <summary>

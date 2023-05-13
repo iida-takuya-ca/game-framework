@@ -4,7 +4,7 @@ using GameFramework.EntitySystems;
 using GameFramework.LogicSystems;
 using UnityEngine;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// CameraのAttachment更新用Logic
     /// </summary>

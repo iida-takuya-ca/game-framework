@@ -167,26 +167,4 @@ namespace SampleGame {
             Address = GetPath($"Player/{actorId}/Actions/dat_player_actor_action_{assetKey}.asset");
         }
     }
-
-    /// <summary>
-    /// BattlePlayerMasterDataのAssetRequest
-    /// </summary>
-    public class BattlePlayerMasterDataAssetRequest : DataAssetRequest<BattlePlayerMasterData> {
-        public override string Address { get; }
-        
-        public BattlePlayerMasterDataAssetRequest(string assetKey) {
-            Address = GetPath($"Battle/BattlePlayerMaster/dat_battle_player_master_{assetKey}.asset");
-        }
-    }
-
-    /// <summary>
-    /// ModelViewerBodyDataのAssetRequest
-    /// </summary>
-    public class ModelViewerBodyDataRequest : DataAssetRequest<ModelViewerBodyData> {
-        public override string Address { get; }
-        
-        public ModelViewerBodyDataRequest(string assetKey) {
-            Address = GetPath($"ModelViewer/Body/dat_model_viewer_body_{assetKey}.asset");
-        }
-    }
 }

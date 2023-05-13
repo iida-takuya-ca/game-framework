@@ -7,9 +7,8 @@ using GameFramework.PlayableSystems;
 using GameFramework.Core;
 using GameFramework.TaskSystems;
 using UnityEngine;
-using UniRx;
 
-namespace SampleGame {
+namespace SampleGame.Viewer {
     /// <summary>
     /// モデルビューア管理用クラス
     /// </summary>

@@ -1,13 +1,7 @@
-using System;
-using System.Collections;
-using System.Linq;
 using GameFramework.Core;
-using GameFramework.CoroutineSystems;
 using GameFramework.ModelSystems;
-using GameFramework.TaskSystems;
-using UniRx;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// バトル用モデル
     /// </summary>

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// バトル用のプレイヤーマスター
     /// </summary>

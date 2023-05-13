@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// プレイヤー制御用Presenter
     /// </summary>

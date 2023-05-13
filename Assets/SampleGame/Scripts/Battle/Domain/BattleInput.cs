@@ -4,7 +4,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace SampleGame {
+namespace SampleGame.Battle {
     /// <summary>
     /// バトル用入力管理
     /// </summary>
