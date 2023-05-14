@@ -1,14 +1,15 @@
 using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 #if USE_ADDRESSABLES
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.ResourceProviders;
 #endif
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #endif
 
 namespace GameFramework.AssetSystems {
@@ -40,18 +41,43 @@ namespace GameFramework.AssetSystems {
         /// シーンアセット情報
         /// </summary>
         private class SceneAssetInfo : ISceneAssetInfo {
-            private SceneHolder _sceneHolder;
+            private string _path;
+            private AsyncOperation _asyncOperation;
+            private Scene _scene;
+            private Exception _exception;
 
             bool ISceneAssetInfo.IsDone => true;
-            SceneHolder ISceneAssetInfo.SceneHolder => _sceneHolder;
-            Exception ISceneAssetInfo.Exception => new Exception("Not supported scene asset.");
+            Scene ISceneAssetInfo.Scene {
+                get {
+                    if (_asyncOperation == null || !_asyncOperation.isDone) {
+                        return new Scene();
+                    }
 
-            public SceneAssetInfo() {
-                _sceneHolder = new SceneHolder();
+                    if (_scene.IsValid() || _exception != null) {
+                        return _scene;
+                    }
+
+                    _scene = SceneManager.GetSceneByPath(_path);
+                    if (!_scene.IsValid()) {
+                        _exception = new Exception($"Not found scene. [{_path}]");
+                    }
+
+                    return _scene;
+                }
+            }
+            Exception ISceneAssetInfo.Exception => _exception;
+
+            public SceneAssetInfo(string path, AsyncOperation asyncOperation) {
+                _path = path;
+                _asyncOperation = asyncOperation;
             }
 
             public void Dispose() {
                 // Unloadはしない
+            }
+
+            AsyncOperation ISceneAssetInfo.ActivateAsync() {
+                return null;
             }
         }
 
@@ -90,7 +116,8 @@ namespace GameFramework.AssetSystems {
         /// </summary>
         SceneAssetHandle IAssetProvider.LoadSceneAsync(string address, LoadSceneMode mode) {
 #if UNITY_EDITOR
-            var info = new SceneAssetInfo();
+            var asyncOperation = EditorSceneManager.LoadSceneAsyncInPlayMode(address, new LoadSceneParameters(mode));
+            var info = new SceneAssetInfo(address, asyncOperation);
             return new SceneAssetHandle(info);
 #else
             return SceneAssetHandle.Empty;
@@ -101,8 +128,13 @@ namespace GameFramework.AssetSystems {
         /// シーンアセットが含まれているか
         /// </summary>
         bool IAssetProvider.ContainsScene(string address) {
-            // 常に失敗
+#if UNITY_EDITOR
+            // GUIDが存在しなければない扱い
+            var guid = AssetDatabase.AssetPathToGUID(address);
+            return !string.IsNullOrEmpty(guid);
+#else
             return false;
+#endif
         }
 
         /// <summary>

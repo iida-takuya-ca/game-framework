@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using GameFramework.AssetSystems;
 using GameFramework.Core;
 using UniRx;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -46,60 +47,57 @@ namespace SampleGame {
     /// <summary>
     /// Sample用のSceneAssetRequest基底
     /// </summary>
-    public class SceneAssetRequest : GameFramework.AssetSystems.SceneAssetRequest {
+    public abstract class SceneAssetRequest : GameFramework.AssetSystems.SceneAssetRequest {
         private LoadSceneMode _mode;
         private string _address;
 
         public override LoadSceneMode Mode => _mode;
-        public override string Address => _address;
         public override int[] ProviderIndices => new[] { (int)AssetProviderType.AssetDatabase };
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="relativePath">Scenes以下の相対パス</param>
+        /// <param name="path">読み込みパス</param>
         /// <param name="mode">Sceneの読み込みモード</param>
-        public SceneAssetRequest(string relativePath, LoadSceneMode mode) {
-            _address = $"Assets/SampleGame/Scenes/{relativePath}";
+        public SceneAssetRequest(LoadSceneMode mode) {
             _mode = mode;
         }
 
         /// <summary>
         /// アセットの読み込み
         /// </summary>
+        /// <param name="activate">アクティブ化するか</param>
         /// <param name="unloadScope">解放スコープ</param>
-        public IObservable<SceneHolder> LoadAsync(IScope unloadScope) {
-            return Observable.Create<SceneHolder>(observer => {
-                var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
-                if (!handle.IsValid) {
-                    observer.OnError(new KeyNotFoundException($"Load scene failed. {Address}"));
-                    return Disposable.Empty;
-                }
+        /// <param name="ct">Taskキャンセル用Token</param>
+        public async UniTask<Scene> LoadAsync(bool activate, IScope unloadScope, CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+            
+            var handle = LoadAsync(Services.Get<AssetManager>(), unloadScope);
+            if (!handle.IsValid) {
+                Debug.LogException(new KeyNotFoundException($"Load failed. {Address}"));
+                return default;
+            }
 
-                if (handle.IsDone) {
-                    observer.OnNext(handle.SceneHolder);
-                    observer.OnCompleted();
-                    return Disposable.Empty;
-                }
-                
-                // 読み込みを待つ
-                return Observable.EveryUpdate()
-                    .Subscribe(_ => {
-                        if (handle.Exception != null) {
-                            observer.OnError(handle.Exception);
-                        }
-                        else if (handle.IsDone) {
-                            observer.OnNext(handle.SceneHolder);
-                            observer.OnCompleted();
-                        }
-                    });
-            });
+            await handle.ToUniTask(cancellationToken: ct);
+
+            if (handle.Exception != null) {
+                Debug.LogException(handle.Exception);
+                return default;
+            }
+
+            var holder = handle.Scene;
+            if (activate) {
+                await handle.ActivateAsync()
+                    .ToUniTask(cancellationToken: ct);
+            }
+
+            return holder;
         }
 
         /// <summary>
         /// Projectフォルダ相対パスを絶対パスにする
         /// </summary>
-        protected string GetPath(string relativePath) {
+        protected string GetProjectPath(string relativePath) {
             return $"Assets/SampleGame/{relativePath}";
         }
     }
@@ -165,6 +163,22 @@ namespace SampleGame {
         public PlayerActorActionDataAssetRequest(string assetKey) {
             var actorId = assetKey.Substring(0, "pl000".Length);
             Address = GetPath($"Player/{actorId}/Actions/dat_player_actor_action_{assetKey}.asset");
+        }
+    }
+
+    /// <summary>
+    /// フィールドシーン用のAssetRequest
+    /// </summary>
+    public class FieldSceneAssetRequest : SceneAssetRequest {
+        // 読み込みAddress
+        public override string Address { get; }
+        
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="assetKey">fld000</param>
+        public FieldSceneAssetRequest(string assetKey) : base(LoadSceneMode.Additive) {
+            Address = GetProjectPath($"EnvironmentAssets/Field/{assetKey}/{assetKey}.unity");
         }
     }
 }

@@ -1,6 +1,7 @@
 #if USE_ADDRESSABLES
 
 using System;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -44,7 +45,7 @@ namespace GameFramework.AssetSystems {
             private AsyncOperationHandle<SceneInstance> _handle;
 
             bool ISceneAssetInfo.IsDone => _handle.IsDone;
-            SceneHolder ISceneAssetInfo.SceneHolder => new SceneHolder { Scene = _handle.Result };
+            Scene ISceneAssetInfo.Scene => _handle.Result.Scene;
             Exception ISceneAssetInfo.Exception => _handle.OperationException;
 
             public SceneAssetInfo(AsyncOperationHandle<SceneInstance> handle) {
@@ -57,6 +58,14 @@ namespace GameFramework.AssetSystems {
                 }
 
                 Addressables.Release(_handle);
+            }
+            
+            AsyncOperation ISceneAssetInfo.ActivateAsync() {
+                if (!_handle.IsValid()) {
+                    return null;
+                }
+
+                return _handle.Result.ActivateAsync();
             }
         }
 

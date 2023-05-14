@@ -47,6 +47,20 @@ namespace SampleGame {
         protected override string SceneAssetPath => "battle";
 
         /// <summary>
+        /// 読み込み処理
+        /// </summary>
+        protected override IEnumerator LoadRoutineInternal(TransitionHandle handle, IScope scope) {
+            yield return base.LoadRoutineInternal(handle, scope);
+
+            var ct = scope.ToCancellationToken();
+            
+            // フィールド読み込み
+            yield return new FieldSceneAssetRequest("fld000")
+                .LoadAsync(true, scope, ct)
+                .ToCoroutine();
+        }
+
+        /// <summary>
         /// 初期化処理
         /// </summary>
         protected override IEnumerator SetupRoutineInternal(TransitionHandle handle, IScope scope) {
@@ -121,6 +135,7 @@ namespace SampleGame {
             
             if (Input.GetKeyDown(KeyCode.Space)) {
                 MainSystem.Instance.Reboot(new BattleSceneSituation());
+                return;
             }
 
             // todo:コリジョンテスト

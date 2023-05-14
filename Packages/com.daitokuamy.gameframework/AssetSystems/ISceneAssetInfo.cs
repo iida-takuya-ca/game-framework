@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GameFramework.AssetSystems {
     /// <summary>
@@ -11,13 +13,18 @@ namespace GameFramework.AssetSystems {
         bool IsDone { get; }
 
         /// <summary>
-        /// シーンの読み込み情報
+        /// シーン情報
         /// </summary>
-        SceneHolder SceneHolder { get; }
+        Scene Scene { get; }
 
         /// <summary>
         /// エラー
         /// </summary>
         Exception Exception { get; }
+
+        /// <summary>
+        /// アクティブ化
+        /// </summary>
+        AsyncOperation ActivateAsync();
     }
 }

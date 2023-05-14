@@ -39,7 +39,6 @@ namespace GameFramework.VfxSystems {
             }
 
             _rootParticleSystem.Play(true);
-            Debug.Log("Playing");
         }
 
         /// <summary>
@@ -51,7 +50,6 @@ namespace GameFramework.VfxSystems {
             }
 
             _rootParticleSystem.Stop(true);
-            Debug.Log("Stop");
         }
 
         /// <summary>
