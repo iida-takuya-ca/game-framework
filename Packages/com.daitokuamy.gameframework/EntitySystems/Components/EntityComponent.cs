@@ -23,7 +23,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// 廃棄時処理
         /// </summary>
-        public void Dispose() {
+        void IDisposable.Dispose() {
             DisposeInternal();
             _activeScope.Dispose();
             _activeScope = null;
