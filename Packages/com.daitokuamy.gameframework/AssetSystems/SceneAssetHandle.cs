@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using GameFramework.Core;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GameFramework.AssetSystems {

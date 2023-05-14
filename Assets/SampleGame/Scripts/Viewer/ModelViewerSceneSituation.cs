@@ -74,6 +74,21 @@ namespace SampleGame {
                     });
                 }
                 
+                // Field
+                pageTuple.page.AddPageLinkButton("Fields", onLoad: fieldsPageTuple => {
+                    
+                    var fieldIds = viewerManager.FieldIds;
+                    foreach (var fieldId in fieldIds) {
+                        var id = fieldId;
+                        fieldsPageTuple.page.AddButton(fieldId, clicked:() =>
+                        {
+                            viewerManager.SetupFieldAsync(id, ct)
+                                .Forget();
+                        });
+                    }
+                });
+                
+                // Model
                 pageTuple.page.AddPageLinkButton("Models", onLoad: modelsPageTuple => {
                     
                     var bodyDataIds = viewerManager.BodyDataIds;

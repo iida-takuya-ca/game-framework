@@ -7,6 +7,7 @@ using GameFramework.PlayableSystems;
 using GameFramework.Core;
 using GameFramework.TaskSystems;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SampleGame.Viewer {
     /// <summary>
@@ -16,17 +17,21 @@ namespace SampleGame.Viewer {
         [SerializeField, Tooltip("ビューア用のデータ")]
         private ModelViewerData _data;
 
+        // Field生成中のScope
+        private DisposableScope _fieldScope = new();
         // アセット格納用ストレージ
         private PoolAssetStorage<ModelViewerBodyData> _bodyDataPoolAssetStorage;
-        // Body生成中のScope
-        private DisposableScope _bodyScope;
 
+        // 読み込み可能なFieldのIdリスト
+        public string[] FieldIds => _data.fieldIds;
         // 読み込み可能なBodyDataのIdリスト
         public string[] BodyDataIds => _data.bodyDataIds;
         // 現在使用中のBodyData
         public ModelViewerBodyData CurrentBodyData { get; private set; }
         // 現在使用中のBody
         public Body CurrentBody { get; private set; }
+        // 現在使用中のFieldScene
+        public Scene CurrentFieldScene { get; private set; }
 
         /// <summary>
         /// 初期化処理
@@ -35,6 +40,8 @@ namespace SampleGame.Viewer {
             var assetManager = Services.Get<AssetManager>();
             _bodyDataPoolAssetStorage = new PoolAssetStorage<ModelViewerBodyData>(assetManager, 2);
             
+            // 初期のフィールドを読み込み
+            await SetupFieldAsync(_data.defaultFieldId, ct);
             // 初期のBodyDataを読み込み
             await SetupBodyAsync(_data.defaultBodyDataId, ct);
         }
@@ -47,6 +54,31 @@ namespace SampleGame.Viewer {
                 _bodyDataPoolAssetStorage.Dispose();
                 _bodyDataPoolAssetStorage = null;
             }
+        }
+
+        /// <summary>
+        /// フィールドの初期化
+        /// </summary>
+        public async UniTask SetupFieldAsync(string fieldId, CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+
+            CleanupField();
+            
+            CurrentFieldScene = await new FieldSceneAssetRequest(fieldId)
+                .LoadAsync(true, _fieldScope, ct);
+        }
+
+        /// <summary>
+        /// 現在生成されているBodyの削除
+        /// </summary>
+        public void CleanupField() {
+            if (!CurrentFieldScene.IsValid()) {
+                return;
+            }
+
+            SceneManager.UnloadSceneAsync(CurrentFieldScene);
+            _fieldScope.Clear();
+            CurrentFieldScene = new Scene();
         }
 
         /// <summary>
@@ -95,11 +127,6 @@ namespace SampleGame.Viewer {
             if (CurrentBody != null) {
                 CurrentBody.Dispose();
                 CurrentBody = null;
-            }
-
-            if (_bodyScope != null) {
-                _bodyScope.Dispose();
-                _bodyScope = null;
             }
 
             CurrentBodyData = null;

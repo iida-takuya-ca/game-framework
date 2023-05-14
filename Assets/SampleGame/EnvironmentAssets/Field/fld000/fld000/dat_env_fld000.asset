@@ -15,9 +15,9 @@ MonoBehaviour:
   defaultSettings:
     subtractiveShadowColor: {r: 0, g: 0, b: 0, a: 0}
     ambientMode: 1
-    ambientSkyColor: {r: 0.595702, g: 0.7921569, b: 0.7790599, a: 0}
-    ambientEquatorColor: {r: 0.43153843, g: 0.561, b: 0.35242307, a: 0}
-    ambientGroundColor: {r: 0.83699995, g: 0.6400588, b: 0.57441175, a: 0}
+    ambientSkyColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0}
+    ambientEquatorColor: {r: 0.56078434, g: 0.56078434, b: 0.56078434, a: 0}
+    ambientGroundColor: {r: 0.66, g: 0.66, b: 0.66, a: 0}
     ambientIntensity: 0
     skyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
     defaultReflectionMode: 0

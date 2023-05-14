@@ -55,7 +55,7 @@ namespace SampleGame {
             var ct = scope.ToCancellationToken();
             
             // フィールド読み込み
-            yield return new FieldSceneAssetRequest("fld000")
+            yield return new FieldSceneAssetRequest("fld001")
                 .LoadAsync(true, scope, ct)
                 .ToCoroutine();
         }

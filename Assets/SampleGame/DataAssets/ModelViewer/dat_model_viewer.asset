@@ -18,3 +18,7 @@ MonoBehaviour:
   - pl002
   - pl003
   - pl004
+  defaultFieldId: fld000
+  fieldIds:
+  - fld000
+  - fld001

@@ -46,7 +46,7 @@ namespace GameFramework.AssetSystems {
             private Scene _scene;
             private Exception _exception;
 
-            bool ISceneAssetInfo.IsDone => true;
+            bool ISceneAssetInfo.IsDone => _asyncOperation == null || _asyncOperation.isDone;
             Scene ISceneAssetInfo.Scene {
                 get {
                     if (_asyncOperation == null || !_asyncOperation.isDone) {
