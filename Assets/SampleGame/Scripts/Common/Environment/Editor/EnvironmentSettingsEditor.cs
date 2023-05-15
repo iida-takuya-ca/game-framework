@@ -63,15 +63,9 @@ namespace SampleGame.Editor {
         /// 環境の適用
         /// </summary>
         private void ApplyEnvironment() {
-            var manager = Services.Get<EnvironmentManager>();
-            if (manager != null) {
-                manager.SetDirty();
-            }
-            else {
-                var settings = target as EnvironmentSettings;
-                if (settings != null) {
-                    settings.ForceApplyEnvironment();
-                }
+            var settings = target as EnvironmentSettings;
+            if (settings != null) {
+                settings.ApplyEnvironment();
             }
         }
 
