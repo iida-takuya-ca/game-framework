@@ -165,6 +165,7 @@ namespace GameFramework.VfxSystems {
                 _rotationRoot = rotationRoot;
                 _layeredTime = layeredTime;
                 _autoDispose = autoDispose;
+                _transformDirty = true;
 
                 if (layeredTime != null) {
                     layeredTime.OnChangedTimeScale += OnChangedTimeScale;

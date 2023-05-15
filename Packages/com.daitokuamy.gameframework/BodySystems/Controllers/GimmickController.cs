@@ -8,7 +8,7 @@ namespace GameFramework.BodySystems {
     /// </summary>
     public class GimmickController : BodyController {
         // キャッシュ用のGimmick情報
-        private Dictionary<string, List<Gimmick>> _gimmicks = new Dictionary<string, List<Gimmick>>();
+        private Dictionary<string, List<IGimmick>> _gimmicks = new Dictionary<string, List<IGimmick>>();
 
         /// <summary>
         /// ギミックのキー一覧を取得
@@ -77,8 +77,11 @@ namespace GameFramework.BodySystems {
                 var gimmickInfos = gimmickParts.GimmickInfos;
                 foreach (var gimmickInfo in gimmickInfos) {
                     if (!_gimmicks.TryGetValue(gimmickInfo.key, out var list)) {
-                        list = new List<Gimmick>();
+                        list = new List<IGimmick>();
                         _gimmicks[gimmickInfo.key] = list;
+                        foreach (var gimmick in list) {
+                            gimmick.Initialize();
+                        }
                     }
 
                     list.Add(gimmickInfo.gimmick);
