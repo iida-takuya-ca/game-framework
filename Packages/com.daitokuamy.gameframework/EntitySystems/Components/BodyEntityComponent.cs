@@ -23,7 +23,7 @@ namespace GameFramework.EntitySystems {
         /// <param name="body">設定するBody</param>
         /// <param name="prevDispose">既に設定されているBodyをDisposeするか</param>
         public Entity SetBody(Body body, bool prevDispose = true) {
-            if (Body != null) {
+            if (Body != null && Body.IsValid) {
                 _lastPosition = Body.Position;
                 _lastRotation = Body.Rotation;
                 _lastScale = Body.BaseScale;
