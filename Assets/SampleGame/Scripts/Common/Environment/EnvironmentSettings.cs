@@ -20,16 +20,34 @@ namespace SampleGame {
         /// <summary>
         /// 強制的に環境を上書きする(Debug用)
         /// </summary>
-        public void ForceApplyEnvironment() {
-            var resolver = (IEnvironmentResolver)new EnvironmentResolver();
-            if (_data != null) {
+        public void ApplyEnvironment() {
+            
+            if (_handle.IsValid) {
                 var context = _data.CreateContext();
                 context.Sun = _sun;
-                resolver.Apply(context);
-            }
+                _handle.SetContext(context);
 
-            if (_sun != null) {
-                _sun.enabled = true;
+                if (_sun != null) {
+                    _sun.enabled = true;
+                }
+            }
+            else {
+                var manager = Services.Get<EnvironmentManager>();
+                if (manager != null) {
+                    manager.SetDirty();
+                }
+                else {
+                    var resolver = (IEnvironmentResolver)new EnvironmentResolver();
+                    if (_data != null) {
+                        var context = _data.CreateContext();
+                        context.Sun = _sun;
+                        resolver.Apply(context);
+                    }
+
+                    if (_sun != null) {
+                        _sun.enabled = true;
+                    }
+                }
             }
         }
 
@@ -43,7 +61,7 @@ namespace SampleGame {
 
             // 非再生中はActiveになった瞬間に反映
             if (!Application.isPlaying) {
-                ForceApplyEnvironment();
+                ApplyEnvironment();
                 return;
             }
 

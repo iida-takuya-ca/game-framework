@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using GameFramework.Core;
 using UnityEngine;
@@ -31,7 +32,9 @@ namespace GameFramework.ModelSystems {
 
             // 管理対象のモデル
             private List<TModel> _items = new List<TModel>();
-            public IReadOnlyCollection<TModel> Items => _items;
+            public IReadOnlyCollection<TModel> Items => _items
+                .Where(x => x != null)
+                .ToArray();
 
             /// <summary>
             /// リセット処理

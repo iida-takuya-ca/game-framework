@@ -1,10 +1,29 @@
+using UnityEngine;
+
 namespace GameFramework.BodySystems {
     /// <summary>
     /// Active制御するGimmickの基底
     /// </summary>
     public abstract class ActiveGimmick : Gimmick {
+        [SerializeField, Tooltip("読み込み時のアクティブ状態")]
+        private bool _activeOnLoad;
+        
         // 現在アクティブ状態か
         public bool IsActive { get; private set; }
+
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        protected override void InitializeInternal() {
+            if (_activeOnLoad) {
+                IsActive = false;
+                Activate();
+            }
+            else {
+                IsActive = true;
+                Deactivate();
+            }
+        }
 
         /// <summary>
         /// アクティブ化

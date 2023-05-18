@@ -27,6 +27,8 @@ namespace GameFramework.ProjectileSystems {
             public AnimationCurve rollCurve;
             [Tooltip("ねじりオフセット")]
             public float rollOffset;
+            [Tooltip("傾き")]
+            public float tilt;
             [Tooltip("到達時間")]
             public float duration;
             [Tooltip("到達時間が[/m]か")]
@@ -41,6 +43,7 @@ namespace GameFramework.ProjectileSystems {
         private readonly AnimationCurve _depthCurve;
         private readonly AnimationCurve _rollCurve;
         private readonly float _rollOffset;
+        private readonly float _tilt;
         private readonly float _duration;
         private readonly bool _durationPerMeter;
 
@@ -71,11 +74,12 @@ namespace GameFramework.ProjectileSystems {
         /// <param name="depthCurve">奥行きカーブ(1でTargetPoint)</param>
         /// <param name="rollCurve">ねじれカーブ(-1～1)</param>
         /// <param name="rollOffset">ねじれオフセット</param>
+        /// <param name="tilt">傾き</param>
         /// <param name="duration">到達時間</param>
         /// <param name="durationPerMeter">到達時間指定が[/m]か</param>
         public CurveProjectile(Vector3 startPoint, Vector3 endPoint, AnimationCurve vibrationCurve, float amplitude,
             float frequency,
-            AnimationCurve depthCurve, AnimationCurve rollCurve, float rollOffset, float duration,
+            AnimationCurve depthCurve, AnimationCurve rollCurve, float rollOffset, float tilt, float duration,
             bool durationPerMeter) {
             _startPoint = startPoint;
             _endPoint = endPoint;
@@ -85,6 +89,7 @@ namespace GameFramework.ProjectileSystems {
             _depthCurve = depthCurve;
             _rollCurve = rollCurve;
             _rollOffset = rollOffset;
+            _tilt = tilt;
             _duration = duration;
             _durationPerMeter = durationPerMeter;
 
@@ -99,7 +104,7 @@ namespace GameFramework.ProjectileSystems {
         public CurveProjectile(Context context)
             : this(context.startPoint, context.endPoint, context.vibrationCurve, context.amplitude, context.frequency,
                 context.depthCurve,
-                context.rollCurve, context.rollOffset, context.duration, context.durationPerMeter) {
+                context.rollCurve, context.rollOffset, context.tilt, context.duration, context.durationPerMeter) {
         }
 
         /// <summary>
@@ -154,7 +159,7 @@ namespace GameFramework.ProjectileSystems {
             relativePos += up * (Mathf.Cos(radian) * vibration);
             relativePos += right * (Mathf.Sin(radian) * vibration);
             Position = _startPoint + relativePos;
-            Rotation = Quaternion.LookRotation(Position - _prevPosition, up);
+            Rotation = Quaternion.LookRotation(Position - _prevPosition, up) * Quaternion.Euler(0.0f, 0.0f, _tilt);
             _prevPosition = Position;
 
             return _timer > 0.0f;
