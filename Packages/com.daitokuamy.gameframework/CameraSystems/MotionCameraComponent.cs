@@ -18,7 +18,7 @@ namespace GameFramework.CameraSystems {
         [Serializable]
         public struct Context {
             public AnimationClip clip;
-            public Vector2 followOffset;
+            public Vector3 followOffset;
         }
         
         [SerializeField, Tooltip("追従対象のカメラ")]

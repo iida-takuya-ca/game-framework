@@ -99,7 +99,6 @@ namespace GameFramework.CameraSystems {
             _currentTime += _layeredTime?.DeltaTime ?? deltaTime;
             var duration = (float)_playable.GetDuration();
             _playable.SetTime(Mathf.Min(_currentTime, duration - 0.0001f));
-            Debug.Log($"Time:{_currentTime}/{duration}");
             _graph.Evaluate();
         }
     }
