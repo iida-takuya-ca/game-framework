@@ -42,7 +42,7 @@ MonoBehaviour:
     constraintPosition: 0
     relativeAngles: {x: 90, y: 0, z: 0}
     constraintRotation: 0
-    localScale: {x: 0, y: 0, z: 0}
+    localScale: {x: 1, y: 1, z: 1}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +82,7 @@ MonoBehaviour:
     constraintPosition: 0
     relativeAngles: {x: 0, y: 0, z: 0}
     constraintRotation: 0
-    localScale: {x: 0, y: 0, z: 0}
+    localScale: {x: 1, y: 1, z: 1}
 --- !u!114 &5201561928720237376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -124,7 +124,7 @@ MonoBehaviour:
         m_RotationOrder: 4
   context:
     clip: {fileID: 7400000, guid: 6fec1e7ad72ccbf40a557b8920ac436d, type: 2}
-    followOffset: {x: 0, y: 0}
+    followOffset: {x: 0, y: 0, z: 0}
   cameraIndex: 0
   startTime: 0
 --- !u!114 &6214911963404964426
@@ -168,7 +168,7 @@ MonoBehaviour:
         m_RotationOrder: 4
   context:
     clip: {fileID: 7400000, guid: 6fec1e7ad72ccbf40a557b8920ac436d, type: 2}
-    followOffset: {x: 0, y: 0}
+    followOffset: {x: 0, y: 0, z: 0}
   cameraIndex: 1
   startTime: 1
 --- !u!114 &7271644832260823171

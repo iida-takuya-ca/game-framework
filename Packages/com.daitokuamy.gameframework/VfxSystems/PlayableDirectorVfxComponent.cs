@@ -10,8 +10,11 @@ namespace GameFramework.VfxSystems {
         [SerializeField, Tooltip("再生に使うPlayableDirector")]
         private PlayableDirector _playableDirector;
 
+        // 再生中フラグ
+        private bool _isPlaying;
+
         // 再生中か
-        bool IVfxComponent.IsPlaying => _playableDirector.state == PlayState.Playing;
+        bool IVfxComponent.IsPlaying => _isPlaying;
         // 有効なデータか
         private bool IsValid => _playableDirector != null;
 
@@ -25,6 +28,11 @@ namespace GameFramework.VfxSystems {
 
             _playableDirector.time += deltaTime;
             _playableDirector.Evaluate();
+            
+            Debug.Log($"State:{_playableDirector.state}");
+            if (_playableDirector.time >= _playableDirector.duration) {
+                _isPlaying = false;
+            }
         }
 
         /// <summary>
@@ -36,6 +44,7 @@ namespace GameFramework.VfxSystems {
             }
 
             _playableDirector.time = 0.0f;
+            _isPlaying = true;
         }
 
         /// <summary>
@@ -48,7 +57,7 @@ namespace GameFramework.VfxSystems {
 
             _playableDirector.time = _playableDirector.duration;
             _playableDirector.Evaluate();
-            _playableDirector.Stop();
+            _isPlaying = false;
         }
 
         /// <summary>
@@ -61,7 +70,7 @@ namespace GameFramework.VfxSystems {
 
             _playableDirector.time = _playableDirector.duration;
             _playableDirector.Evaluate();
-            _playableDirector.Stop();
+            _isPlaying = false;
         }
 
         /// <summary>
@@ -81,7 +90,8 @@ namespace GameFramework.VfxSystems {
 
             _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
             _playableDirector.playOnAwake = false;
-            _playableDirector.Stop();
+            _playableDirector.time = 0.0f;
+            _isPlaying = false;
         }
     }
 }
