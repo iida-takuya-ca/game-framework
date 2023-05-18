@@ -1,10 +1,11 @@
+using System;
 using Cinemachine;
 
 namespace GameFramework.CameraSystems {
     /// <summary>
     /// カメラを操作するためのComponent
     /// </summary>
-    public interface ICameraComponent {
+    public interface ICameraComponent : IDisposable {
         // アクティブ状態
         bool IsActive { get; }
 

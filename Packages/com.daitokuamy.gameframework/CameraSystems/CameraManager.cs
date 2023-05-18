@@ -48,6 +48,9 @@ namespace GameFramework.CameraSystems {
             /// </summary>
             public void Dispose() {
                 SetController(null);
+                if (Component != null) {
+                    Component.Dispose();
+                }
             }
 
             /// <summary>
@@ -318,14 +321,16 @@ namespace GameFramework.CameraSystems {
                 if (pair.Value.Controller == null) {
                     continue;
                 }
+
                 pair.Value.Controller.Update(deltaTime);
             }
 
             // Componentの更新
             foreach (var pair in _cameraHandlers) {
-                if (pair.Value.Component == null) {
+                if (pair.Value.Component == null || !pair.Value.Component.IsActive) {
                     continue;
                 }
+
                 pair.Value.Component.Update(deltaTime);
             }
 
@@ -347,23 +352,24 @@ namespace GameFramework.CameraSystems {
 
             // 1階層下の仮想カメラを元にカメラ情報を構築
             foreach (Transform child in _virtualCameraRoot.transform) {
-                var vcam = child.GetComponent<CinemachineVirtualCameraBase>();
-                if (vcam == null) {
-                    continue;
-                }
-
                 // カメラ名が既にあれば何もしない
-                var cameraName = vcam.name;
+                var cameraName = child.name;
                 if (_cameraHandlers.ContainsKey(cameraName)) {
                     Debug.LogWarning($"Already exists camera name. [{cameraName}]");
                     continue;
                 }
-
-                // Camera制御用Componentを取得(無ければDefaultの物を使用)
+                
                 var component = child.GetComponent<ICameraComponent>();
                 if (component == null) {
+                    // Componentがないただの仮想カメラだったら、DefaultComponentを設定
+                    var vcam = child.GetComponent<CinemachineVirtualCameraBase>();
+                    if (vcam == null) {
+                        continue;
+                    }
+                    
                     component = new DefaultCameraComponent(vcam);
                 }
+
                 component.Initialize();
 
                 var handler = new CameraHandler(cameraName, component);

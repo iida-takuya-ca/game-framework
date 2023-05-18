@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8057174152018970456
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a74ca9c767054d4293ac5103db9f7c6, type: 3}
+  m_Name: LookAtMotionCameraRangeEvent
+  m_EditorClassIdentifier: 
+  label: "\u5171\u901A/\u30AB\u30E1\u30E9\u5207\u66FF(LookAtMotion)"
+  active: 1
+  enterTime: 1
+  exitTime: 2
+  cameraName: LookAtMotion_0
+  toBlend:
+    active: 1
+    blendDefinition:
+      m_Style: 0
+      m_Time: 0
+      m_CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  fromBlend:
+    active: 0
+    blendDefinition:
+      m_Style: 0
+      m_Time: 0
+      m_CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  context:
+    clip: {fileID: 7400000, guid: bb240ca872b97c0409b2c25f5d44bbba, type: 2}
+    screenOffset: {x: 0, y: 0}
+    followOffset: {x: 0, y: 0, z: 0}
+    lookAtOffset: {x: 5, y: 0, z: 0}
+  slotIndex: 1
+  startTime: 1
 --- !u!114 &-245911394695117622
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15,6 +61,8 @@ MonoBehaviour:
   label: Track
   sequenceEvents:
   - {fileID: 5068393585975085450}
+  - {fileID: 4420266808296600433}
+  - {fileID: -8057174152018970456}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30,6 +78,52 @@ MonoBehaviour:
   tracks:
   - {fileID: -245911394695117622}
   frameRate: 30
+--- !u!114 &4420266808296600433
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a74ca9c767054d4293ac5103db9f7c6, type: 3}
+  m_Name: LookAtMotionCameraRangeEvent
+  m_EditorClassIdentifier: 
+  label: "\u5171\u901A/\u30AB\u30E1\u30E9\u5207\u66FF(LookAtMotion)"
+  active: 1
+  enterTime: 0
+  exitTime: 1
+  cameraName: LookAtMotion_0
+  toBlend:
+    active: 1
+    blendDefinition:
+      m_Style: 0
+      m_Time: 0
+      m_CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  fromBlend:
+    active: 1
+    blendDefinition:
+      m_Style: 0
+      m_Time: 0
+      m_CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  context:
+    clip: {fileID: 7400000, guid: bb240ca872b97c0409b2c25f5d44bbba, type: 2}
+    screenOffset: {x: 0, y: 0}
+    followOffset: {x: 0, y: 0, z: 0}
+    lookAtOffset: {x: 0, y: 0, z: 0}
+  slotIndex: 0
+  startTime: 0
 --- !u!114 &5068393585975085450
 MonoBehaviour:
   m_ObjectHideFlags: 1

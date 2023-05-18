@@ -199,6 +199,12 @@ namespace SampleGame.Battle {
             sequenceController.BindRangeEventHandler<CameraRangeEvent, CameraRangeEventHandler>(handler => {
                 handler.Setup(cameraManager);
             });
+            sequenceController.BindRangeEventHandler<MotionCameraRangeEvent, MotionCameraRangeEventHandler>(handler => {
+                handler.Setup(cameraManager, _actor.Body.Transform, _actor.Body.LayeredTime);
+            });
+            sequenceController.BindRangeEventHandler<LookAtMotionCameraRangeEvent, LookAtMotionCameraRangeEventHandler>(handler => {
+                handler.Setup(cameraManager, _actor.Body.Transform, _actor.Body.LayeredTime);
+            });
 
             scope.OnExpired += () => sequenceController.ResetEventHandlers();
         }

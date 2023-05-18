@@ -14,10 +14,6 @@ namespace GameFramework.CameraSystems {
         private float _angleX;
         [SerializeField, Tooltip("Y軸回転"), Range(0.0f, 360.0f)]
         private float _angleY;
-
-        // Cinemachine用のキャッシュ
-        private CinemachineTransposer _transposer;
-        private CinemachineComposer _composer;
         
         // FOV
         public float Fov {

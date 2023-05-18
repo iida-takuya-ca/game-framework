@@ -22,3 +22,9 @@ MonoBehaviour:
   - fullName: SampleGame.SequenceEvents.CameraRangeEvent
     label: "\u5171\u901A/\u30AB\u30E1\u30E9\u5207\u66FF"
     color: {r: 1, g: 0.5517647, b: 0.5019608, a: 1}
+  - fullName: SampleGame.SequenceEvents.LookAtMotionCameraRangeEvent
+    label: "\u5171\u901A/\u30AB\u30E1\u30E9\u5207\u66FF(LookAtMotion)"
+    color: {r: 1, g: 0.5529412, b: 0.5019608, a: 1}
+  - fullName: SampleGame.SequenceEvents.MotionCameraRangeEvent
+    label: "\u5171\u901A/\u30AB\u30E1\u30E9\u5207\u66FF(Motion)"
+    color: {r: 1, g: 0.5529412, b: 0.5019608, a: 1}

@@ -1,5 +1,6 @@
 using Cinemachine;
 using UnityEngine;
+using System;
 
 namespace GameFramework.CameraSystems {
     /// <summary>
@@ -11,7 +12,7 @@ namespace GameFramework.CameraSystems {
         private TCamera _virtualCamera;
 
         // アクティブ状態
-        bool ICameraComponent.IsActive => _virtualCamera != null && _virtualCamera.gameObject.activeSelf;
+        bool ICameraComponent.IsActive => gameObject.activeSelf;
 
         // 基本カメラ
         ICinemachineCamera ICameraComponent.BaseCamera => _virtualCamera;
@@ -23,6 +24,13 @@ namespace GameFramework.CameraSystems {
         /// </summary>
         void ICameraComponent.Initialize() {
             InitializeInternal();
+        }
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        void IDisposable.Dispose() {
+            DisposeInternal();
         }
         
         /// <summary>
@@ -37,7 +45,7 @@ namespace GameFramework.CameraSystems {
                 return;
             }
 
-            _virtualCamera.gameObject.SetActive(true);
+            gameObject.SetActive(true);
             ActivateInternal();
         }
 
@@ -54,7 +62,7 @@ namespace GameFramework.CameraSystems {
             }
             
             DeactivateInternal();
-            _virtualCamera.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -72,6 +80,12 @@ namespace GameFramework.CameraSystems {
         /// 初期化処理
         /// </summary>
         protected virtual void InitializeInternal() {
+        }
+
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        protected virtual void DisposeInternal() {
         }
 
         /// <summary>

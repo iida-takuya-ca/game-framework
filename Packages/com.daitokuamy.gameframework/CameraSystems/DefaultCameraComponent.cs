@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 
 namespace GameFramework.CameraSystems {
@@ -26,6 +27,12 @@ namespace GameFramework.CameraSystems {
         /// 初期化処理
         /// </summary>
         void ICameraComponent.Initialize(){
+        }
+        
+        /// <summary>
+        /// 廃棄時処理
+        /// </summary>
+        void IDisposable.Dispose() {
         }
 
         /// <summary>
