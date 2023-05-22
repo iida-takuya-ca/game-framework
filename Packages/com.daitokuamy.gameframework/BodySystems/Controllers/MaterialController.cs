@@ -51,6 +51,12 @@ namespace GameFramework.BodySystems {
         private void CreateMaterialInfos() {
             _materialInfos.Clear();
 
+#if UNITY_EDITOR
+            var controlType = MaterialInstance.ControlType.PropertyBlock;
+#else
+            var controlType = MaterialInstance.ControlType.Clone;
+#endif
+
             var partsList = Body.GetComponentsInChildren<MaterialParts>(true);
             for (var i = 0; i < partsList.Length; i++) {
                 var parts = partsList[i];
@@ -65,7 +71,7 @@ namespace GameFramework.BodySystems {
                         _materialInfos.Add(info.key, list);
                     }
 
-                    var materialInfo = new MaterialInstance(info.Renderer, info.MaterialIndex, MaterialInstance.ControlType.PropertyBlock);
+                    var materialInfo = new MaterialInstance(info.Renderer, info.MaterialIndex, controlType);
                     list.Add(materialInfo);
                 }
             }
