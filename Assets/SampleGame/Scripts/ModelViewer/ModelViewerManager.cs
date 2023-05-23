@@ -9,7 +9,7 @@ using GameFramework.TaskSystems;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SampleGame.Viewer {
+namespace SampleGame.ModelViewer {
     /// <summary>
     /// モデルビューア管理用クラス
     /// </summary>

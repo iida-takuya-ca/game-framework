@@ -1,4 +1,4 @@
-namespace SampleGame.Viewer {
+namespace SampleGame.ModelViewer {
     /// <summary>
     /// ModelViewerBodyDataのAssetRequest
     /// </summary>

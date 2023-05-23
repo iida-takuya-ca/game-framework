@@ -145,7 +145,7 @@ namespace SampleGame {
             
             // 加算モーションレイヤーの追加
             _motionController.Player.BuildAdditionalLayers(new [] {
-                new MotionPlayer.LayerSetting {
+                new MotionPlayer.LayerSettings {
                     additive = true
                 }
             });

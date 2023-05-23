@@ -5,7 +5,7 @@ using GameFramework.CameraSystems;
 using GameFramework.Core;
 using GameFramework.SituationSystems;
 using UnityDebugSheet.Runtime.Core.Scripts;
-using SampleGame.Viewer;
+using SampleGame.ModelViewer;
 
 namespace SampleGame {
     /// <summary>
@@ -30,7 +30,7 @@ namespace SampleGame {
             
             var cameraManager = Services.Get<CameraManager>();
             cameraManager.RegisterTask(TaskOrder.Camera);
-            cameraManager.SetCameraController("Default", new ModelViewerCameraController());
+            cameraManager.SetCameraController("Default", new PreviewCameraController());
             
             var viewerManager = Services.Get<ModelViewerManager>();
             viewerManager.RegisterTask(TaskOrder.Logic);

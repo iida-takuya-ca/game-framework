@@ -1,11 +1,11 @@
 using GameFramework.CameraSystems;
 using UnityEngine.InputSystem;
 
-namespace SampleGame.Viewer {
+namespace SampleGame.ModelViewer {
     /// <summary>
     /// モデルビューア用カメラ制御クラス
     /// </summary>
-    public class ModelViewerCameraController : CameraController<PreviewCameraComponent> {
+    public class PreviewCameraController : CameraController<PreviewCameraComponent> {
         private float _mouseLeftDeltaSpeed = 1.0f;
         private float _mouseMiddleDeltaSpeed = 0.005f;
         private float _mouseRightDeltaSpeed = 0.01f;

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SampleGame.Viewer {
+namespace SampleGame.ModelViewer {
     /// <summary>
     /// モデルビューア用のBody参照データ
     /// </summary>
