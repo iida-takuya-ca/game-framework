@@ -1,11 +1,14 @@
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using GameFramework.AssetSystems;
 using GameFramework.BodySystems;
 using GameFramework.CameraSystems;
 using GameFramework.Core;
 using GameFramework.SituationSystems;
 using UnityDebugSheet.Runtime.Core.Scripts;
 using SampleGame.ModelViewer;
+using UnityEngine.InputSystem.Utilities;
+using Observable = UniRx.Observable;
 
 namespace SampleGame {
     /// <summary>
@@ -13,8 +16,16 @@ namespace SampleGame {
     /// </summary>
     public class ModelViewerSceneSituation : SceneSituation {
         private int _debugPageId;
+        private ModelViewerData _modelViewerData;
         
         protected override string SceneAssetPath => "model_viewer";
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ModelViewerSceneSituation(ModelViewerData modelViewerData) {
+            _modelViewerData = modelViewerData;
+        }
 
         /// <summary>
         /// 初期化処理
@@ -24,18 +35,38 @@ namespace SampleGame {
 
             var ct = scope.ToCancellationToken();
             
+            // Modelの生成
+            var viewerModel = ModelViewerModel.Create()
+                .ScopeTo(scope);
+            viewerModel.Setup(_modelViewerData);
+            
+            // Repositoryの生成
+            var repository = new ModelViewerRepository(Services.Get<AssetManager>());
+            repository.ScopeTo(scope);
+            
+            // ApplicationServiceの生成
+            var appService = new ModelViewerApplicationService(viewerModel, repository);
+            ServiceContainer.Set(appService);
+            
+            // 各種管理クラス生成/初期化
             var bodyManager = new BodyManager();
             bodyManager.RegisterTask(TaskOrder.Body);
             ServiceContainer.Set(bodyManager);
+
+            var environmentManager = new EnvironmentManager();
+            ServiceContainer.Set(environmentManager);
+
+            var entityManager = new EntityManager();
+            ServiceContainer.Set(entityManager);
             
             var cameraManager = Services.Get<CameraManager>();
             cameraManager.RegisterTask(TaskOrder.Camera);
+            
+            // カメラ操作用Controllerの設定
             cameraManager.SetCameraController("Default", new PreviewCameraController());
             
-            var viewerManager = Services.Get<ModelViewerManager>();
-            viewerManager.RegisterTask(TaskOrder.Logic);
-            yield return viewerManager.InitializeAsync(ct)
-                .ToCoroutine();
+            // フィールドの読み込み
+            yield return environmentManager.ChangeEnvironmentAsync(_modelViewerData.defaultEnvironmentId, ct);
         }
 
         /// <summary>
@@ -45,7 +76,10 @@ namespace SampleGame {
             base.ActivateInternal(handle, scope);
 
             var ct = scope.ToCancellationToken();
-            var viewerManager = Services.Get<ModelViewerManager>();
+            var viewerModel = ModelViewerModel.Get();
+            var appService = Services.Get<ModelViewerApplicationService>();
+            var entityManager = Services.Get<EntityManager>();
+            var environmentManager = Services.Get<EnvironmentManager>();
             var debugSheet = Services.Get<DebugSheet>();
             
             var rootPage = debugSheet.GetOrCreateInitialPage();
@@ -66,44 +100,38 @@ namespace SampleGame {
                         var clips = bodyData.animationClips;
                         for (var i = 0; i < clips.Length; i++) {
                             var clip = clips[i];
-                            var index = i;
                             motionsPageTuple.page.AddButton(clip.name, clicked: () => {
-                                viewerManager.SetMotion(index);
+                                // Actor取得
+                                var actor = entityManager.PreviewActorProperty.Value;
+                                actor.ChangeMotion(clip);
                             });
                         }
                     });
                 }
                 
-                // Field
-                pageTuple.page.AddPageLinkButton("Fields", onLoad: fieldsPageTuple => {
-                    
-                    var fieldIds = viewerManager.FieldIds;
-                    foreach (var fieldId in fieldIds) {
-                        var id = fieldId;
-                        fieldsPageTuple.page.AddButton(fieldId, clicked:() =>
-                        {
-                            viewerManager.SetupFieldAsync(id, ct)
-                                .Forget();
-                        });
+                // Environment
+                pageTuple.page.AddPageLinkButton("Environments", onLoad: fieldsPageTuple => {
+                    var environmentIds = viewerModel.Data.environmentIds;
+                    foreach (var environmentId in environmentIds) {
+                        var id = environmentId;
+                        fieldsPageTuple.page.AddButton(environmentId,
+                            clicked: () => environmentManager.ChangeEnvironmentAsync(id, ct).Forget());
                     }
                 });
                 
-                // Model
+                // PreviewObject
                 pageTuple.page.AddPageLinkButton("Models", onLoad: modelsPageTuple => {
                     
-                    var bodyDataIds = viewerManager.BodyDataIds;
+                    var bodyDataIds = viewerModel.Data.bodyDataIds;
                     foreach (var bodyDataId in bodyDataIds) {
                         var id = bodyDataId;
-                        modelsPageTuple.page.AddButton(bodyDataId, clicked:() =>
-                        {
-                            viewerManager.SetupBodyAsync(id, ct)
-                                .ContinueWith(() => SetupMotionPage(viewerManager.CurrentBodyData));
-                        });
+                        modelsPageTuple.page.AddButton(bodyDataId, clicked:() => entityManager.CreatePreviewObjectAsync(id, ct).Forget());
                     }
                 });
                     
                 // 初期状態反映
-                SetupMotionPage(viewerManager.CurrentBodyData);
+                environmentManager.ChangeEnvironmentAsync(_modelViewerData.defaultEnvironmentId, ct).Forget();
+                entityManager.CreatePreviewObjectAsync(_modelViewerData.defaultBodyDataId, ct).Forget();
             });
         }
 

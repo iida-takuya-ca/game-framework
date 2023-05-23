@@ -53,8 +53,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// GUI描画
         /// </summary>
         private void OnGUI() {
-            var modelViewerManager = Services.Get<ModelViewerManager>();
-            if (modelViewerManager == null) {
+            var modelViewerModel = ModelViewerModel.Get();
+            if (modelViewerModel == null) {
                 EditorGUILayout.HelpBox("Not found ModelViewerManager", MessageType.Error);
                 return;
             }

@@ -13,10 +13,10 @@ namespace SampleGame {
         [Tooltip("BodyDataのAssetKeyリスト")]
         public string[] bodyDataIds = Array.Empty<string>();
 
-        [Header("Field")]
-        [Tooltip("初期状態で読み込むFieldのID")]
-        public string defaultFieldId = "fld000";
-        [Tooltip("FieldのIDリスト")]
-        public string[] fieldIds = Array.Empty<string>();
+        [Header("Environment")]
+        [Tooltip("初期状態で読み込む環境ID")]
+        public string defaultEnvironmentId = "fld000";
+        [Tooltip("EnvironmentIDリスト")]
+        public string[] environmentIds = Array.Empty<string>();
     }
 }
