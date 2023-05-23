@@ -14,7 +14,7 @@ namespace GameFramework.PlayableSystems {
         /// レイヤー設定
         /// </summary>
         [Serializable]
-        public struct LayerSetting {
+        public struct LayerSettings {
             [Tooltip("加算レイヤーか")]
             public bool additive;
             [Tooltip("アバターマスク")]
@@ -250,7 +250,7 @@ namespace GameFramework.PlayableSystems {
         /// 追加レイヤーの構築
         /// </summary>
         /// <param name="layerSettings">Base以外に構築するLayer設定</param>
-        public void BuildAdditionalLayers(params LayerSetting[] layerSettings) {
+        public void BuildAdditionalLayers(params LayerSettings[] layerSettings) {
             // 既にあるLayerInfoの削除
             for (var i = _additiveLayerInfos.Count - 1; i >= 0; i--) {
                 DestroyLayerInfo(_additiveLayerInfos[i]);
@@ -285,7 +285,7 @@ namespace GameFramework.PlayableSystems {
         /// 追加用レイヤーのリセット
         /// </summary>
         public void ResetAdditionalLayers() {
-            BuildAdditionalLayers(Array.Empty<LayerSetting>());
+            BuildAdditionalLayers(Array.Empty<LayerSettings>());
         }
 
         /// <summary>
