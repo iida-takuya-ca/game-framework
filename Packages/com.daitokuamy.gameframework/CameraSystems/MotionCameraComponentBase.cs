@@ -87,6 +87,11 @@ namespace GameFramework.CameraSystems {
                 _playable.Destroy();
             }
 
+            if (clip == null) {
+                Debug.LogWarning("Not found motion camera clip");
+                return;
+            }
+
             _playable = AnimationClipPlayable.Create(_graph, clip);
             _playable.SetDuration(clip.length);
             _output.SetSourcePlayable(_playable);
@@ -96,6 +101,10 @@ namespace GameFramework.CameraSystems {
         /// PlayableGraphの更新
         /// </summary>
         private void UpdateGraph(float deltaTime) {
+            if (!_playable.IsValid()) {
+                return;
+            }
+            
             _currentTime += _layeredTime?.DeltaTime ?? deltaTime;
             var duration = (float)_playable.GetDuration();
             _playable.SetTime(Mathf.Min(_currentTime, duration - 0.0001f));
