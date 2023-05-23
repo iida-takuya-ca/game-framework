@@ -191,21 +191,25 @@ namespace GameFramework.BodySystems.Editor {
         private void ResetBones() {
             if (_animator != null) {
                 _animator.WriteDefaultValues();
-
-                var renderers = _animator.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-                var bones = new HashSet<Transform>();
-                foreach (var renderer in renderers) {
-                    foreach (var bone in renderer.bones) {
-                        bones.Add(bone);
-                    }
-                }
-
-                foreach (var bone in bones) {
-                    if (bone == null) {
-                        return;
+                
+                if (PrefabUtility.IsPartOfVariantPrefab(_animator) || PrefabUtility.IsPartOfModelPrefab(_animator)) {
+                    var renderers = _animator.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                    var bones = new HashSet<Transform>();
+                    foreach (var renderer in renderers) {
+                        foreach (var bone in renderer.bones) {
+                            bones.Add(bone);
+                        }
                     }
 
-                    PrefabUtility.RevertObjectOverride(bone.transform, InteractionMode.AutomatedAction);
+                    foreach (var bone in bones) {
+                        if (bone == null) {
+                            return;
+                        }
+                        
+                        PrefabUtility.RevertObjectOverride(bone.transform, InteractionMode.AutomatedAction);
+                    }
+                    
+                    
                 }
 
                 EditorUtility.SetDirty(_animator);
