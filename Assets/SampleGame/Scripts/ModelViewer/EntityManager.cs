@@ -14,6 +14,7 @@ namespace SampleGame.ModelViewer {
     public class EntityManager : IDisposable {
         private Entity _previewObjectEntity;
         private ReactiveProperty<PreviewObjectActor> _previewActorProperty = new();
+        private DisposableScope _previewObjectScope = new();
 
         // 現在のプレビュー用アクター
         public IReadOnlyReactiveProperty<PreviewObjectActor> PreviewActorProperty => _previewActorProperty;
@@ -27,12 +28,13 @@ namespace SampleGame.ModelViewer {
                 _previewObjectEntity.Dispose();
                 _previewObjectEntity = null;
             }
+            _previewObjectScope.Clear();
         }
 
         /// <summary>
-        /// PreviewObjectの生成
+        /// PreviewObjectの変更
         /// </summary>
-        public async UniTask<Entity> CreatePreviewObjectAsync(string bodyDataId, CancellationToken ct) {
+        public async UniTask<Entity> ChangePreviewObjectAsync(string bodyDataId, CancellationToken ct) {
             ct.ThrowIfCancellationRequested();
             
             if (_previewObjectEntity == null) {
@@ -67,6 +69,15 @@ namespace SampleGame.ModelViewer {
             _previewActorProperty.Value = actor;
 
             return _previewObjectEntity;
+        }
+
+        /// <summary>
+        /// 環境の削除
+        /// </summary>
+        public void RemovePreviewObject() {
+            if (_previewObjectEntity == null) {
+                return;
+            }
         }
     }
 }

@@ -7,8 +7,6 @@ using GameFramework.Core;
 using GameFramework.SituationSystems;
 using UnityDebugSheet.Runtime.Core.Scripts;
 using SampleGame.ModelViewer;
-using UnityEngine.InputSystem.Utilities;
-using Observable = UniRx.Observable;
 
 namespace SampleGame {
     /// <summary>
@@ -121,17 +119,16 @@ namespace SampleGame {
                 
                 // PreviewObject
                 pageTuple.page.AddPageLinkButton("Models", onLoad: modelsPageTuple => {
-                    
                     var bodyDataIds = viewerModel.Data.bodyDataIds;
                     foreach (var bodyDataId in bodyDataIds) {
                         var id = bodyDataId;
-                        modelsPageTuple.page.AddButton(bodyDataId, clicked:() => entityManager.CreatePreviewObjectAsync(id, ct).Forget());
+                        modelsPageTuple.page.AddButton(bodyDataId, clicked:() => entityManager.ChangePreviewObjectAsync(id, ct).Forget());
                     }
                 });
                     
                 // 初期状態反映
                 environmentManager.ChangeEnvironmentAsync(_modelViewerData.defaultEnvironmentId, ct).Forget();
-                entityManager.CreatePreviewObjectAsync(_modelViewerData.defaultBodyDataId, ct).Forget();
+                entityManager.ChangePreviewObjectAsync(_modelViewerData.defaultBodyDataId, ct).Forget();
             });
         }
 
