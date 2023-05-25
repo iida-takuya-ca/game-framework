@@ -138,6 +138,11 @@ namespace SampleGame {
                 return;
             }
 
+            if (Input.GetKeyDown(KeyCode.R)) {
+                ParentContainer.Transition(new BattleSceneSituation());
+                return;
+            }
+
             // todo:コリジョンテスト
             if (Input.GetKeyDown(KeyCode.C)) {
                 var collisionManager = Services.Get<CollisionManager>();

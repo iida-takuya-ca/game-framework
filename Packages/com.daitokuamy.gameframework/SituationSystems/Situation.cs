@@ -1,6 +1,5 @@
 using System.Collections;
 using GameFramework.Core;
-using GameFramework.CoroutineSystems;
 using UnityEngine;
 
 namespace GameFramework.SituationSystems {
@@ -106,8 +105,6 @@ namespace GameFramework.SituationSystems {
             ParentContainer = container;
             // Containerの生成
             Container = CreateContainer();
-            // ServiceContainerの生成
-            ServiceContainer = new ServiceContainer(Parent?.ServiceContainer ?? Services.Instance);
             StandbyInternal(Parent);
         }
 
@@ -129,6 +126,7 @@ namespace GameFramework.SituationSystems {
             }
 
             _loadScope = new DisposableScope();
+            ServiceContainer = new ServiceContainer(Parent?.ServiceContainer ?? Services.Instance);
             yield return LoadRoutineInternal(handle, _loadScope);
             CurrentState = State.Loaded;
         }
@@ -232,6 +230,7 @@ namespace GameFramework.SituationSystems {
             CurrentState = State.Standby;
             UnloadInternal(handle);
             _loadScope.Dispose();
+            ServiceContainer.Dispose();
             _loadScope = null;
         }
 
@@ -279,7 +278,6 @@ namespace GameFramework.SituationSystems {
 
             ParentContainer = null;
             Container.Dispose();
-            ServiceContainer.Dispose();
             CurrentState = State.Invalid;
         }
 
