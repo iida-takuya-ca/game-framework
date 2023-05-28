@@ -62,9 +62,10 @@ namespace SampleGame {
             
             // カメラ操作用Controllerの設定
             cameraManager.SetCameraController("Default", new PreviewCameraController());
-            
-            // フィールドの読み込み
-            yield return environmentManager.ChangeEnvironmentAsync(_modelViewerData.defaultEnvironmentId, ct);
+                    
+            // 初期状態反映
+            appService.ChangeEnvironment(_modelViewerData.defaultEnvironmentId);
+            appService.ChangePreviewActorAsync(_modelViewerData.defaultActorDataId, ct).Forget();
         }
 
         /// <summary>
@@ -76,32 +77,36 @@ namespace SampleGame {
             var ct = scope.ToCancellationToken();
             var viewerModel = ModelViewerModel.Get();
             var appService = Services.Get<ModelViewerApplicationService>();
-            var entityManager = Services.Get<EntityManager>();
-            var environmentManager = Services.Get<EnvironmentManager>();
-            var debugSheet = Services.Get<DebugSheet>();
             
+            // Presenter初期化
+            var presenter = new ModelViewerPresenter(viewerModel)
+                .ScopeTo(scope);
+            presenter.RegisterTask(TaskOrder.Logic);
+            presenter.Activate();
+            
+            // DebugPage初期化
+            var debugSheet = Services.Get<DebugSheet>();
             var rootPage = debugSheet.GetOrCreateInitialPage();
             var motionsPageId = -1;
             _debugPageId = rootPage.AddPageLinkButton("Model Viewer", onLoad: pageTuple => {
                 // モーションページの初期化
-                void SetupMotionPage(ModelViewerBodyData bodyData) {
+                void SetupMotionPage(PreviewActorSetupData setupData) {
                     if (motionsPageId >= 0) {
                         pageTuple.page.RemoveItem(motionsPageId);
                         motionsPageId = -1;
                     }
 
-                    if (bodyData == null) {
+                    if (setupData == null) {
                         return;
                     }
                         
                     motionsPageId = pageTuple.page.AddPageLinkButton("Motions", onLoad: motionsPageTuple => {
-                        var clips = bodyData.animationClips;
+                        var clips = setupData.animationClips;
                         for (var i = 0; i < clips.Length; i++) {
+                            var index = i;
                             var clip = clips[i];
                             motionsPageTuple.page.AddButton(clip.name, clicked: () => {
-                                // Actor取得
-                                var actor = entityManager.PreviewActorProperty.Value;
-                                actor.ChangeMotion(clip);
+                                viewerModel.PreviewActor.ChangeClip(index);
                             });
                         }
                     });
@@ -113,22 +118,24 @@ namespace SampleGame {
                     foreach (var environmentId in environmentIds) {
                         var id = environmentId;
                         fieldsPageTuple.page.AddButton(environmentId,
-                            clicked: () => environmentManager.ChangeEnvironmentAsync(id, ct).Forget());
+                            clicked: () => appService.ChangeEnvironment(id));
                     }
                 });
                 
-                // PreviewObject
+                // PreviewActor
                 pageTuple.page.AddPageLinkButton("Models", onLoad: modelsPageTuple => {
-                    var bodyDataIds = viewerModel.Data.bodyDataIds;
-                    foreach (var bodyDataId in bodyDataIds) {
-                        var id = bodyDataId;
-                        modelsPageTuple.page.AddButton(bodyDataId, clicked:() => entityManager.ChangePreviewObjectAsync(id, ct).Forget());
+                    var actorDataIds = viewerModel.Data.actorDataIds;
+                    foreach (var actorDataId in actorDataIds) {
+                        var id = actorDataId;
+                        modelsPageTuple.page.AddButton(actorDataId, clicked:() => {
+                            appService.ChangePreviewActorAsync(id, ct)
+                                .ContinueWith(SetupMotionPage);
+                        });
                     }
                 });
-                    
+                
                 // 初期状態反映
-                environmentManager.ChangeEnvironmentAsync(_modelViewerData.defaultEnvironmentId, ct).Forget();
-                entityManager.ChangePreviewObjectAsync(_modelViewerData.defaultBodyDataId, ct).Forget();
+                SetupMotionPage(viewerModel.PreviewActor.SetupData.Value);
             });
         }
 
@@ -136,6 +143,7 @@ namespace SampleGame {
         /// 非アクティブ時処理
         /// </summary>
         protected override void DeactivateInternal(TransitionHandle handle) {
+            // Debugページ削除
             var debugSheet = Services.Get<DebugSheet>();
             var rootPage = debugSheet.GetOrCreateInitialPage();
             rootPage.RemoveItem(_debugPageId);

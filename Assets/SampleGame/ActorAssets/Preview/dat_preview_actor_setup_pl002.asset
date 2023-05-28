@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 766e4859ef2073d499c3d859617ce96d, type: 3}
-  m_Name: dat_model_viewer_body_pl001
+  m_Name: dat_preview_actor_setup_pl002
   m_EditorClassIdentifier: 
-  prefab: {fileID: 3446560305985819590, guid: e6b290ad6e6418748ae192fdd9ac1649, type: 3}
+  prefab: {fileID: 6163698259360608169, guid: ea13caea2842aaa42969d5c8de8f4f4a, type: 3}
   animationClips:
   - {fileID: 1453985722396304077, guid: 6d57102141fc7184db95eafa963b4572, type: 3}

@@ -10,14 +10,14 @@ namespace SampleGame.ModelViewer {
     /// </summary>
     public class ModelViewerRepository : IDisposable {
         private AssetManager _assetManager;
-        private PoolAssetStorage<ModelViewerBodyData> _bodyDataStorage;
+        private PoolAssetStorage<PreviewActorSetupData> _bodyDataStorage;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public ModelViewerRepository(AssetManager assetManager) {
             _assetManager = assetManager;
-            _bodyDataStorage = new PoolAssetStorage<ModelViewerBodyData>(_assetManager, 2);
+            _bodyDataStorage = new PoolAssetStorage<PreviewActorSetupData>(_assetManager, 2);
         }
 
         /// <summary>
@@ -28,10 +28,10 @@ namespace SampleGame.ModelViewer {
         }
 
         /// <summary>
-        /// BodyDataの読み込み
+        /// ActorDataの読み込み
         /// </summary>
-        public UniTask<ModelViewerBodyData> LoadBodyDataAsync(string bodyDataId, CancellationToken ct) {
-            return _bodyDataStorage.LoadAssetAsync(new ModelViewerBodyDataRequest(bodyDataId))
+        public UniTask<PreviewActorSetupData> LoadActorDataAsync(string setupDataId, CancellationToken ct) {
+            return _bodyDataStorage.LoadAssetAsync(new PreviewActorSetupDataRequest(setupDataId))
                 .ToUniTask(cancellationToken:ct);
         }
     }

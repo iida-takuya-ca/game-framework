@@ -1,14 +1,12 @@
-using System;
-
 namespace SampleGame.ModelViewer.Editor {
     /// <summary>
-    /// ModelViewerのModelパネル
+    /// ModelViewerのComponentパネル
     /// </summary>
     partial class ModelViewerWindow {
         /// <summary>
-        /// ModelPanel
+        /// ComponentPanel
         /// </summary>
-        private class ModelPanel : PanelBase {
+        private class BodyPanel : PanelBase {
             /// <summary>
             /// GUI描画
             /// </summary>

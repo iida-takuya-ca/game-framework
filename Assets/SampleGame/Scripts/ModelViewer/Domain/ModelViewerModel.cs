@@ -9,7 +9,7 @@ namespace SampleGame.ModelViewer {
         // 基本データ
         public ModelViewerData Data { get; private set; }
         // 表示用オブジェクトのモデル
-        public PreviewObjectModel PreviewObject { get; private set; }
+        public PreviewActorModel PreviewActor { get; private set; }
         // 環境用のモデル
         public EnvironmentModel Environment { get; private set; }
 
@@ -24,7 +24,7 @@ namespace SampleGame.ModelViewer {
         /// 生成時処理
         /// </summary>
         protected override void OnCreatedInternal(IScope scope) {
-            PreviewObject = PreviewObjectModel.Create()
+            PreviewActor = PreviewActorModel.Create()
                 .ScopeTo(scope);
             Environment = EnvironmentModel.Create()
                 .ScopeTo(scope);

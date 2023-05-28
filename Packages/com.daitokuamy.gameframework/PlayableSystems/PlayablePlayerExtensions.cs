@@ -11,7 +11,7 @@ namespace GameFramework.PlayableSystems {
         public static AnimationClipPlayableProvider Change(this MotionPlayer source, int layerIndex, AnimationClip clip,
             float blendDuration, bool autoDispose = true) {
             if (clip == null) {
-                source.Change(null, blendDuration);
+                source.Change(layerIndex, null, blendDuration);
                 return null;
             }
 
@@ -32,7 +32,7 @@ namespace GameFramework.PlayableSystems {
             RuntimeAnimatorController controller,
             float blendDuration, bool autoDispose = true) {
             if (controller == null) {
-                source.Change(null, blendDuration);
+                source.Change(layerIndex, null, blendDuration);
                 return null;
             }
 

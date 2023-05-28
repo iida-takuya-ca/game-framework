@@ -1,3 +1,4 @@
+using System;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
@@ -8,15 +9,18 @@ namespace SampleGame.ModelViewer {
     /// <summary>
     /// オブジェクトプレビュー用のアクター
     /// </summary>
-    public class PreviewObjectActor : Actor {
+    public class PreviewActor : Actor {
         private MotionController _motionController;
         private GimmickController _gimmickController;
+
+        private PreviewActorSetupData _actorSetupData;
         
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PreviewObjectActor(Body body)
+        public PreviewActor(Body body, PreviewActorSetupData setupData)
             : base(body) {
+            _actorSetupData = setupData;
             _motionController = body.GetController<MotionController>();
         }
 
@@ -24,6 +28,10 @@ namespace SampleGame.ModelViewer {
         /// モーションの変更
         /// </summary>
         public void ChangeMotion(AnimationClip clip) {
+            if (_motionController == null) {
+                return;
+            }
+            
             _motionController.Player.Change(0, clip, 0.0f);
         }
 
@@ -31,10 +39,22 @@ namespace SampleGame.ModelViewer {
         /// 加算モーションの変更
         /// </summary>
         public void ChangeAdditiveMotion(AnimationClip clip) {
+            if (_motionController == null) {
+                return;
+            }
+            
             _motionController.Player.Change(1, clip, 0.0f);
         }
 
+        /// <summary>
+        /// ギミックキーの一覧を取得
+        /// </summary>
+        /// <returns></returns>
         public string[] GetGimmickKeys() {
+            if (_gimmickController == null) {
+                return Array.Empty<string>();
+            }
+            
             return _gimmickController.GetKeys();
         }
 
@@ -44,12 +64,20 @@ namespace SampleGame.ModelViewer {
         protected override void ActivateInternal(IScope scope) {
             base.ActivateInternal(scope);
             
+            // RootMotionを無効化
+            var animator = Body.GetComponent<Animator>();
+            if (animator != null) {
+                animator.applyRootMotion = false;
+            }
+            
             // 加算レイヤーの追加
-            _motionController.Player.BuildAdditionalLayers(
-                new MotionPlayer.LayerSettings {
-                    additive = true,
-                    avatarMask = null
-                });
+            if (_motionController != null) {
+                _motionController.Player.BuildAdditionalLayers(
+                    new MotionPlayer.LayerSettings {
+                        additive = true,
+                        avatarMask = null
+                    });
+            }
         }
 
         /// <summary>
@@ -57,7 +85,9 @@ namespace SampleGame.ModelViewer {
         /// </summary>
         protected override void DeactivateInternal() {
             // 加算レイヤーの削除
-            _motionController.Player.ResetAdditionalLayers();
+            if (_motionController != null) {
+                _motionController.Player.ResetAdditionalLayers();
+            }
             
             base.DeactivateInternal();
         }

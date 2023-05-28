@@ -1,12 +1,12 @@
 namespace SampleGame.ModelViewer {
     /// <summary>
-    /// ModelViewerBodyDataのAssetRequest
+    /// Preview用のActorSetupData読み込みリクエスト
     /// </summary>
-    public class ModelViewerBodyDataRequest : DataAssetRequest<ModelViewerBodyData> {
+    public class PreviewActorSetupDataRequest : ActorAssetRequest<PreviewActorSetupData> {
         public override string Address { get; }
         
-        public ModelViewerBodyDataRequest(string assetKey) {
-            Address = GetPath($"ModelViewer/Body/dat_model_viewer_body_{assetKey}.asset");
+        public PreviewActorSetupDataRequest(string assetKey) {
+            Address = GetPath($"Preview/dat_preview_actor_setup_{assetKey}.asset");
         }
     }
 }

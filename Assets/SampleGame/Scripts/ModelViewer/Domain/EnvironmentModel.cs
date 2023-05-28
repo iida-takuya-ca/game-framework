@@ -6,16 +6,16 @@ namespace SampleGame.ModelViewer {
     /// 環境情報用モデル
     /// </summary>
     public class EnvironmentModel : AutoIdModel<EnvironmentModel> {
-        private ReactiveProperty<string> _assetIdProperty = new();
+        private ReactiveProperty<string> _assetId = new();
 
         // 環境情報用のアセットID
-        public IReadOnlyReactiveProperty<string> AssetIdProperty => _assetIdProperty;
+        public IReadOnlyReactiveProperty<string> AssetId => _assetId;
         
         /// <summary>
         /// BodyDataの切り替え
         /// </summary>
         public void SetAssetId(string assetId) {
-            _assetIdProperty.Value = assetId;
+            _assetId.Value = assetId;
         }
 
         /// <summary>

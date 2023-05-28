@@ -8,10 +8,10 @@ namespace SampleGame {
     [CreateAssetMenu(fileName = "dat_model_viewer.asset", menuName = "SampleGame/Model Viewer/Data")]
     public class ModelViewerData : ScriptableObject {
         [Header("Model")]
-        [Tooltip("初期状態で読み込むBodyDataId")]
-        public string defaultBodyDataId = "";
-        [Tooltip("BodyDataのAssetKeyリスト")]
-        public string[] bodyDataIds = Array.Empty<string>();
+        [Tooltip("初期状態で読み込むActorDataId")]
+        public string defaultActorDataId = "";
+        [Tooltip("ActorDataのAssetKeyリスト")]
+        public string[] actorDataIds = Array.Empty<string>();
 
         [Header("Environment")]
         [Tooltip("初期状態で読み込む環境ID")]
