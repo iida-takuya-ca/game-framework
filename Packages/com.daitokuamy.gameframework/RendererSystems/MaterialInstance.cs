@@ -42,6 +42,17 @@ namespace GameFramework.RendererSystems {
         }
 
         /// <summary>
+        /// 文字列変換
+        /// </summary>
+        public override string ToString() {
+            if (_renderer == null || _material == null) {
+                return "Invalid Instance";
+            }
+
+            return $"{_renderer.name}[{_materialIndex}]:{_material.name}";
+        }
+
+        /// <summary>
         /// 各種ゲッター
         /// </summary>
         public float GetFloat(int nameId) {

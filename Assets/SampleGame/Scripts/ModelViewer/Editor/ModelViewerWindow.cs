@@ -43,7 +43,7 @@ namespace SampleGame.ModelViewer.Editor {
             /// <param name="itemToName">項目名変換関数</param>
             /// <param name="onGUIElement">項目GUI描画</param>
             /// <param name="options">LayoutOption</param>
-            public void OnGUI(IEnumerable<T> items, Func<T, string> itemToName, Action<T, int> onGUIElement, params GUILayoutOption[] options) {
+            public void OnGUI(IList<T> items, Func<T, string> itemToName, Action<T, int> onGUIElement, params GUILayoutOption[] options) {
                 using (new EditorGUILayout.VerticalScope("Box", options)) {
                     // 検索フィルタ
                     _filter = _searchField.OnToolbarGUI(_filter);
@@ -69,6 +69,43 @@ namespace SampleGame.ModelViewer.Editor {
                     using (var scope = new EditorGUILayout.ScrollViewScope(_scroll, "Box")) {
                         for (var i = 0; i < filteredItems.Length; i++) {
                             onGUIElement.Invoke(filteredItems[i], i);
+                        }
+
+                        _scroll = scope.scrollPosition;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 検索可能なリストGUI
+        /// </summary>
+        private class FoldoutList<T> {
+            private readonly string _label;
+            private bool _open;
+            private Vector2 _scroll;
+            
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            public FoldoutList(string label, bool defaultOpen = true) {
+                _label = label;
+                _open = defaultOpen;
+            }
+            
+            /// <summary>
+            /// GUI描画
+            /// </summary>
+            /// <param name="items">表示項目</param>
+            /// <param name="onGUIElement">項目GUI描画</param>
+            /// <param name="options">LayoutOption</param>
+            public void OnGUI(IList<T> items, Action<T, int> onGUIElement, params GUILayoutOption[] options) {
+                _open = EditorGUILayout.ToggleLeft(_label, _open, EditorStyles.boldLabel);
+                if (_open) {
+                    // 項目描画
+                    using (var scope = new EditorGUILayout.ScrollViewScope(_scroll, "Box", options)) {
+                        for (var i = 0; i < items.Count; i++) {
+                            onGUIElement.Invoke(items[i], i);
                         }
 
                         _scroll = scope.scrollPosition;

@@ -18,6 +18,17 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
+        /// ギミックのキー一覧を取得
+        /// </summary>
+        public string[] GetKeys<T>()
+            where T : Gimmick {
+            return _gimmicks
+                .Where(x => x.Value.Exists(y => y is T))
+                .Select(x => x.Key)
+                .ToArray();
+        }
+
+        /// <summary>
         /// ギミックの取得
         /// </summary>
         /// <param name="key">取得用のキー</param>

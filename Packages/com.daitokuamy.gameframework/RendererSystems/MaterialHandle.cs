@@ -22,6 +22,19 @@ namespace GameFramework.RendererSystems {
         }
 
         /// <summary>
+        /// Instance内容を表記するための文字列を列挙
+        /// </summary>
+        public IEnumerable<string> GetInstanceTexts() {
+            if (!IsValid) {
+                yield break;
+            }
+            
+            foreach (var info in _infos) {
+                yield return info.ToString();
+            }
+        }
+
+        /// <summary>
         /// 各種セッター
         /// </summary>
         public void SetFloat(int nameId, float val) {

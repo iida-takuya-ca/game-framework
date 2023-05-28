@@ -1,4 +1,5 @@
 using GameFramework.CameraSystems;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace SampleGame.ModelViewer {
@@ -15,6 +16,11 @@ namespace SampleGame.ModelViewer {
         /// 更新処理
         /// </summary>
         protected override void UpdateInternal(float deltaTime) {
+            // 注視点リセットボタン
+            if (Keyboard.current[Key.R].isPressed) {
+                Component.LookAtOffset = Vector3.zero;
+            }
+            
             // マウス移動による移動
             if (Mouse.current.leftButton.isPressed) {
                 var delta = Mouse.current.delta.ReadValue() * _mouseLeftDeltaSpeed;
