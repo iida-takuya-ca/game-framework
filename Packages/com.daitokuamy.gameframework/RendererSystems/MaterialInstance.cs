@@ -216,7 +216,7 @@ namespace GameFramework.RendererSystems {
             if (_block != null) {
                 _renderer.GetPropertyBlock(_block, _materialIndex);
                 setPropertyAction.Invoke(_block, nameId, val);
-                _renderer.SetPropertyBlock(_block);
+                _renderer.SetPropertyBlock(_block, _materialIndex);
             }
             else if (_clonedMaterial != null) {
                 setMaterialAction.Invoke(_clonedMaterial, nameId, val);

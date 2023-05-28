@@ -49,6 +49,7 @@ namespace GameFramework.SituationSystems {
             // 既に同タイプのシチュエーションが登録されている場合、そこにスタックを戻す
             var backIndex = -1;
             var back = false;
+            var reset = false;
 
             if (situation != null) {
                 for (var i = 0; i < _stack.Count; i++) {
@@ -61,16 +62,18 @@ namespace GameFramework.SituationSystems {
 
                     // 同じ型は置き換える
                     if (_stack[i].GetType() == situation.GetType()) {
-                        // 遷移の必要なければキャンセル
+                        // 同じSituationに遷移しなおす
                         if (i == _stack.Count - 1) {
-                            return new TransitionHandle(new Exception($"Cancel transit. Situation:{nextName}"));
+                            reset = true;
+                            break;
                         }
-
-                        var old = _stack[i];
-                        ((ISituation)old).Release(this);
-                        _stack[i] = situation;
-                        backIndex = i;
-                        back = true;
+                        else {
+                            var old = _stack[i];
+                            ((ISituation)old).Release(this);
+                            _stack[i] = situation;
+                            backIndex = i;
+                            back = true;
+                        }
                     }
                 }
             }
@@ -95,8 +98,13 @@ namespace GameFramework.SituationSystems {
                     new Exception($"Cant transition. Situation:{nextName} Transition:{transition}"));
             }
 
+            // リセットする場合
+            if (reset) {
+                // Stackの最後を入れ直す
+                _stack[_stack.Count - 1] = situation;
+            }
             // 戻る場合
-            if (back) {
+            else if (back) {
                 // 現在のSituationをStackから除外
                 _stack.RemoveAt(_stack.Count - 1);
 
@@ -124,8 +132,8 @@ namespace GameFramework.SituationSystems {
 
             // コルーチンの登録
             _coroutineRunner.StartCoroutine(transition.TransitRoutine(this), () => {
-                // 戻る時はここでRelease
-                if (back && prev != null) {
+                // リセットか戻る時はここでRelease
+                if ((reset || back) && prev != null) {
                     prev.Release(this);
                 }
 
