@@ -15,3 +15,9 @@ MonoBehaviour:
   prefab: {fileID: 6042716972913021716, guid: 10f2085c9d6ec8b4dac25a1072d78e5d, type: 3}
   animationClips:
   - {fileID: 1453985722396304077, guid: 6d57102141fc7184db95eafa963b4572, type: 3}
+  meshAvatarInfos:
+  - key: Hair
+    prefabs:
+    - {fileID: 6624754348099263956, guid: edec448c10ea5744fb4c23aeed56590f, type: 3}
+    - {fileID: 7843111422530718673, guid: af375953c2a5a9841b21ff7d22233027, type: 3}
+    - {fileID: 1136340997951054310, guid: 63c89b55823893642a8ec5b6c0ddd504, type: 3}

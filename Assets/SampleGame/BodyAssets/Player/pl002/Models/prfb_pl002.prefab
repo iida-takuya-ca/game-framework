@@ -520,7 +520,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100156, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100158, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_Name
@@ -536,19 +536,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100336, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100338, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100340, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100342, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100344, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
@@ -584,7 +584,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100396, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400158, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}
       propertyPath: m_RootOrder
@@ -713,6 +713,27 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+--- !u!114 &915917478626707773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163698259360608169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48c0313b2ddff3c4b95eeef29c12dae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _locatorInfos:
+  - key: Head
+    transform: {fileID: 6163698259360903711}
+  - key: Hips
+    transform: {fileID: 6163698259360903707}
+  - key: Hand_R
+    transform: {fileID: 6163698259360904181}
+  - key: Hand_L
+    transform: {fileID: 6163698259360903727}
 --- !u!114 &1388154185988475507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,6 +812,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 516e62229ad883f4fac3fd2e2b798dd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeOnLoad: 0
   _targets:
   - {fileID: 4693691037638167521}
 --- !u!114 &3254368334144999223
@@ -893,7 +915,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _updateMode: 1
---- !u!114 &915917478626707773
+--- !u!114 &6921120156587490984
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -902,18 +924,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6163698259360608169}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48c0313b2ddff3c4b95eeef29c12dae9, type: 3}
+  m_Script: {fileID: 11500000, guid: e5d5dca96968c524f87bd65fd4584f5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _locatorInfos:
-  - key: Head
-    transform: {fileID: 6163698259360903711}
-  - key: Hips
-    transform: {fileID: 6163698259360903707}
-  - key: Hand_R
-    transform: {fileID: 6163698259360904181}
-  - key: Hand_L
-    transform: {fileID: 6163698259360903727}
 --- !u!4 &6163698259360903707 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400012, guid: e8df3d267d7d965469313c7824cb5f69, type: 3}

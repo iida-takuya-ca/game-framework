@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.EntitySystems;
@@ -12,16 +13,19 @@ namespace SampleGame.ModelViewer {
     public class PreviewActor : Actor {
         private MotionController _motionController;
         private GimmickController _gimmickController;
-
-        private PreviewActorSetupData _actorSetupData;
+        private AvatarController _avatarController;
+        
+        public PreviewActorSetupData SetupData { get; private set; }
         
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public PreviewActor(Body body, PreviewActorSetupData setupData)
             : base(body) {
-            _actorSetupData = setupData;
+            SetupData = setupData;
             _motionController = body.GetController<MotionController>();
+            _gimmickController = body.GetController<GimmickController>();
+            _avatarController = body.GetController<AvatarController>();
         }
 
         /// <summary>
@@ -56,6 +60,27 @@ namespace SampleGame.ModelViewer {
             }
             
             return _gimmickController.GetKeys();
+        }
+
+        /// <summary>
+        /// メッシュアバターの変更
+        /// </summary>
+        public void ChangeMeshAvatar(string key, int index) {
+            if (_avatarController == null) {
+                return;
+            }
+
+            var info = SetupData.meshAvatarInfos.FirstOrDefault(x => x.key == key);
+            if (info == null) {
+                return;
+            }
+
+            if (index < 0 || index >= info.prefabs.Length) {
+                _avatarController.ResetPart(key);
+            }
+            else {
+                _avatarController.ChangePart(new MeshAvatarResolver(key, info.prefabs[index]));
+            }
         }
 
         /// <summary>

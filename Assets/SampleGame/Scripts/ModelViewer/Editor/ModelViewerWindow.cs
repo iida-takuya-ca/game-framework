@@ -17,7 +17,9 @@ namespace SampleGame.ModelViewer.Editor {
         private enum PanelType {
             Actor,
             Body,
+            Avatar,
             Environment,
+            Settings,
         }
 
         /// <summary>
@@ -239,7 +241,9 @@ namespace SampleGame.ModelViewer.Editor {
             
             CreatePanel<ActorPanel>(PanelType.Actor);
             CreatePanel<BodyPanel>(PanelType.Body);
+            CreatePanel<AvatarPanel>(PanelType.Avatar);
             CreatePanel<EnvironmentPanel>(PanelType.Environment);
+            CreatePanel<SettingsPanel>(PanelType.Settings);
         }
 
         /// <summary>
