@@ -10,8 +10,6 @@ namespace GameFramework.Core {
     /// 時間の階層管理用クラス
     /// </summary>
     public class LayeredTime : IDisposable {
-        // 階層用の親TimeLayer
-        private LayeredTime _parent;
         // 自身の持つTimeLayer
         private float _localTimeScale = 1.0f;
 
@@ -26,6 +24,8 @@ namespace GameFramework.Core {
         public IReadOnlyReactiveProperty<float> TimeScaleProp => _timeScaleProp;
 #endif
 
+        // 階層用の親TimeLayer
+        public LayeredTime Parent { get; private set; }
         // 自身のTimeScale
         public float LocalTimeScale {
             get => _localTimeScale;
@@ -38,7 +38,7 @@ namespace GameFramework.Core {
         }
         // 親階層を考慮したTimeScale
         public float TimeScale => ParentTimeScale * _localTimeScale;
-        public float ParentTimeScale => _parent?.TimeScale ?? 1.0f;
+        public float ParentTimeScale => Parent?.TimeScale ?? 1.0f;
         // 現フレームのDeltaTime
         public float DeltaTime => BaseDeltaTime * TimeScale;
         public float ParentDeltaTime => BaseDeltaTime * ParentTimeScale;
@@ -66,15 +66,15 @@ namespace GameFramework.Core {
         /// </summary>
         /// <param name="parent">親となるTimeLayer, 未指定の場合UnityEngine.Timeに直接依存</param>
         public void SetParent(LayeredTime parent) {
-            if (_parent != null) {
-                _parent.OnChangedTimeScaleInternal -= OnChangedTimeScaleInternal;
-                _parent = null;
+            if (Parent != null) {
+                Parent.OnChangedTimeScaleInternal -= OnChangedTimeScaleInternal;
+                Parent = null;
             }
 
-            _parent = parent;
+            Parent = parent;
 
-            if (_parent != null) {
-                _parent.OnChangedTimeScaleInternal += OnChangedTimeScaleInternal;
+            if (Parent != null) {
+                Parent.OnChangedTimeScaleInternal += OnChangedTimeScaleInternal;
             }
         }
 
@@ -82,9 +82,9 @@ namespace GameFramework.Core {
         /// 廃棄処理
         /// </summary>
         public void Dispose() {
-            if (_parent != null) {
-                _parent.OnChangedTimeScaleInternal -= OnChangedTimeScaleInternal;
-                _parent = null;
+            if (Parent != null) {
+                Parent.OnChangedTimeScaleInternal -= OnChangedTimeScaleInternal;
+                Parent = null;
             }
         }
     }
