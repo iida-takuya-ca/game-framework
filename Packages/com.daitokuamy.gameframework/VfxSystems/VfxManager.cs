@@ -412,8 +412,9 @@ namespace GameFramework.VfxSystems {
             public IVfxComponent[] components;
         }
 
-        private int _poolDefaultCapacity = 10;
-        private int _poolMaxCapacity = 10000;
+        // Poolキャパシティ
+        private readonly int _poolDefaultCapacity;
+        private readonly int _poolMaxCapacity;
 
         // 生成したGameObjectを保持するためのTransform
         private Transform _rootTransform;
@@ -433,7 +434,7 @@ namespace GameFramework.VfxSystems {
             _poolDefaultCapacity = poolDefaultCapacity;
             _poolMaxCapacity = poolMaxCapacity;
 
-            var root = new GameObject("VfxManager", typeof(VfxManagerDispatcher));
+            var root = new GameObject(nameof(VfxManager), typeof(VfxManagerDispatcher));
             var dispatcher = root.GetComponent<VfxManagerDispatcher>();
             dispatcher.Setup(this);
             Object.DontDestroyOnLoad(root);
