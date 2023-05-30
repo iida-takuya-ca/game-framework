@@ -16,6 +16,10 @@ namespace GameFramework.BodySystems {
             public MeshParts meshParts;
         }
 
+        // 依存コンポーネント
+        private Animator _animator;
+        private BoneController _boneController;
+        
         // メッシュを追加する場所
         private Transform _additiveMeshRoot;
         // 追加したメッシュの情報
@@ -56,6 +60,9 @@ namespace GameFramework.BodySystems {
         /// 初期化処理
         /// </summary>
         protected override void InitializeInternal() {
+            _animator = Body.GetComponent<Animator>();
+            _boneController = Body.GetController<BoneController>();
+            
             // 追加Mesh用の箱を作る
             _additiveMeshRoot = new GameObject("AdditiveMeshRoot").transform;
             _additiveMeshRoot.gameObject.layer = Body.GameObject.layer;
@@ -105,6 +112,11 @@ namespace GameFramework.BodySystems {
 
             // Rendererの回収
             RefreshRenderers();
+            
+            // AnimatorのRebind
+            if (_animator != null) {
+                _animator.Rebind();
+            }
 
             // 更新通知
             if (meshParts != null) {
@@ -132,6 +144,11 @@ namespace GameFramework.BodySystems {
 
             // Rendererの回収
             RefreshRenderers();
+            
+            // AnimatorのRebind
+            if (_animator != null) {
+                _animator.Rebind();
+            }
 
             // 削除通知
             if (mergedInfo.meshParts != null) {
@@ -158,9 +175,7 @@ namespace GameFramework.BodySystems {
         /// <param name="target">対象のGameObject</param>
         /// <param name="prefix">マージする際につけるPrefix</param>
         private Transform[] MergeBones(GameObject target, string prefix) {
-            var boneController = Body.GetController<BoneController>();
-
-            if (boneController == null || boneController.Root == null) {
+            if (_boneController == null || _boneController.Root == null) {
                 return Array.Empty<Transform>();
             }
 
@@ -168,11 +183,11 @@ namespace GameFramework.BodySystems {
             var meshParts = target.GetComponent<MeshParts>();
 
             // 既に存在する骨の列挙
-            var currentBones = boneController.Root.GetComponentsInChildren<Transform>()
+            var currentBones = _boneController.Root.GetComponentsInChildren<Transform>()
                 .ToDictionary(x => x.name, x => x);
 
             // 対象の情報取得
-            var root = target.transform.Find(boneController.Root.name);
+            var root = target.transform.Find(_boneController.Root.name);
             var rootName = root.name;
             var renderers = target.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
@@ -279,7 +294,7 @@ namespace GameFramework.BodySystems {
                     renderer.rootBone = rootBone;
                 }
                 else {
-                    renderer.rootBone = boneController.Root;
+                    renderer.rootBone = _boneController.Root;
                 }
             }
 
