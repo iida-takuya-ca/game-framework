@@ -2,7 +2,7 @@ using System;
 using GameFramework.BodySystems;
 using GameFramework.LogicSystems;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
     /// Body制御用ロジックのInterface
     /// </summary>

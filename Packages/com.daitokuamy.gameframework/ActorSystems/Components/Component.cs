@@ -3,12 +3,12 @@ using GameFramework.Core;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
     /// Entity拡張用コンポーネント基底
     /// </summary>
     [Preserve]
-    public abstract class EntityComponent : IEntityComponent, IScope {
+    public abstract class Component : IComponent, IScope {
         // Attach中のScope
         private DisposableScope _attachScope = new DisposableScope();
         // Active中のScope
@@ -18,7 +18,7 @@ namespace GameFramework.EntitySystems {
         public event Action OnExpired;
 
         // AttachされているEntity
-        public Entity Entity { get; private set; } = null;
+        public ActorEntity Entity { get; private set; } = null;
 
         /// <summary>
         /// 廃棄時処理
@@ -36,28 +36,28 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Entityに登録された時の処理
         /// </summary>
-        /// <param name="entity">対象のEntity</param>
-        void IEntityComponent.Attached(Entity entity) {
+        /// <param name="actorEntity">対象のEntity</param>
+        void IComponent.Attached(ActorEntity actorEntity) {
             if (Entity != null) {
                 Debug.LogError($"Already attached component. {GetType().Name}");
                 return;
             }
 
-            Entity = entity;
+            Entity = actorEntity;
             AttachedInternal(_attachScope);
         }
 
         /// <summary>
         /// アクティブ化
         /// </summary>
-        void IEntityComponent.Activate() {
+        void IComponent.Activate() {
             ActivateInternal(_activeScope);
         }
 
         /// <summary>
         /// 非アクティブ化
         /// </summary>
-        void IEntityComponent.Deactivate() {
+        void IComponent.Deactivate() {
             DeactivateInternal();
             _activeScope.Clear();
         }
@@ -65,9 +65,9 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Entityから登録解除された時の処理
         /// </summary>
-        /// <param name="entity">対象のEntity</param>
-        void IEntityComponent.Detached(Entity entity) {
-            if (entity != Entity) {
+        /// <param name="actorEntity">対象のEntity</param>
+        void IComponent.Detached(ActorEntity actorEntity) {
+            if (actorEntity != Entity) {
                 Debug.LogError($"Invalid detached entity. {GetType().Name}");
                 return;
             }

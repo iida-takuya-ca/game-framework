@@ -3,12 +3,12 @@ using GameFramework.Core;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
     /// BodyをEntityと紐づけるためのComponent
     /// </summary>
     [Preserve]
-    public sealed class BodyEntityComponent : EntityComponent {
+    public sealed class BodyComponent : Component {
         // 最後に残っていたBodyのTransform情報
         private Vector3? _lastPosition;
         private Quaternion? _lastRotation;
@@ -22,7 +22,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         /// <param name="body">設定するBody</param>
         /// <param name="prevDispose">既に設定されているBodyをDisposeするか</param>
-        public Entity SetBody(Body body, bool prevDispose = true) {
+        public ActorEntity SetBody(Body body, bool prevDispose = true) {
             if (Body != null && Body.IsValid) {
                 _lastPosition = Body.Position;
                 _lastRotation = Body.Rotation;
@@ -58,7 +58,7 @@ namespace GameFramework.EntitySystems {
         /// Bodyの削除
         /// </summary>
         /// <param name="dispose">BodyをDisposeするか</param>
-        public Entity RemoveBody(bool dispose = true) {
+        public ActorEntity RemoveBody(bool dispose = true) {
             return SetBody(null, dispose);
         }
 

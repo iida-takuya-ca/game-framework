@@ -1,27 +1,27 @@
 using GameFramework.Core;
 using GameFramework.LogicSystems;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
-    /// エンティティ用ロジック処理
+    /// ActorEntity用ロジック処理
     /// </summary>
-    public abstract class EntityLogic : Logic {
+    public abstract class ActorEntityLogic : Logic {
         // アタッチ中のScope
         private DisposableScope _attachScope;
 
         // 持ち主のEntity
-        public Entity Entity { get; private set; }
+        public ActorEntity ActorEntity { get; private set; }
 
         /// <summary>
         /// Entityに追加された時の処理
         /// </summary>
-        /// <param name="entity">持ち主のEntity</param>
-        public void Attach(Entity entity) {
-            if (Entity != null || entity == null) {
+        /// <param name="actorEntity">持ち主のEntity</param>
+        public void Attach(ActorEntity actorEntity) {
+            if (ActorEntity != null || actorEntity == null) {
                 return;
             }
 
-            Entity = entity;
+            ActorEntity = actorEntity;
             _attachScope = new DisposableScope();
             AttachInternal(_attachScope);
         }
@@ -29,17 +29,17 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// Entityから削除された時の処理
         /// </summary>
-        /// <param name="entity">持ち主のEntity</param>
-        public void Detach(Entity entity) {
-            if (Entity == null || entity == null) {
+        /// <param name="actorEntity">持ち主のEntity</param>
+        public void Detach(ActorEntity actorEntity) {
+            if (ActorEntity == null || actorEntity == null) {
                 return;
             }
 
-            if (entity == Entity) {
+            if (actorEntity == ActorEntity) {
                 DetachInternal();
                 _attachScope.Dispose();
                 _attachScope = null;
-                Entity = null;
+                ActorEntity = null;
             }
         }
 

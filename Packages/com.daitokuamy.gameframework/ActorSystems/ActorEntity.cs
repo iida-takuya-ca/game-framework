@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
-    /// インスタンス管理用クラスのコア
+    /// Actorインスタンス管理用のコア
     /// </summary>
-    public class Entity : IDisposable {
+    public class ActorEntity : IDisposable {
         // 次の生成するEntityのID
         private static int _nextId = 1;
 
         // Entity拡張用Component
-        private Dictionary<Type, IEntityComponent> _components = new Dictionary<Type, IEntityComponent>();
+        private Dictionary<Type, IComponent> _components = new Dictionary<Type, IComponent>();
         // EntityのID
         public int Id { get; private set; }
         // Active状態
@@ -20,7 +20,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Entity(bool active = true) {
+        public ActorEntity(bool active = true) {
             Id = _nextId++;
             IsActive = active;
         }
@@ -51,20 +51,20 @@ namespace GameFramework.EntitySystems {
         /// Componentの取得
         /// </summary>
         /// <param name="type">取得する型</param>
-        public EntityComponent GetComponent(Type type) {
+        public Component GetComponent(Type type) {
             // 型一致での検索
             if (!_components.TryGetValue(type, out var component)) {
                 return null;
             }
 
-            return (EntityComponent)component;
+            return (Component)component;
         }
 
         /// <summary>
         /// Componentの取得
         /// </summary>
         public T GetComponent<T>()
-            where T : EntityComponent {
+            where T : Component {
             return (T)GetComponent(typeof(T));
         }
 
@@ -72,8 +72,8 @@ namespace GameFramework.EntitySystems {
         /// Componentの追加(重複はエラー)
         /// </summary>
         /// <param name="type">追加する型</param>
-        public EntityComponent AddComponent(Type type) {
-            if (!type.IsSubclassOf(typeof(EntityComponent))) {
+        public Component AddComponent(Type type) {
+            if (!type.IsSubclassOf(typeof(Component))) {
                 Debug.LogError($"Component is not EntityComponent. [{type.Name}]");
                 return null;
             }
@@ -89,21 +89,21 @@ namespace GameFramework.EntitySystems {
                 return null;
             }
 
-            var component = (IEntityComponent)constructor.Invoke(Array.Empty<object>());
+            var component = (IComponent)constructor.Invoke(Array.Empty<object>());
             _components[type] = component;
             component.Attached(this);
             if (IsActive) {
                 component.Activate();
             }
 
-            return (EntityComponent)component;
+            return (Component)component;
         }
 
         /// <summary>
         /// Componentの追加(重複はエラー)
         /// </summary>
         public T AddComponent<T>()
-            where T : EntityComponent {
+            where T : Component {
             return (T)AddComponent(typeof(T));
         }
 
@@ -111,7 +111,7 @@ namespace GameFramework.EntitySystems {
         /// Componentの追加、既に追加されていたら取得
         /// </summary>
         /// <param name="type">追加する型</param>
-        public EntityComponent AddOrGetComponent(Type type) {
+        public Component AddOrGetComponent(Type type) {
             var component = GetComponent(type);
             if (component == null) {
                 component = AddComponent(type);
@@ -124,7 +124,7 @@ namespace GameFramework.EntitySystems {
         /// Componentの追加、既に追加されていたら取得
         /// </summary>
         public T AddOrGetComponent<T>()
-            where T : EntityComponent {
+            where T : Component {
             return (T)AddOrGetComponent(typeof(T));
         }
 

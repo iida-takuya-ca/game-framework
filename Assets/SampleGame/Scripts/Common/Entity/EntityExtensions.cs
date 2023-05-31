@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.Core;
-using GameFramework.EntitySystems;
+using GameFramework.ActorSystems;
 
 namespace SampleGame {
     /// <summary>
@@ -16,8 +16,8 @@ namespace SampleGame {
         /// <param name="source">初期化対象のEntity</param>
         /// <param name="onCreateBody">Body生成</param>
         /// <param name="onSetupEntity">各種初期化処理</param>
-        public static async UniTask<Entity> SetupAsync(this Entity source, Func<UniTask<Body>> onCreateBody,
-            Action<Entity> onSetupEntity) {
+        public static async UniTask<ActorEntity> SetupAsync(this ActorEntity source, Func<UniTask<Body>> onCreateBody,
+            Action<ActorEntity> onSetupEntity) {
             // Bodyの生成
             if (onCreateBody != null) {
                 var body = await onCreateBody.Invoke();
@@ -35,7 +35,7 @@ namespace SampleGame {
         /// <summary>
         /// プレイヤーエンティティの初期化処理
         /// </summary>
-        public static async UniTask<Entity> SetupPlayerAsync(this Entity source, Battle.BattlePlayerModel model, IScope unloadScope, CancellationToken ct) {
+        public static async UniTask<ActorEntity> SetupPlayerAsync(this ActorEntity source, Battle.BattlePlayerModel model, IScope unloadScope, CancellationToken ct) {
             return await source.SetupAsync(async () => {
                 var prefab = await new PlayerPrefabAssetRequest(model.AssetKey)
                     .LoadAsync(unloadScope, ct);

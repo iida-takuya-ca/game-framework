@@ -4,20 +4,20 @@ using GameFramework.LogicSystems;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
     /// LogicをEntityと紐づけるためのComponent
     /// </summary>
     [Preserve]
-    public sealed class LogicEntityComponent : EntityComponent {
+    public sealed class LogicComponent : Component {
         // ロジックのキャッシュ
-        private Dictionary<Type, EntityLogic> _logics = new Dictionary<Type, EntityLogic>();
+        private Dictionary<Type, ActorEntityLogic> _logics = new Dictionary<Type, ActorEntityLogic>();
 
         /// <summary>
         /// ロジックの取得
         /// </summary>
         public TLogic GetLogic<TLogic>()
-            where TLogic : EntityLogic {
+            where TLogic : ActorEntityLogic {
             var type = typeof(TLogic);
             if (_logics.TryGetValue(type, out var logic)) {
                 return (TLogic)logic;
@@ -35,7 +35,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// ロジックが含まれているか
         /// </summary>
-        public bool ContainsLogic(EntityLogic logic) {
+        public bool ContainsLogic(ActorEntityLogic logic) {
             return _logics.ContainsValue(logic);
         }
 
@@ -43,14 +43,14 @@ namespace GameFramework.EntitySystems {
         /// ロジックの追加(Remove時に自動削除)
         /// </summary>
         /// <param name="logic">追加するLogic</param>
-        public Entity AddLogic(EntityLogic logic) {
+        public ActorEntity AddLogic(ActorEntityLogic logic) {
             var type = logic.GetType();
             if (_logics.ContainsKey(type)) {
                 Debug.LogError($"Already exists logic. type:{type.Name}");
                 return Entity;
             }
 
-            if (logic.Entity != null) {
+            if (logic.ActorEntity != null) {
                 Debug.LogError($"Entity is not null. type:{type.Name}");
                 return Entity;
             }
@@ -69,7 +69,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         /// <param name="logic">削除対象のLogic</param>
         /// <param name="dispose">LogicをDisposeするか</param>
-        public Entity RemoveLogic(EntityLogic logic, bool dispose = true) {
+        public ActorEntity RemoveLogic(ActorEntityLogic logic, bool dispose = true) {
             var type = logic.GetType();
             if (!_logics.ContainsKey(type)) {
                 return Entity;
@@ -89,7 +89,7 @@ namespace GameFramework.EntitySystems {
         /// ロジックの削除
         /// </summary>
         /// <param name="dispose">LogicをDisposeするか</param>
-        public Entity RemoveLogic<TLogic>(bool dispose = true)
+        public ActorEntity RemoveLogic<TLogic>(bool dispose = true)
             where TLogic : Logic {
             var type = typeof(TLogic);
             if (!_logics.TryGetValue(type, out var logic)) {

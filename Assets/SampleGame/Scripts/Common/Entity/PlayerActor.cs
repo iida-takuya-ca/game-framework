@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
-using GameFramework.EntitySystems;
+using GameFramework.ActorSystems;
 using GameFramework.PlayableSystems;
 using UniRx;
 using UnityEngine;

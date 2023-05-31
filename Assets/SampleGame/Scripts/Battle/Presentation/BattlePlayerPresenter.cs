@@ -3,7 +3,7 @@ using GameFramework.BodySystems;
 using GameFramework.CameraSystems;
 using GameFramework.ProjectileSystems;
 using GameFramework.Core;
-using GameFramework.EntitySystems;
+using GameFramework.ActorSystems;
 using GameFramework.VfxSystems;
 using SampleGame.SequenceEvents;
 using UniRx;
@@ -15,7 +15,7 @@ namespace SampleGame.Battle {
     /// <summary>
     /// プレイヤー制御用Presenter
     /// </summary>
-    public class BattlePlayerPresenter : EntityLogic {
+    public class BattlePlayerPresenter : ActorEntityLogic {
         private PlayerActor _actor;
         private BattlePlayerModel _model;
         private GimmickController _gimmickController;

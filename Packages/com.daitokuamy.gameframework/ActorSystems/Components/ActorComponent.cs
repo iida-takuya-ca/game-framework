@@ -4,12 +4,12 @@ using System.Linq;
 using GameFramework.Core;
 using UnityEngine.Scripting;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
     /// ActorをEntityと紐づけるためのComponent
     /// </summary>
     [Preserve]
-    public sealed class ActorEntityComponent : EntityComponent {
+    public sealed class ActorComponent : Component {
         /// <summary>
         /// Actor管理情報
         /// </summary>
@@ -91,7 +91,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         /// <param name="actor">追加するActor</param>
         /// <param name="priority">Actorのアクティブ優先度</param>
-        public Entity AddActor(Actor actor, int priority = 0) {
+        public ActorEntity AddActor(Actor actor, int priority = 0) {
             var info = new ActorInfo { actor = actor, priority = priority };
             _sortedActorInfos.Add(info);
             _sortedActorInfos.Sort((a, b) => b.priority - a.priority);
@@ -104,7 +104,7 @@ namespace GameFramework.EntitySystems {
         /// </summary>
         /// <param name="actor">取り除くActor</param>
         /// <param name="dispose">取り除く際にActorをDisposeするか</param>
-        public Entity RemoveActor(Actor actor, bool dispose = true) {
+        public ActorEntity RemoveActor(Actor actor, bool dispose = true) {
             var count = _sortedActorInfos.RemoveAll(x => x.actor == actor);
             if (count <= 0) {
                 return Entity;
@@ -123,7 +123,7 @@ namespace GameFramework.EntitySystems {
         /// Actorの全削除
         /// </summary>
         /// <param name="dispose">取り除く際にActorをDisposeするか</param>
-        public Entity RemoveActors(bool dispose = true) {
+        public ActorEntity RemoveActors(bool dispose = true) {
             foreach (var actorInfo in _sortedActorInfos) {
                 ((Actor)actorInfo.actor).Deactivate();
                 if (dispose) {

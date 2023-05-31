@@ -4,12 +4,12 @@ using GameFramework.ModelSystems;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace GameFramework.EntitySystems {
+namespace GameFramework.ActorSystems {
     /// <summary>
     /// ModelをEntityと紐づけるためのComponent
     /// </summary>
     [Preserve]
-    public sealed class ModelEntityComponent : EntityComponent {
+    public sealed class ModelComponent : Component {
         // モデルのキャッシュ
         private Dictionary<Type, IModel> _models = new Dictionary<Type, IModel>();
 
@@ -28,7 +28,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// モデルの設定
         /// </summary>
-        public Entity SetModel<TModel>(TModel model)
+        public ActorEntity SetModel<TModel>(TModel model)
             where TModel : class, IModel {
             var type = typeof(TModel);
             if (_models.ContainsKey(type)) {
@@ -43,7 +43,7 @@ namespace GameFramework.EntitySystems {
         /// <summary>
         /// モデルの設定クリア（削除はされない）
         /// </summary>
-        public Entity ClearModel<TModel>()
+        public ActorEntity ClearModel<TModel>()
             where TModel : IModel {
             var type = typeof(TModel);
             if (!_models.TryGetValue(type, out var model)) {

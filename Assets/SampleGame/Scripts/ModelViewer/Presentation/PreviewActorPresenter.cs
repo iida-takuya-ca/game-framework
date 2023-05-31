@@ -1,12 +1,12 @@
 using GameFramework.Core;
-using GameFramework.EntitySystems;
+using GameFramework.ActorSystems;
 using UniRx;
 
 namespace SampleGame.ModelViewer {
     /// <summary>
     /// PreviewActor制御用のPresenter
     /// </summary>
-    public class PreviewActorPresenter : EntityLogic {
+    public class PreviewActorPresenter : ActorEntityLogic {
         private PreviewActorModel _model;
         private PreviewActor _actor;
         

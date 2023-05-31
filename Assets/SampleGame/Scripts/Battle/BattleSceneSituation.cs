@@ -6,13 +6,14 @@ using GameFramework.BodySystems;
 using GameFramework.CameraSystems;
 using GameFramework.CollisionSystems;
 using GameFramework.Core;
-using GameFramework.EntitySystems;
+using GameFramework.ActorSystems;
 using GameFramework.ProjectileSystems;
 using GameFramework.SituationSystems;
 using GameFramework.VfxSystems;
 using UniRx;
 using UnityEngine;
 using SampleGame.Battle;
+using Component = UnityEngine.Component;
 
 namespace SampleGame {
     /// <summary>
@@ -42,7 +43,7 @@ namespace SampleGame {
         // BattleScene内シチュエーション用コンテナ
         private SituationContainer _situationContainer;
         // 生成したPlayerのEntity
-        private Entity _playerEntity;
+        private ActorEntity _playerActorEntity;
 
         protected override string SceneAssetPath => "battle";
 
@@ -116,12 +117,12 @@ namespace SampleGame {
             Services.Get<BattleInput>().RegisterTask(TaskOrder.Input);
 
             // PlayerEntityの生成
-            _playerEntity = new Entity();
-            yield return _playerEntity.SetupPlayerAsync(battleModel.PlayerModel, scope, ct)
+            _playerActorEntity = new ActorEntity();
+            yield return _playerActorEntity.SetupPlayerAsync(battleModel.PlayerModel, scope, ct)
                 .ToCoroutine();
             
             // CameraTargetPoint制御用Logic追加
-            var cameraTargetPointLogic = new CameraTargetPointLogic(_playerEntity, battleModel.AngleModel)
+            var cameraTargetPointLogic = new CameraTargetPointLogic(_playerActorEntity, battleModel.AngleModel)
                 .ScopeTo(scope);
             cameraTargetPointLogic.RegisterTask(TaskOrder.Logic);
             cameraTargetPointLogic.Activate();
@@ -173,7 +174,7 @@ namespace SampleGame {
         /// <param name="handle"></param>
         protected override void CleanupInternal(TransitionHandle handle) {
             // PlayerEntity削除
-            _playerEntity.Dispose();
+            _playerActorEntity.Dispose();
 
             // Inputのタスク登録解除
             var input = Services.Get<BattleInput>();

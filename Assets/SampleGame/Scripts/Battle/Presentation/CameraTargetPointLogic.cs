@@ -1,6 +1,6 @@
 using GameFramework.CameraSystems;
 using GameFramework.Core;
-using GameFramework.EntitySystems;
+using GameFramework.ActorSystems;
 using GameFramework.LogicSystems;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ namespace SampleGame.Battle {
     /// CameraのAttachment更新用Logic
     /// </summary>
     public class CameraTargetPointLogic : Logic {
-        private Entity _playerEntity;
+        private ActorEntity _playerActorEntity;
         private BattleAngleModel _angleModel;
 
         private Transform _playerPoint;
@@ -18,8 +18,8 @@ namespace SampleGame.Battle {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CameraTargetPointLogic(Entity playerEntity, BattleAngleModel angleModel) {
-            _playerEntity = playerEntity;
+        public CameraTargetPointLogic(ActorEntity playerActorEntity, BattleAngleModel angleModel) {
+            _playerActorEntity = playerActorEntity;
             _angleModel = angleModel;
         }
 
@@ -37,7 +37,7 @@ namespace SampleGame.Battle {
         /// 後更新処理
         /// </summary>
         protected override void LateUpdateInternal() {
-            var playerBody = _playerEntity?.GetBody();
+            var playerBody = _playerActorEntity?.GetBody();
             
             // Playerの追従処理
             if (playerBody != null && _playerPoint != null) {
