@@ -9,6 +9,8 @@ namespace GameFramework.BodySystems {
     /// BodyのRig制御クラス
     /// </summary>
     public class RigController : BodyController {
+        // リグ構築用
+        private RigBuilder _rigBuilder;
         // RigParts情報
         private Dictionary<string, RigParts> _rigParts = new();
 
@@ -79,6 +81,23 @@ namespace GameFramework.BodySystems {
         /// 初期化処理
         /// </summary>
         protected override void InitializeInternal() {
+            _rigBuilder = Body.GetComponent<RigBuilder>();
+            
+            var meshController = Body.GetController<MeshController>();
+            meshController.OnRefreshed += () => {
+                RefreshRigParts();
+                
+                // RigのRebuild
+                _rigBuilder.Build();
+            };
+            
+            RefreshRigParts();
+        }
+
+        /// <summary>
+        /// RigPartsの取得
+        /// </summary>
+        private void RefreshRigParts() {
             _rigParts = Body.GetComponentsInChildren<RigParts>(true)
                 .ToDictionary(x => x.name, x => x);
         }
