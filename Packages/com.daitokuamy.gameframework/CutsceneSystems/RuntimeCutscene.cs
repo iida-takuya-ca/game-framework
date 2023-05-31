@@ -48,6 +48,8 @@ namespace GameFramework.CutsceneSystems {
             if (_isPlaying) {
                 ((ICutscene)this).Stop();
             }
+
+            _playableDirector = null;
         }
         
         /// <summary>

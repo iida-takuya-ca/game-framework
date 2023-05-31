@@ -50,6 +50,7 @@ namespace GameFramework.CutsceneSystems {
             
             DisposeInternal();
             _scope.Dispose();
+            _playableDirector = null;
         }
         
         /// <summary>
@@ -184,6 +185,13 @@ namespace GameFramework.CutsceneSystems {
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
         protected virtual void UpdateInternal(float deltaTime) {
+        }
+
+        /// <summary>
+        /// 再生速度の設定(Override用)
+        /// </summary>
+        /// <param name="timeScale">再生速度</param>
+        protected virtual void SetSpeedInternal(float timeScale) {
         }
 
         /// <summary>

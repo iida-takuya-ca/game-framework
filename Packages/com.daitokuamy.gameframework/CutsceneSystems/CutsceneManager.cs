@@ -217,7 +217,9 @@ namespace GameFramework.CutsceneSystems {
             _poolDefaultCapacity = poolDefaultCapacity;
             _poolMaxCapacity = poolMaxCapacity;
             
-            var root = new GameObject(nameof(CutsceneManager));
+            var root = new GameObject(nameof(CutsceneManager), typeof(CutsceneManagerDispatcher));
+            var dispatcher = root.GetComponent<CutsceneManagerDispatcher>();
+            dispatcher.Setup(this);
             Object.DontDestroyOnLoad(root);
             _rootTransform = root.transform;
         }
@@ -235,6 +237,10 @@ namespace GameFramework.CutsceneSystems {
             where T : class, ICutscene {
             // 再生情報の生成
             var playingInfo = CreatePlayingInfo(prefab, layeredTime, false);
+            if (playingInfo == null) {
+                return new Handle();
+            }
+            
             // 初期化
             var trans = playingInfo.CutsceneInfo.root.transform;
             trans.position = position;
@@ -278,6 +284,10 @@ namespace GameFramework.CutsceneSystems {
             where T : class, ICutscene {
             // 再生情報の生成
             var playingInfo = CreatePlayingInfo(prefab, layeredTime, true);
+            if (playingInfo == null) {
+                return new Handle();
+            }
+            
             // 初期化
             var trans = playingInfo.CutsceneInfo.root.transform;
             trans.position = position;
