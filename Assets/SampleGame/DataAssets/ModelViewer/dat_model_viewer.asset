@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f6329eaa44d9f4d8c65fadb9bb36cc, type: 3}
   m_Name: dat_model_viewer
   m_EditorClassIdentifier: 
-  defaultActorDataId: pl004
+  defaultActorDataId: pl001
   actorDataIds:
   - pl001
   - pl002

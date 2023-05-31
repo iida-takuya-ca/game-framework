@@ -7,6 +7,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2262335703325820252, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
+      propertyPath: uniqueBoneInfos.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2262335703325820252, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
+      propertyPath: uniqueBoneInfos.Array.data[0].constraintMask
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2262335703325820252, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
+      propertyPath: uniqueBoneInfos.Array.data[0].targetBones.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2262335703325820252, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
+      propertyPath: uniqueBoneInfos.Array.data[0].targetBones.Array.data[0]
+      value: 
+      objectReference: {fileID: 6317859523015868534}
     - target: {fileID: 4454274218419446688, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -61,3 +77,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
+--- !u!4 &6317859523015868534 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4454274218431181564, guid: 0f6ce97bd28005146ac9923dc2f5fc08, type: 3}
+  m_PrefabInstance: {fileID: 7673369664787542666}
+  m_PrefabAsset: {fileID: 0}

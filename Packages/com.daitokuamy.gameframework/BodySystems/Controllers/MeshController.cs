@@ -112,11 +112,6 @@ namespace GameFramework.BodySystems {
 
             // Rendererの回収
             RefreshRenderers();
-            
-            // AnimatorのRebind
-            if (_animator != null) {
-                _animator.Rebind();
-            }
 
             // 更新通知
             if (meshParts != null) {
@@ -144,11 +139,6 @@ namespace GameFramework.BodySystems {
 
             // Rendererの回収
             RefreshRenderers();
-            
-            // AnimatorのRebind
-            if (_animator != null) {
-                _animator.Rebind();
-            }
 
             // 削除通知
             if (mergedInfo.meshParts != null) {
@@ -170,12 +160,31 @@ namespace GameFramework.BodySystems {
         }
 
         /// <summary>
+        /// 骨のオリジナルを取得
+        /// </summary>
+        public Transform GetOriginalBone(Transform bone) {
+            if (_boneController == null || _boneController.BoneRoot == null) {
+                return null;
+            }
+            
+            if (bone == null) {
+                return null;
+            }
+
+            // 対象の骨を探す
+            var boneName = bone.name;
+            var names = boneName.Split('-');
+            var originalBoneName = string.Join("-", names, Mathf.Min(1, names.Length - 1), names.Length - 1);
+            return FindTransform(_boneController.BoneRoot, originalBoneName);
+        }
+
+        /// <summary>
         /// 骨のマージ
         /// </summary>
         /// <param name="target">対象のGameObject</param>
         /// <param name="prefix">マージする際につけるPrefix</param>
         private Transform[] MergeBones(GameObject target, string prefix) {
-            if (_boneController == null || _boneController.Root == null) {
+            if (_boneController == null || _boneController.BoneRoot == null) {
                 return Array.Empty<Transform>();
             }
 
@@ -183,11 +192,11 @@ namespace GameFramework.BodySystems {
             var meshParts = target.GetComponent<MeshParts>();
 
             // 既に存在する骨の列挙
-            var currentBones = _boneController.Root.GetComponentsInChildren<Transform>()
+            var currentBones = _boneController.BoneRoot.GetComponentsInChildren<Transform>()
                 .ToDictionary(x => x.name, x => x);
 
             // 対象の情報取得
-            var root = target.transform.Find(_boneController.Root.name);
+            var root = FindTransform(target.transform, _boneController.BoneRoot.name);
             var rootName = root.name;
             var renderers = target.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
@@ -242,7 +251,11 @@ namespace GameFramework.BodySystems {
 
             // 対応するCurrentBoneの取得
             Transform GetCurrentBone(Transform targetBone) {
-                // null骨だった場合、直下の骨名の親を置き換え対象にする
+                if (targetBone == null) {
+                    return null;
+                }
+                
+                // Root骨だった場合、直下の骨名の親を置き換え対象にする
                 if (targetBone.name == rootName) {
                     if (targetBone.childCount > 0) {
                         var childBone = targetBone.GetChild(0);
@@ -272,16 +285,10 @@ namespace GameFramework.BodySystems {
                 targetBones.Clear();
 
                 foreach (var targetBone in renderer.bones) {
-                    if (targetBone == null) {
-                        continue;
-                    }
-
                     var bone = GetCurrentBone(targetBone);
 
                     // 差し替え対象の骨リストとして列挙し直す
-                    if (bone != null) {
-                        targetBones.Add(bone);
-                    }
+                    targetBones.Add(bone);
                 }
 
                 // 骨の参照を差し替える
@@ -294,7 +301,7 @@ namespace GameFramework.BodySystems {
                     renderer.rootBone = rootBone;
                 }
                 else {
-                    renderer.rootBone = _boneController.Root;
+                    renderer.rootBone = _boneController.BoneRoot;
                 }
             }
 
@@ -312,7 +319,7 @@ namespace GameFramework.BodySystems {
         private void DeleteBones(MergedInfo mergedInfo) {
             var boneController = Body.GetController<BoneController>();
 
-            if (boneController == null || boneController.Root == null) {
+            if (boneController == null || boneController.BoneRoot == null) {
                 return;
             }
 
@@ -323,7 +330,9 @@ namespace GameFramework.BodySystems {
 
                 if (referenceCount <= 1) {
                     _boneReferenceCounts.Remove(additiveBone);
-                    UnityEngine.Object.DestroyImmediate(additiveBone.gameObject);
+                    if (additiveBone != null) {
+                        UnityEngine.Object.DestroyImmediate(additiveBone.gameObject);
+                    }
                 }
                 else {
                     _boneReferenceCounts[additiveBone] = referenceCount - 1;
@@ -361,6 +370,24 @@ namespace GameFramework.BodySystems {
             foreach (var renderer in _renderers) {
                 renderer.enabled = visible;
             }
+        }
+
+        /// <summary>
+        /// 再帰的にTransformを探す
+        /// </summary>
+        private Transform FindTransform(Transform parent, string targetName) {
+            if (parent.name == targetName) {
+                return parent;
+            }
+
+            for (var i = 0; i < parent.childCount; i++) {
+                var found = FindTransform(parent.GetChild(i), targetName);
+                if (found != null) {
+                    return found;
+                }
+            }
+
+            return null;
         }
     }
 }
