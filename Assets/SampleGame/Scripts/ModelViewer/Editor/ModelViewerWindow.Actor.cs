@@ -31,13 +31,13 @@ namespace SampleGame.ModelViewer.Editor {
             protected override void OnGUIInternal() {
                 var viewerModel = ModelViewerModel.Get();
                 var appService = Services.Get<ModelViewerApplicationService>();
-                var actorModel = viewerModel.PreviewActor;
+                var actorModel = viewerModel.PreviewActorModel;
 
                 var prevColor = GUI.color;
 
                 using (new EditorGUILayout.HorizontalScope("Box")) {
                     // Actorの変更
-                    var actorSetupDataIds = viewerModel.Data != null ? viewerModel.Data.actorDataIds : Array.Empty<string>();
+                    var actorSetupDataIds = viewerModel.SetupData != null ? viewerModel.SetupData.actorDataIds : Array.Empty<string>();
                     _modelList.OnGUI(actorSetupDataIds, x => x, (id, index) => {
                         var current = actorModel.SetupDataId == id;
                         GUI.color = current ? Color.green : Color.gray;

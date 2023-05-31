@@ -33,7 +33,6 @@ namespace GameFramework.Core {
                 _localTimeScale = Mathf.Max(0.0f, value);
                 var timeScale = TimeScale;
                 OnChangedTimeScaleInternal?.Invoke(timeScale);
-                OnChangedTimeScale?.Invoke(timeScale);
             }
         }
         // 親階層を考慮したTimeScale
@@ -55,6 +54,7 @@ namespace GameFramework.Core {
         public LayeredTime(LayeredTime parent = null) {
             SetParent(parent);
 
+            OnChangedTimeScaleInternal += x => OnChangedTimeScale?.Invoke(x);
 #if USE_UNI_RX
             OnChangedTimeScaleInternal += x => _timeScaleProp.Value = x;
             _timeScaleProp.Value = TimeScale;

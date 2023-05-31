@@ -26,12 +26,12 @@ namespace SampleGame.ModelViewer.Editor {
             protected override void OnGUIInternal() {
                 var viewerModel = ModelViewerModel.Get();
                 var appService = Services.Get<ModelViewerApplicationService>();
-                var environmentModel = viewerModel.Environment;
+                var environmentModel = viewerModel.EnvironmentModel;
 
                 var prevColor = GUI.color;
                 
                 // Environmentの変更
-                var environmentIds = viewerModel.Data != null ? viewerModel.Data.environmentIds : Array.Empty<string>();
+                var environmentIds = viewerModel.SetupData != null ? viewerModel.SetupData.environmentIds : Array.Empty<string>();
                 _environmentIdList.OnGUI(environmentIds, x => x, (id, index) => {
                     var current = environmentModel.AssetId.Value == id;
                     GUI.color = current ? Color.green : Color.gray;

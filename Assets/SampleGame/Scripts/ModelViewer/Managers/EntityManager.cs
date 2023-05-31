@@ -34,6 +34,8 @@ namespace SampleGame.ModelViewer {
                 _previewEntity = new Entity();
             }
 
+            var viewerModel = ModelViewerModel.Get();
+
             // 既存のLogic/Actor/Bodyを削除
             _previewActor.Value = null;
             _previewEntity.RemoveLogic<PreviewActorPresenter>();
@@ -49,6 +51,7 @@ namespace SampleGame.ModelViewer {
             // Bodyの生成
             var bodyManager = Services.Get<BodyManager>();
             var body = bodyManager.CreateFromPrefab(setupData.prefab);
+            body.LayeredTime.SetParent(viewerModel.SettingsModel.LayeredTime);
             _previewEntity.SetBody(body);
 
             // Actorの生成

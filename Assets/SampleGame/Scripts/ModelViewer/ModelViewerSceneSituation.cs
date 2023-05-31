@@ -14,16 +14,8 @@ namespace SampleGame {
     /// </summary>
     public class ModelViewerSceneSituation : SceneSituation {
         private int _debugPageId;
-        private ModelViewerData _modelViewerData;
         
         protected override string SceneAssetPath => "model_viewer";
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public ModelViewerSceneSituation(ModelViewerData modelViewerData) {
-            _modelViewerData = modelViewerData;
-        }
 
         /// <summary>
         /// 初期化処理
@@ -34,17 +26,20 @@ namespace SampleGame {
             var ct = scope.ToCancellationToken();
             
             // Modelの生成
-            var viewerModel = ModelViewerModel.Create()
+            var model = ModelViewerModel.Create()
                 .ScopeTo(scope);
-            viewerModel.Setup(_modelViewerData);
             
             // Repositoryの生成
             var repository = new ModelViewerRepository(Services.Get<AssetManager>());
             repository.ScopeTo(scope);
             
             // ApplicationServiceの生成
-            var appService = new ModelViewerApplicationService(viewerModel, repository);
+            var appService = new ModelViewerApplicationService(model, repository);
             ServiceContainer.Set(appService);
+            
+            // ApplicationServiceの初期化
+            yield return appService.SetupAsync(ct)
+                .ToCoroutine();
             
             // 各種管理クラス生成/初期化
             var bodyManager = new BodyManager();
@@ -64,8 +59,9 @@ namespace SampleGame {
             cameraManager.SetCameraController("Default", new PreviewCameraController());
                     
             // 初期状態反映
-            appService.ChangeEnvironment(_modelViewerData.defaultEnvironmentId);
-            appService.ChangePreviewActorAsync(_modelViewerData.defaultActorDataId, ct).Forget();
+            appService.ChangeEnvironment(model.SetupData.defaultEnvironmentId);
+            yield return appService.ChangePreviewActorAsync(model.SetupData.defaultActorDataId, ct)
+                .ToCoroutine();
         }
 
         /// <summary>
@@ -75,11 +71,11 @@ namespace SampleGame {
             base.ActivateInternal(handle, scope);
 
             var ct = scope.ToCancellationToken();
-            var viewerModel = ModelViewerModel.Get();
+            var model = ModelViewerModel.Get();
             var appService = Services.Get<ModelViewerApplicationService>();
             
             // Presenter初期化
-            var presenter = new ModelViewerPresenter(viewerModel)
+            var presenter = new ModelViewerPresenter(model)
                 .ScopeTo(scope);
             presenter.RegisterTask(TaskOrder.Logic);
             presenter.Activate();
@@ -106,7 +102,7 @@ namespace SampleGame {
                             var index = i;
                             var clip = clips[i];
                             motionsPageTuple.page.AddButton(clip.name, clicked: () => {
-                                viewerModel.PreviewActor.ChangeClip(index);
+                                model.PreviewActorModel.ChangeClip(index);
                             });
                         }
                     });
@@ -114,7 +110,7 @@ namespace SampleGame {
                 
                 // Environment
                 pageTuple.page.AddPageLinkButton("Environments", onLoad: fieldsPageTuple => {
-                    var environmentIds = viewerModel.Data.environmentIds;
+                    var environmentIds = model.SetupData.environmentIds;
                     foreach (var environmentId in environmentIds) {
                         var id = environmentId;
                         fieldsPageTuple.page.AddButton(environmentId,
@@ -124,7 +120,7 @@ namespace SampleGame {
                 
                 // PreviewActor
                 pageTuple.page.AddPageLinkButton("Models", onLoad: modelsPageTuple => {
-                    var actorDataIds = viewerModel.Data.actorDataIds;
+                    var actorDataIds = model.SetupData.actorDataIds;
                     foreach (var actorDataId in actorDataIds) {
                         var id = actorDataId;
                         modelsPageTuple.page.AddButton(actorDataId, clicked:() => {
@@ -135,7 +131,7 @@ namespace SampleGame {
                 });
                 
                 // 初期状態反映
-                SetupMotionPage(viewerModel.PreviewActor.SetupData.Value);
+                SetupMotionPage(model.PreviewActorModel.SetupData.Value);
             });
         }
 

@@ -283,6 +283,8 @@ namespace GameFramework.ProjectileSystems {
                 UnityEngine.Object.Destroy(_rootTransform.gameObject);
                 _rootTransform = null;
             }
+            
+            LayeredTime.Dispose();
         }
 
         /// <summary>

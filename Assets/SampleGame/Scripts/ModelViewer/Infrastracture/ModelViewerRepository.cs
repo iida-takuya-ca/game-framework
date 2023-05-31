@@ -9,29 +9,41 @@ namespace SampleGame.ModelViewer {
     /// モデルビューア用のリポジトリ
     /// </summary>
     public class ModelViewerRepository : IDisposable {
-        private AssetManager _assetManager;
-        private PoolAssetStorage<PreviewActorSetupData> _bodyDataStorage;
+        private readonly AssetManager _assetManager;
+        private readonly DisposableScope _unloadScope;
+        private PoolAssetStorage<PreviewActorSetupData> _actorSetupDataStorage;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public ModelViewerRepository(AssetManager assetManager) {
             _assetManager = assetManager;
-            _bodyDataStorage = new PoolAssetStorage<PreviewActorSetupData>(_assetManager, 2);
+            _unloadScope = new DisposableScope();
+            _actorSetupDataStorage = new PoolAssetStorage<PreviewActorSetupData>(_assetManager, 2);
         }
 
         /// <summary>
         /// 廃棄処理
         /// </summary>
         public void Dispose() {
-            _bodyDataStorage.Dispose();
+            _actorSetupDataStorage.Dispose();
+            _unloadScope.Dispose();
+        }
+
+        /// <summary>
+        /// ActorSetupDataの読み込み
+        /// </summary>
+        public UniTask<ModelViewerSetupData> LoadSetupDataAsync(CancellationToken ct) {
+            return new ModelViewerSetupDataRequest()
+                .LoadAsync(_assetManager, _unloadScope)
+                .ToUniTask(cancellationToken:ct);
         }
 
         /// <summary>
         /// ActorDataの読み込み
         /// </summary>
-        public UniTask<PreviewActorSetupData> LoadActorDataAsync(string setupDataId, CancellationToken ct) {
-            return _bodyDataStorage.LoadAssetAsync(new PreviewActorSetupDataRequest(setupDataId))
+        public UniTask<PreviewActorSetupData> LoadActorSetupDataAsync(string setupDataId, CancellationToken ct) {
+            return _actorSetupDataStorage.LoadAssetAsync(new PreviewActorSetupDataRequest(setupDataId))
                 .ToUniTask(cancellationToken:ct);
         }
     }

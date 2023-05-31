@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using GameFramework.CameraSystems;
 using GameFramework.Core;
 using GameFramework.LogicSystems;
 using UniRx;
@@ -28,19 +29,38 @@ namespace SampleGame.ModelViewer {
             base.ActivateInternal(scope);
 
             var ct = scope.ToCancellationToken();
+
+            var cameraManager = Services.Get<CameraManager>();
+            var settingsModel = _model.SettingsModel;
             
             // Actorの切り替え
-            _model.PreviewActor.SetupData
+            _model.PreviewActorModel.SetupData
                 .TakeUntil(scope)
                 .Subscribe(_ => {
-                    _entityManager.ChangePreviewActor(_model.PreviewActor);
+                    _entityManager.ChangePreviewActor(_model.PreviewActorModel);
                 });
             
             // Environmentの切り替え
-            _model.Environment.AssetId
+            _model.EnvironmentModel.AssetId
                 .TakeUntil(scope)
                 .Subscribe(id => {
                     _environmentManager.ChangeEnvironmentAsync(id, ct).Forget();
+                });
+
+            // カメラの切り替え
+            settingsModel.CameraControlType
+                .TakeUntil(scope)
+                .Subscribe(type => {
+                    switch (type) {
+                        case CameraControlType.Default:
+                            cameraManager.ForceDeactivate("SceneView");
+                            cameraManager.ForceActivate("Default");
+                            break;
+                        case CameraControlType.SceneView:
+                            cameraManager.ForceActivate("SceneView");
+                            cameraManager.ForceDeactivate("Default");
+                            break;
+                    }
                 });
         }
     }

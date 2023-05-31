@@ -12,7 +12,7 @@ namespace SampleGame.ModelViewer {
         public IReadOnlyReactiveProperty<string> AssetId => _assetId;
         
         /// <summary>
-        /// BodyDataの切り替え
+        /// アセットIDの切り替え
         /// </summary>
         public void SetAssetId(string assetId) {
             _assetId.Value = assetId;

@@ -54,10 +54,22 @@ namespace GameFramework.CameraSystems {
             }
 
             /// <summary>
+            /// アクティブ状態か
+            /// </summary>
+            public bool CheckActivate() {
+                return _activateCount > 0;
+            }
+
+            /// <summary>
             /// アクティブ化
             /// </summary>
-            public void Activate() {
-                _activateCount++;
+            public void Activate(bool force = false) {
+                if (force) {
+                    _activateCount = 1;
+                }
+                else {
+                    _activateCount++;
+                }
 
                 ApplyActiveStatus();
             }
@@ -65,11 +77,17 @@ namespace GameFramework.CameraSystems {
             /// <summary>
             /// 非アクティブ化
             /// </summary>
-            public void Deactivate() {
-                _activateCount--;
+            public void Deactivate(bool force = false) {
+                if (force) {
+                    _activateCount = 0;
+                }
+                else {
+                    _activateCount--;
+                }
 
                 if (_activateCount < 0) {
                     Debug.LogWarning($"activateCount is minus. [{Name}]");
+                    _activateCount = 0;
                 }
 
                 ApplyActiveStatus();
@@ -155,14 +173,17 @@ namespace GameFramework.CameraSystems {
         /// <param name="blendDefinition">上書き用ブレンド設定</param>
         public void Activate(string cameraName, CinemachineBlendDefinition blendDefinition) {
             Initialize();
+            ActivateInternal(cameraName, new CameraBlend(blendDefinition), false);
+        }
 
-            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
-                return;
-            }
-
-            _toCameraBlends[handler.Component.BaseCamera] = new CameraBlend(blendDefinition);
-
-            handler.Activate();
+        /// <summary>
+        /// カメラのアクティブ化(参照カウンタなし)
+        /// </summary>
+        /// <param name="cameraName">アクティブ化するカメラ名</param>
+        /// <param name="blendDefinition">上書き用ブレンド設定</param>
+        public void ForceActivate(string cameraName, CinemachineBlendDefinition blendDefinition) {
+            Initialize();
+            ActivateInternal(cameraName, new CameraBlend(blendDefinition), true);
         }
 
         /// <summary>
@@ -171,14 +192,16 @@ namespace GameFramework.CameraSystems {
         /// <param name="cameraName">アクティブ化するカメラ名</param>
         public void Activate(string cameraName) {
             Initialize();
+            ActivateInternal(cameraName, null, false);
+        }
 
-            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
-                return;
-            }
-
-            _toCameraBlends[handler.Component.BaseCamera] = null;
-
-            handler.Activate();
+        /// <summary>
+        /// カメラのアクティブ化(参照カウンタなし)
+        /// </summary>
+        /// <param name="cameraName">アクティブ化するカメラ名</param>
+        public void ForceActivate(string cameraName) {
+            Initialize();
+            ActivateInternal(cameraName, null, true);
         }
 
         /// <summary>
@@ -188,14 +211,17 @@ namespace GameFramework.CameraSystems {
         /// <param name="blendDefinition">上書き用ブレンド設定</param>
         public void Deactivate(string cameraName, CinemachineBlendDefinition blendDefinition) {
             Initialize();
+            DeactivateInternal(cameraName, new CameraBlend(blendDefinition), false);
+        }
 
-            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
-                return;
-            }
-
-            _fromCameraBlends[handler.Component.BaseCamera] = new CameraBlend(blendDefinition);
-
-            handler.Deactivate();
+        /// <summary>
+        /// カメラの非アクティブ化(参照カウンタなし)
+        /// </summary>
+        /// <param name="cameraName">非アクティブ化するカメラ名</param>
+        /// <param name="blendDefinition">上書き用ブレンド設定</param>
+        public void ForceDeactivate(string cameraName, CinemachineBlendDefinition blendDefinition) {
+            Initialize();
+            DeactivateInternal(cameraName, new CameraBlend(blendDefinition), true);
         }
 
         /// <summary>
@@ -204,14 +230,30 @@ namespace GameFramework.CameraSystems {
         /// <param name="cameraName">非アクティブ化するカメラ名</param>
         public void Deactivate(string cameraName) {
             Initialize();
+            DeactivateInternal(cameraName, null, false);
+        }
+
+        /// <summary>
+        /// カメラの非アクティブ化(参照カウンタなし)
+        /// </summary>
+        /// <param name="cameraName">非アクティブ化するカメラ名</param>
+        public void ForceDeactivate(string cameraName) {
+            Initialize();
+            DeactivateInternal(cameraName, null, true);
+        }
+
+        /// <summary>
+        /// カメラのアクティブ状態をチェック
+        /// </summary>
+        /// <param name="cameraName">カメラ名</param>
+        public bool CheckActivate(string cameraName) {
+            Initialize();
 
             if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
-                return;
+                return false;
             }
 
-            _fromCameraBlends[handler.Component.BaseCamera] = null;
-
-            handler.Deactivate();
+            return handler.CheckActivate();
         }
 
         /// <summary>
@@ -294,6 +336,8 @@ namespace GameFramework.CameraSystems {
 
             _cameraHandlers.Clear();
             _targetPoints.Clear();
+            
+            LayeredTime.Dispose();
         }
 
         /// <summary>
@@ -337,6 +381,32 @@ namespace GameFramework.CameraSystems {
             // Brainの更新
             CinemachineCore.UniformDeltaTimeOverride = deltaTime;
             _brain.ManualUpdate();
+        }
+
+        /// <summary>
+        /// カメラのアクティブ化
+        /// </summary>
+        private void ActivateInternal(string cameraName, CameraBlend cameraBlend, bool force) {
+            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
+                return;
+            }
+
+            _toCameraBlends[handler.Component.BaseCamera] = cameraBlend;
+
+            handler.Activate(force);
+        }
+
+        /// <summary>
+        /// カメラの非アクティブ化
+        /// </summary>
+        private void DeactivateInternal(string cameraName, CameraBlend cameraBlend, bool force) {
+            if (!_cameraHandlers.TryGetValue(cameraName, out var handler)) {
+                return;
+            }
+
+            _fromCameraBlends[handler.Component.BaseCamera] = cameraBlend;
+
+            handler.Deactivate(force);
         }
 
         /// <summary>

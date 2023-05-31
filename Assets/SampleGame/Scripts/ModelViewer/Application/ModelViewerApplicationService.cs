@@ -18,16 +18,29 @@ namespace SampleGame.ModelViewer {
         }
 
         /// <summary>
+        /// 初期化
+        /// </summary>
+        public async UniTask SetupAsync(CancellationToken ct) {
+            ct.ThrowIfCancellationRequested();
+
+            // 設定ファイル読み込み
+            var result = await _repository.LoadSetupDataAsync(ct);
+            
+            // Modelに反映
+            _model.Setup(result);
+        }
+
+        /// <summary>
         /// 表示モデルの変更
         /// </summary>
         public async UniTask<PreviewActorSetupData> ChangePreviewActorAsync(string setupDataId, CancellationToken ct) {
             ct.ThrowIfCancellationRequested();
             
             // 設定ファイルを読み込み
-            var result = await _repository.LoadActorDataAsync(setupDataId, ct);
+            var result = await _repository.LoadActorSetupDataAsync(setupDataId, ct);
             
             // Modelに反映
-            _model.PreviewActor.Setup(setupDataId, result);
+            _model.PreviewActorModel.Setup(setupDataId, result);
 
             return result;
         }
@@ -37,7 +50,7 @@ namespace SampleGame.ModelViewer {
         /// </summary>
         public void ChangeEnvironment(string assetId) {
             // Modelに反映
-            _model.Environment.SetAssetId(assetId);
+            _model.EnvironmentModel.SetAssetId(assetId);
         }
     }
 }
