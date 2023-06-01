@@ -156,7 +156,10 @@ namespace GameFramework.BodySystems {
         /// 所持しているMeshPartsのリスト
         /// </summary>
         public MeshParts[] GetMeshPartsList() {
-            return _mergedInfos.Select(x => x.Value.meshParts).ToArray();
+            return _mergedInfos
+                .Select(x => x.Value.meshParts)
+                .Where(x => x != null)
+                .ToArray();
         }
 
         /// <summary>
