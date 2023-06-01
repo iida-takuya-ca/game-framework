@@ -8,30 +8,24 @@ namespace GameFramework.RendererSystems {
     /// マテリアル制御ハンドル
     /// </summary>
     public struct MaterialHandle {
-        private MaterialInstance[] _infos;
+        private MaterialInstance[] _instances;
 
         // 有効なハンドルか
-        public bool IsValid => _infos != null && _infos.Length > 0;
+        public bool IsValid => _instances != null && _instances.Length > 0;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="infos">制御対象のMaterial情報リスト</param>
-        public MaterialHandle(IEnumerable<MaterialInstance> infos) {
-            _infos = infos.ToArray();
+        /// <param name="instances">制御対象のMaterial情報リスト</param>
+        public MaterialHandle(IEnumerable<MaterialInstance> instances) {
+            _instances = instances.ToArray();
         }
 
         /// <summary>
-        /// Instance内容を表記するための文字列を列挙
+        /// MaterialInstanceのリストを取得(Debug用)
         /// </summary>
-        public IEnumerable<string> GetInstanceTexts() {
-            if (!IsValid) {
-                yield break;
-            }
-            
-            foreach (var info in _infos) {
-                yield return info.ToString();
-            }
+        public MaterialInstance[] GetMaterialInstances() {
+            return _instances;
         }
 
         /// <summary>
@@ -120,8 +114,8 @@ namespace GameFramework.RendererSystems {
                 return;
             }
 
-            for (var i = 0; i < _infos.Length; i++) {
-                setAction.Invoke(_infos[i], nameId, val);
+            for (var i = 0; i < _instances.Length; i++) {
+                setAction.Invoke(_instances[i], nameId, val);
             }
         }
 
@@ -133,7 +127,7 @@ namespace GameFramework.RendererSystems {
                 return default;
             }
 
-            return getAction.Invoke(_infos[0], nameId);
+            return getAction.Invoke(_instances[0], nameId);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace SampleGame.ModelViewer.Editor {
                 if (locatorController != null) {
                     _locatorFoldoutList.OnGUI(locatorController.GetKeys(), (key, index) => {
                         var locator = locatorController[key];
-                        EditorGUILayout.LabelField(key);
+                        EditorGUILayout.ObjectField(key, locator, typeof(Transform), true);
                         EditorGUI.indentLevel++;
                         EditorGUILayout.LabelField("Position", locator.position.ToString());
                         EditorGUILayout.LabelField("Angles", locator.transform.eulerAngles.ToString());
@@ -69,8 +69,11 @@ namespace SampleGame.ModelViewer.Editor {
                         var handle = materialController.GetHandle(key);
                         EditorGUILayout.LabelField(key);
                         EditorGUI.indentLevel++;
-                        foreach (var instanceText in handle.GetInstanceTexts()) {
-                            EditorGUILayout.LabelField(instanceText);
+                        var instances = handle.GetMaterialInstances();
+                        for (var i = 0; i < instances.Length; i++) {
+                            var instance = instances[i];
+                            EditorGUILayout.ObjectField($"[{i}]", instance.Renderer, typeof(Renderer), true);
+                            EditorGUILayout.ObjectField(" ", instance.Material, typeof(Material), false);
                         }
                         EditorGUI.indentLevel--;
                     }, GUILayout.Height(FoldoutHeight));

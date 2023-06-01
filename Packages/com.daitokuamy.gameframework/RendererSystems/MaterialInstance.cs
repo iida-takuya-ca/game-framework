@@ -21,6 +21,11 @@ namespace GameFramework.RendererSystems {
         private readonly Material _clonedMaterial;
         private readonly MaterialPropertyBlock _block;
 
+        /// <summary>Materialを保持しているRenderer</summary>
+        public Renderer Renderer => _renderer;
+        /// <summary>元のMaterial</summary>
+        public Material Material => _material;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>

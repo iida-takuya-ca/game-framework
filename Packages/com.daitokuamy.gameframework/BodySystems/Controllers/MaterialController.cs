@@ -27,7 +27,7 @@ namespace GameFramework.BodySystems {
         /// <param name="key">制御用キー</param>
         public MaterialHandle GetHandle(string key) {
             if (_materialInfos.TryGetValue(key, out var result)) {
-                return new MaterialHandle();
+                return new MaterialHandle(result);
             }
 
             return default;

@@ -1,4 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using GameFramework.AssetSystems;
 using GameFramework.BodySystems;
@@ -57,6 +60,9 @@ namespace SampleGame {
             
             // カメラ操作用Controllerの設定
             cameraManager.SetCameraController("Default", new PreviewCameraController());
+
+            // Editor用のSetupData自動更新処理
+            UpdateModelViewerSetupData(model.SetupData);
                     
             // 初期状態反映
             appService.ChangeEnvironment(model.SetupData.defaultEnvironmentId);
@@ -145,6 +151,26 @@ namespace SampleGame {
             rootPage.RemoveItem(_debugPageId);
             
             base.DeactivateInternal(handle);
+        }
+
+        /// <summary>
+        /// エディタ実行時用のModelViewerSetupDataの更新処理
+        /// </summary>
+        private void UpdateModelViewerSetupData(ModelViewerSetupData setupData) {
+#if UNITY_EDITOR
+            var ids = new HashSet<string>();
+            var guids = UnityEditor.AssetDatabase.FindAssets($"t:{nameof(PreviewActorSetupData)}");
+            foreach (var guid in guids) {
+                var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                var fileName = Path.GetFileNameWithoutExtension(path);
+                var assetKey = fileName.Replace("dat_preview_actor_setup_", "");
+                ids.Add(assetKey);
+            }
+
+            setupData.actorDataIds = ids.OrderBy(x => x).ToArray();
+            UnityEditor.EditorUtility.SetDirty(setupData);
+            UnityEditor.AssetDatabase.Refresh();
+#endif
         }
     }
 }
