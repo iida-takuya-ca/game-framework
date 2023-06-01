@@ -35,7 +35,8 @@ namespace SampleGame.ModelViewer {
             if (_motionController == null) {
                 return;
             }
-            
+
+            ResetTransform();
             _motionController.Player.Change(0, clip, 0.0f);
         }
 
@@ -47,6 +48,7 @@ namespace SampleGame.ModelViewer {
                 return;
             }
             
+            ResetTransform();
             _motionController.Player.Change(1, clip, 0.0f);
         }
 
@@ -84,15 +86,23 @@ namespace SampleGame.ModelViewer {
         }
 
         /// <summary>
+        /// Transformのリセット
+        /// </summary>
+        public void ResetTransform() {
+            Body.Position = Vector3.zero;
+            Body.Rotation = Quaternion.identity;
+        }
+
+        /// <summary>
         /// アクティブ時処理
         /// </summary>
         protected override void ActivateInternal(IScope scope) {
             base.ActivateInternal(scope);
             
-            // RootMotionを無効化
-            var animator = Body.GetComponent<Animator>();
-            if (animator != null) {
-                animator.applyRootMotion = false;
+            // 物理無効化
+            var rigidbody = Body.GetComponent<Rigidbody>();
+            if (rigidbody != null) {
+                rigidbody.isKinematic = true;
             }
             
             // 加算レイヤーの追加

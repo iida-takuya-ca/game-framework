@@ -44,7 +44,7 @@ namespace SampleGame.ModelViewer.Editor {
                         if (GUILayout.Button(id)) {
                             appService.ChangePreviewActorAsync(id, CancellationToken.None).Forget();
                         }
-                    }, GUILayout.Width(Screen.width * 0.5f));
+                    }, GUILayout.Width(Window.position.width * 0.5f));
 
                     GUI.color = prevColor;
                 
