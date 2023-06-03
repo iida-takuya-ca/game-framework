@@ -33,11 +33,5 @@ namespace GameFramework.CutsceneSystems {
         /// </summary>
         /// <param name="deltaTime">変位時間</param>
         void Update(float deltaTime);
-
-        /// <summary>
-        /// 速度変更
-        /// </summary>
-        /// <param name="timeScale">再生速度</param>
-        void SetSpeed(float timeScale);
     }
 }

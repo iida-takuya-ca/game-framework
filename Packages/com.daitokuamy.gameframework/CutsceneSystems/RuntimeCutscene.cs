@@ -115,13 +115,6 @@ namespace GameFramework.CutsceneSystems {
         }
 
         /// <summary>
-        /// 再生速度の設定
-        /// </summary>
-        /// <param name="timeScale">再生速度</param>
-        void ICutscene.SetSpeed(float timeScale) {
-        }
-
-        /// <summary>
         /// オブジェクトのバインド
         /// </summary>
         /// <param name="trackName">Track名</param>

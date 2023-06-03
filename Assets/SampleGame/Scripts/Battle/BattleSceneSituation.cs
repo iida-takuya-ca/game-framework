@@ -7,12 +7,14 @@ using GameFramework.CameraSystems;
 using GameFramework.CollisionSystems;
 using GameFramework.Core;
 using GameFramework.ActorSystems;
+using GameFramework.CutsceneSystems;
 using GameFramework.ProjectileSystems;
 using GameFramework.SituationSystems;
 using GameFramework.VfxSystems;
 using UniRx;
 using UnityEngine;
 using SampleGame.Battle;
+using UnityEngine.SceneManagement;
 using Component = UnityEngine.Component;
 
 namespace SampleGame {
@@ -44,6 +46,9 @@ namespace SampleGame {
         private SituationContainer _situationContainer;
         // 生成したPlayerのEntity
         private ActorEntity _playerActorEntity;
+        
+        // テスト用カットシーン
+        private Scene _cutsceneScene;
 
         protected override string SceneAssetPath => "battle";
 
@@ -58,6 +63,17 @@ namespace SampleGame {
             // フィールド読み込み
             yield return new FieldSceneAssetRequest("fld001")
                 .LoadAsync(true, scope, ct)
+                .ToCoroutine();
+
+            // カットシーン読み込み
+            yield return new BattleEventCutsceneAssetRequest("001")
+                .LoadAsync(true, scope, ct)
+                .ContinueWith(x => {
+                    _cutsceneScene = x;
+                    foreach (var obj in x.GetRootGameObjects()) {
+                        obj.SetActive(false);
+                    }
+                })
                 .ToCoroutine();
         }
 
@@ -92,6 +108,11 @@ namespace SampleGame {
             // CameraManagerの初期化
             var cameraManager = Services.Get<CameraManager>();
             cameraManager.RegisterTask(TaskOrder.Camera);
+            
+            // CutsceneManagerの生成
+            var cutsceneManager = new CutsceneManager();
+            ServiceContainer.Set(cutsceneManager);
+            cutsceneManager.RegisterTask(TaskOrder.Cutscene);
             
             // VfxManagerの生成
             var vfxManager = new VfxManager();
@@ -162,6 +183,12 @@ namespace SampleGame {
                 
                 Observable.TimerFrame(50)
                     .Subscribe(_ => handle.Dispose());
+            }
+            
+            // カットシーンテスト
+            if (Input.GetKeyDown(KeyCode.B)) {
+                var cutsceneManager = Services.Get<CutsceneManager>();
+                cutsceneManager.Play(_cutsceneScene);
             }
             
             // BattleModel更新

@@ -120,13 +120,6 @@ namespace GameFramework.CutsceneSystems {
         }
 
         /// <summary>
-        /// 再生速度の設定
-        /// </summary>
-        /// <param name="timeScale">再生速度</param>
-        void ICutscene.SetSpeed(float timeScale) {
-        }
-
-        /// <summary>
         /// 通知の受信
         /// </summary>
         /// <param name="origin">発生元のPlayable</param>
