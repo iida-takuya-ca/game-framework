@@ -13,7 +13,7 @@ namespace GameFramework.CutsceneSystems {
     /// <summary>
     /// カットシーン管理クラス
     /// </summary>
-    public class CutsceneManager : DisposableLateUpdatableTask {
+    public class CutsceneManager : DisposableTask {
         /// <summary>
         /// 再生管理用ハンドル
         /// </summary>
@@ -482,9 +482,9 @@ namespace GameFramework.CutsceneSystems {
         }
 
         /// <summary>
-        /// 後更新処理
+        /// 更新処理
         /// </summary>
-        protected override void LateUpdateInternal() {
+        protected override void UpdateInternal() {
             // 再生中情報の更新
             for (var i = _playingInfos.Count - 1; i >= 0; i--) {
                 var info = _playingInfos[i];

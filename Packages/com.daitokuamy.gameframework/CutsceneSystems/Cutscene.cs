@@ -30,7 +30,7 @@ namespace GameFramework.CutsceneSystems {
                 return;
             }
             
-            _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
+            _playableDirector.timeUpdateMode = DirectorUpdateMode.GameTime;
 
             _scope = new DisposableScope();
             InitializeInternal(_scope);
