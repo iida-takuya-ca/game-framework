@@ -14,7 +14,7 @@ namespace SampleGame.ModelViewer {
     /// </summary>
     [Flags]
     public enum RecordingModeFlags {
-        CharacterRotation = 1 << 0,
+        ActorRotation = 1 << 0,
         CameraRotation = 1 << 1,
         LightRotation = 1 << 2,
     }

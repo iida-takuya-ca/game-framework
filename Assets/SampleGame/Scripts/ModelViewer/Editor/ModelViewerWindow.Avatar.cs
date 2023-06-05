@@ -21,7 +21,7 @@ namespace SampleGame.ModelViewer.Editor {
             /// 初期化処理
             /// </summary>
             protected override void InitializeInternal(IScope scope) {
-                var entityManager = Services.Get<EntityManager>();
+                var entityManager = Services.Get<ActorManager>();
                 entityManager.PreviewActor
                     .TakeUntil(scope)
                     .Subscribe(x => {

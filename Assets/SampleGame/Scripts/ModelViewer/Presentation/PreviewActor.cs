@@ -89,8 +89,8 @@ namespace SampleGame.ModelViewer {
         /// Transformのリセット
         /// </summary>
         public void ResetTransform() {
-            Body.Position = Vector3.zero;
-            Body.Rotation = Quaternion.identity;
+            Body.LocalPosition = Vector3.zero;
+            Body.LocalRotation = Quaternion.identity;
         }
 
         /// <summary>

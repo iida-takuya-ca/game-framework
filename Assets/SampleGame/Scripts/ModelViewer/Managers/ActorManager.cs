@@ -3,17 +3,27 @@ using GameFramework.BodySystems;
 using GameFramework.Core;
 using GameFramework.ActorSystems;
 using UniRx;
+using UnityEngine;
 
 namespace SampleGame.ModelViewer {
     /// <summary>
-    /// Entity管理用クラス
+    /// Actor管理用クラス
     /// </summary>
-    public class EntityManager : IDisposable {
+    public class ActorManager : IDisposable {
+        private Transform _slot;
         private ActorEntity _previewActorEntity;
         private ReactiveProperty<PreviewActor> _previewActor = new();
 
         // 現在のプレビュー用アクター
         public IReadOnlyReactiveProperty<PreviewActor> PreviewActor => _previewActor;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="slot">配置用スロット</param>
+        public ActorManager(Transform slot) {
+            _slot = slot;
+        }
 
         /// <summary>
         /// 廃棄時処理
@@ -51,6 +61,7 @@ namespace SampleGame.ModelViewer {
             // Bodyの生成
             var bodyManager = Services.Get<BodyManager>();
             var body = bodyManager.CreateFromPrefab(setupData.prefab);
+            body.Transform.SetParent(_slot, false);
             body.LayeredTime.SetParent(viewerModel.SettingsModel.LayeredTime);
             _previewActorEntity.SetBody(body);
 
