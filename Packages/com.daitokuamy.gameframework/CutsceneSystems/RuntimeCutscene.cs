@@ -29,12 +29,19 @@ namespace GameFramework.CutsceneSystems {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void ICutscene.Initialize() {
+        void ICutscene.Initialize(bool updateGameTime) {
             if (_playableDirector == null) {
                 return;
             }
-            
-            _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
+
+            if (updateGameTime) {
+                _playableDirector.timeUpdateMode = DirectorUpdateMode.GameTime;
+            }
+            else {
+                _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
+            }
+
+            _playableDirector.playOnAwake = false;
         }
 
         /// <summary>
@@ -51,11 +58,11 @@ namespace GameFramework.CutsceneSystems {
 
             _playableDirector = null;
         }
-        
+
         /// <summary>
         /// Poolに戻る際の処理
         /// </summary>
-        void ICutscene.OnReturn(){
+        void ICutscene.OnReturn() {
             if (_playableDirector == null) {
                 return;
             }
@@ -67,6 +74,7 @@ namespace GameFramework.CutsceneSystems {
             foreach (var trackKey in _bindingTrackKeys) {
                 _playableDirector.ClearGenericBinding(trackKey);
             }
+
             _bindingTrackKeys.Clear();
         }
 
@@ -77,7 +85,7 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             _playableDirector.time = 0.0f;
             _isPlaying = true;
         }
@@ -89,7 +97,7 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             _isPlaying = false;
             _playableDirector.gameObject.SetActive(false);
         }
@@ -102,7 +110,7 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             var time = _playableDirector.time + deltaTime;
             if (time >= _playableDirector.duration &&
                 (_playableDirector.extrapolationMode == DirectorWrapMode.Hold || _playableDirector.extrapolationMode == DirectorWrapMode.None)) {
@@ -123,13 +131,13 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             var binding = _playableDirector.playableAsset.outputs.FirstOrDefault(x => x.streamName == trackName);
             if (binding.sourceObject == null) {
                 Debug.unityLogger.LogWarning(_playableDirector.name, $"Not found bind trackName. [{trackName}]");
                 return;
             }
-            
+
             _playableDirector.SetGenericBinding(binding.sourceObject, target);
             _bindingTrackKeys.Add(binding.sourceObject);
         }
