@@ -50,6 +50,8 @@ namespace SampleGame {
         // テスト用カットシーン
         private Scene _cutsceneScene;
 
+        private LayeredTime _layeredTime;
+
         protected override string SceneAssetPath => "battle";
 
         /// <summary>
@@ -147,6 +149,10 @@ namespace SampleGame {
                 .ScopeTo(scope);
             cameraTargetPointLogic.RegisterTask(TaskOrder.Logic);
             cameraTargetPointLogic.Activate();
+
+            _layeredTime = new LayeredTime();
+            _layeredTime.LocalTimeScale = 0.5f;
+            _layeredTime.ScopeTo(scope);
         }
 
         /// <summary>
@@ -188,7 +194,7 @@ namespace SampleGame {
             // カットシーンテスト
             if (Input.GetKeyDown(KeyCode.B)) {
                 var cutsceneManager = Services.Get<CutsceneManager>();
-                cutsceneManager.Play(_cutsceneScene);
+                cutsceneManager.Play(_cutsceneScene, _layeredTime);
             }
             
             // BattleModel更新

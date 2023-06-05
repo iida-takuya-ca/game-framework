@@ -11,7 +11,7 @@ namespace GameFramework.CutsceneSystems {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void Initialize();
+        void Initialize(bool updateGameTime);
 
         /// <summary>
         /// Poolに戻る際の処理

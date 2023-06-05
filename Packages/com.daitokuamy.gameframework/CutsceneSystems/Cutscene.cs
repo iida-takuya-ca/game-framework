@@ -23,14 +23,21 @@ namespace GameFramework.CutsceneSystems {
         /// <summary>
         /// 初期化処理
         /// </summary>
-        void ICutscene.Initialize() {
+        void ICutscene.Initialize(bool updateGameTime) {
             _playableDirector = GetComponent<PlayableDirector>();
-            
+
             if (_playableDirector == null) {
                 return;
             }
-            
-            _playableDirector.timeUpdateMode = DirectorUpdateMode.GameTime;
+
+            if (updateGameTime) {
+                _playableDirector.timeUpdateMode = DirectorUpdateMode.GameTime;
+            }
+            else {
+                _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
+            }
+
+            _playableDirector.playOnAwake = false;
 
             _scope = new DisposableScope();
             InitializeInternal(_scope);
@@ -47,16 +54,16 @@ namespace GameFramework.CutsceneSystems {
             if (_isPlaying) {
                 ((ICutscene)this).Stop();
             }
-            
+
             DisposeInternal();
             _scope.Dispose();
             _playableDirector = null;
         }
-        
+
         /// <summary>
         /// Poolに戻る際の処理
         /// </summary>
-        void ICutscene.OnReturn(){
+        void ICutscene.OnReturn() {
             if (_playableDirector == null) {
                 return;
             }
@@ -68,6 +75,7 @@ namespace GameFramework.CutsceneSystems {
             foreach (var trackKey in _bindingTrackKeys) {
                 _playableDirector.ClearGenericBinding(trackKey);
             }
+
             _bindingTrackKeys.Clear();
         }
 
@@ -78,7 +86,7 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             _playableDirector.time = 0.0f;
             _isPlaying = true;
             PlayInternal();
@@ -91,7 +99,7 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             _isPlaying = false;
             gameObject.SetActive(false);
             StopInternal();
@@ -105,7 +113,7 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             var time = _playableDirector.time + deltaTime;
             if (time >= _playableDirector.duration &&
                 (_playableDirector.extrapolationMode == DirectorWrapMode.Hold || _playableDirector.extrapolationMode == DirectorWrapMode.None)) {
@@ -115,7 +123,7 @@ namespace GameFramework.CutsceneSystems {
 
             _playableDirector.time = time;
             _playableDirector.Evaluate();
-            
+
             UpdateInternal(deltaTime);
         }
 
@@ -138,17 +146,17 @@ namespace GameFramework.CutsceneSystems {
             if (_playableDirector == null) {
                 return;
             }
-            
+
             var binding = _playableDirector.playableAsset.outputs.FirstOrDefault(x => x.streamName == trackName);
             if (binding.sourceObject == null) {
                 Debug.unityLogger.LogWarning(name, $"Not found bind trackName. [{trackName}]");
                 return;
             }
-            
+
             _playableDirector.SetGenericBinding(binding.sourceObject, target);
             _bindingTrackKeys.Add(binding.sourceObject);
         }
-        
+
         /// <summary>
         /// 初期化時処理(Override用)
         /// </summary>
