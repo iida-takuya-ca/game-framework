@@ -12,7 +12,7 @@ namespace GameFramework.CutsceneSystems {
     public sealed class RuntimeCutscene : ICutscene {
         private PlayableDirector _playableDirector;
         private bool _isPlaying;
-        private float _speed;
+        private float _speed = 1.0f;
 
         private List<Object> _bindingTrackKeys = new();
 

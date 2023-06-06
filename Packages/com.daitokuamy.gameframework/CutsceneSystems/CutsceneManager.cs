@@ -116,6 +116,9 @@ namespace GameFramework.CutsceneSystems {
                     layeredTime.OnChangedTimeScale += OnChangedTimeScale;
                     OnChangedTimeScale(layeredTime.TimeScale);
                 }
+                else {
+                    OnChangedTimeScale(1.0f);
+                }
             }
 
             /// <summary>

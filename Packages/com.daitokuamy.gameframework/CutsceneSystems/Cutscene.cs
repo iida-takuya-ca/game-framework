@@ -13,7 +13,7 @@ namespace GameFramework.CutsceneSystems {
     public class Cutscene : MonoBehaviour, ICutscene, INotificationReceiver {
         private PlayableDirector _playableDirector;
         private bool _isPlaying;
-        private float _speed;
+        private float _speed = 1.0f;
         private DisposableScope _scope;
 
         private List<Object> _bindingTrackKeys = new();
