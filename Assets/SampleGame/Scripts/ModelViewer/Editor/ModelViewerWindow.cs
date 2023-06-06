@@ -12,17 +12,6 @@ namespace SampleGame.ModelViewer.Editor {
     /// </summary>
     public partial class ModelViewerWindow : EditorWindow {
         /// <summary>
-        /// パネルのタイプ
-        /// </summary>
-        private enum PanelType {
-            Actor,
-            Body,
-            Avatar,
-            Environment,
-            Settings,
-        }
-
-        /// <summary>
         /// 検索可能なリストGUI
         /// </summary>
         private class SearchableList<T> {
@@ -123,6 +112,9 @@ namespace SampleGame.ModelViewer.Editor {
             private DisposableScope _scope;
             private Vector2 _scroll;
 
+            /// <summary>タブの表示名</summary>
+            public abstract string Title { get; }
+            /// <summary>Windowへの参照</summary>
             protected ModelViewerWindow Window { get; private set; }
 
             /// <summary>
@@ -170,8 +162,8 @@ namespace SampleGame.ModelViewer.Editor {
             protected abstract void OnGUIInternal();
         }
 
-        private Dictionary<PanelType, PanelBase> _panels = new();
-        private PanelType _currentPanelType;
+        private Dictionary<string, PanelBase> _panels = new();
+        private string _currentPanelKey;
 
         /// <summary>
         /// 開く処理
@@ -186,6 +178,13 @@ namespace SampleGame.ModelViewer.Editor {
         /// </summary>
         private void OnDisable() {
             ClearPanels();
+        }
+
+        /// <summary>
+        /// 更新処理
+        /// </summary>
+        private void Update() {
+            Repaint();
         }
 
         /// <summary>
@@ -207,9 +206,11 @@ namespace SampleGame.ModelViewer.Editor {
 
             CreatePanels();
 
-            var labels = Enum.GetNames(typeof(PanelType));
-            _currentPanelType = (PanelType)GUILayout.Toolbar((int)_currentPanelType, labels, EditorStyles.toolbarButton);
-            var panel = GetPanel(_currentPanelType);
+            var labels = _panels.Keys.ToArray();
+            var index = labels.ToList().IndexOf(_currentPanelKey);
+            index = GUILayout.Toolbar(index, labels, EditorStyles.toolbarButton);
+            _currentPanelKey = index >= 0 ? labels[index] : "";
+            var panel = GetPanel(_currentPanelKey);
             if (panel != null) {
                 panel.OnGUI();
             }
@@ -218,8 +219,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// <summary>
         /// パネルの取得
         /// </summary>
-        private PanelBase GetPanel(PanelType type) {
-            _panels.TryGetValue(type, out var panel);
+        private PanelBase GetPanel(string panelKey) {
+            _panels.TryGetValue(panelKey, out var panel);
             return panel;
         }
 
@@ -228,22 +229,24 @@ namespace SampleGame.ModelViewer.Editor {
         /// </summary>
         private void CreatePanels() {
             // パネルの生成
-            void CreatePanel<T>(PanelType panelType)
+            void CreatePanel<T>()
                 where T : PanelBase, new() {
-                if (_panels.ContainsKey(panelType)) {
+                var panel = new T();
+                
+                if (_panels.ContainsKey(panel.Title)) {
                     return;
                 }
                 
-                var panel = new T();
                 panel.Initialize(this);
-                _panels[panelType] = panel;
+                _panels[panel.Title] = panel;
             }
             
-            CreatePanel<ActorPanel>(PanelType.Actor);
-            CreatePanel<BodyPanel>(PanelType.Body);
-            CreatePanel<AvatarPanel>(PanelType.Avatar);
-            CreatePanel<EnvironmentPanel>(PanelType.Environment);
-            CreatePanel<SettingsPanel>(PanelType.Settings);
+            CreatePanel<ActorPanel>();
+            CreatePanel<BodyPanel>();
+            CreatePanel<AvatarPanel>();
+            CreatePanel<EnvironmentPanel>();
+            CreatePanel<RecordingPanel>();
+            CreatePanel<SettingsPanel>();
         }
 
         /// <summary>

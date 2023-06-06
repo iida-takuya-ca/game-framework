@@ -13,6 +13,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// AvatarPanel
         /// </summary>
         private class AvatarPanel : PanelBase {
+            public override string Title => "Avatar";
+            
             private PreviewActor _actor;
             private Dictionary<string, FoldoutList<GameObject>> _meshAvatarFoldoutLists = new();
             private Dictionary<string, GameObject[]> _meshAvatarPrefabLists = new();
@@ -21,7 +23,7 @@ namespace SampleGame.ModelViewer.Editor {
             /// 初期化処理
             /// </summary>
             protected override void InitializeInternal(IScope scope) {
-                var entityManager = Services.Get<EntityManager>();
+                var entityManager = Services.Get<ActorManager>();
                 entityManager.PreviewActor
                     .TakeUntil(scope)
                     .Subscribe(x => {

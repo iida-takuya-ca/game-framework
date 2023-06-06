@@ -14,6 +14,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// ComponentPanel
         /// </summary>
         private class BodyPanel : PanelBase {
+            public override string Title => "Body";
+            
             private const float FoldoutHeight = 300;
             
             private Body _body;
@@ -35,7 +37,7 @@ namespace SampleGame.ModelViewer.Editor {
                 _materialFoldoutList = new FoldoutList<string>("Material Controller");
                 _gimmickFoldoutList = new FoldoutList<string>("Gimmick Controller");
                 
-                var entityManager = Services.Get<EntityManager>();
+                var entityManager = Services.Get<ActorManager>();
                 entityManager.PreviewActor
                     .TakeUntil(scope)
                     .Subscribe(x => _body = x?.Body);

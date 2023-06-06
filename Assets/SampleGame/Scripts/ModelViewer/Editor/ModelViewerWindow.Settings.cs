@@ -10,6 +10,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// SettingsPanel
         /// </summary>
         private class SettingsPanel : PanelBase {
+            public override string Title => "Settings";
+            
             /// <summary>
             /// 初期化処理
             /// </summary>

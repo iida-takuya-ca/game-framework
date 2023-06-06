@@ -10,9 +10,11 @@ namespace SampleGame.ModelViewer {
         public ModelViewerSetupData SetupData { get; private set; }
         // 表示用オブジェクトのモデル
         public PreviewActorModel PreviewActorModel { get; private set; }
-        // 環境用のモデル
+        // 環境用モデル
         public EnvironmentModel EnvironmentModel { get; private set; }
-        // 設定用のモデル
+        // 録画用モデル
+        public RecordingModel RecordingModel { get; private set; }
+        // 設定用モデル
         public SettingsModel SettingsModel { get; private set; }
 
         /// <summary>
@@ -29,6 +31,8 @@ namespace SampleGame.ModelViewer {
             PreviewActorModel = PreviewActorModel.Create()
                 .ScopeTo(scope);
             EnvironmentModel = EnvironmentModel.Create()
+                .ScopeTo(scope);
+            RecordingModel = RecordingModel.Create()
                 .ScopeTo(scope);
             SettingsModel = SettingsModel.Create()
                 .ScopeTo(scope);

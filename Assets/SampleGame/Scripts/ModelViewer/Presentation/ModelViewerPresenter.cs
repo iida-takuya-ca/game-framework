@@ -10,7 +10,7 @@ namespace SampleGame.ModelViewer {
     /// </summary>
     public class ModelViewerPresenter : Logic {
         private ModelViewerModel _model;
-        private EntityManager _entityManager;
+        private ActorManager _actorManager;
         private EnvironmentManager _environmentManager;
         
         /// <summary>
@@ -18,7 +18,7 @@ namespace SampleGame.ModelViewer {
         /// </summary>
         public ModelViewerPresenter(ModelViewerModel model) {
             _model = model;
-            _entityManager = Services.Get<EntityManager>();
+            _actorManager = Services.Get<ActorManager>();
             _environmentManager = Services.Get<EnvironmentManager>();
         }
 
@@ -37,7 +37,7 @@ namespace SampleGame.ModelViewer {
             _model.PreviewActorModel.SetupData
                 .TakeUntil(scope)
                 .Subscribe(_ => {
-                    _entityManager.ChangePreviewActor(_model.PreviewActorModel);
+                    _actorManager.ChangePreviewActor(_model.PreviewActorModel);
                 });
             
             // Environmentの切り替え

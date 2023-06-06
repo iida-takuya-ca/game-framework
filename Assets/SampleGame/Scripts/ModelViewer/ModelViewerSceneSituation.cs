@@ -27,6 +27,8 @@ namespace SampleGame {
             yield return base.SetupRoutineInternal(handle, scope);
 
             var ct = scope.ToCancellationToken();
+
+            var settings = Services.Get<ModelViewerSettings>();
             
             // Modelの生成
             var model = ModelViewerModel.Create()
@@ -52,11 +54,14 @@ namespace SampleGame {
             var environmentManager = new EnvironmentManager();
             ServiceContainer.Set(environmentManager);
 
-            var entityManager = new EntityManager();
-            ServiceContainer.Set(entityManager);
+            var actorManager = new ActorManager(settings.PreviewSlot);
+            ServiceContainer.Set(actorManager);
             
             var cameraManager = Services.Get<CameraManager>();
             cameraManager.RegisterTask(TaskOrder.Camera);
+
+            var recordingController = Services.Get<RecordingController>();
+            recordingController.RegisterTask(TaskOrder.Logic);
             
             // カメラ操作用Controllerの設定
             cameraManager.SetCameraController("Default", new PreviewCameraController());
