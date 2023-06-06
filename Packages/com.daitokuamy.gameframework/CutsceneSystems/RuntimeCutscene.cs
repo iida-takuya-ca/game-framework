@@ -12,6 +12,7 @@ namespace GameFramework.CutsceneSystems {
     public sealed class RuntimeCutscene : ICutscene {
         private PlayableDirector _playableDirector;
         private bool _isPlaying;
+        private float _speed;
 
         private List<Object> _bindingTrackKeys = new();
 
@@ -39,6 +40,10 @@ namespace GameFramework.CutsceneSystems {
             }
             else {
                 _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
+            }
+
+            if (_playableDirector.extrapolationMode == DirectorWrapMode.None) {
+                _playableDirector.extrapolationMode = DirectorWrapMode.Hold;
             }
 
             _playableDirector.playOnAwake = false;
@@ -86,7 +91,18 @@ namespace GameFramework.CutsceneSystems {
                 return;
             }
 
-            _playableDirector.time = 0.0f;
+            if (_playableDirector.timeUpdateMode == DirectorUpdateMode.Manual) {
+                _playableDirector.time = 0.0f;
+            }
+            else {
+                _playableDirector.Play();
+            }
+            
+            // 再生開始時にGraphが生成される可能性があるため、ここで速度を再設定
+            if (_playableDirector.playableGraph.IsValid()) {
+                _playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(_speed);
+            }
+
             _isPlaying = true;
         }
 
@@ -99,6 +115,10 @@ namespace GameFramework.CutsceneSystems {
             }
 
             _isPlaying = false;
+            if (_playableDirector.timeUpdateMode != DirectorUpdateMode.Manual) {
+                _playableDirector.Stop();
+            }
+
             _playableDirector.gameObject.SetActive(false);
         }
 
@@ -111,15 +131,38 @@ namespace GameFramework.CutsceneSystems {
                 return;
             }
 
-            var time = _playableDirector.time + deltaTime;
-            if (time >= _playableDirector.duration &&
-                (_playableDirector.extrapolationMode == DirectorWrapMode.Hold || _playableDirector.extrapolationMode == DirectorWrapMode.None)) {
-                time = _playableDirector.duration;
-                _isPlaying = false;
-            }
+            var loop = _playableDirector.extrapolationMode == DirectorWrapMode.Loop;
+            if (_playableDirector.timeUpdateMode == DirectorUpdateMode.Manual) {
+                var time = _playableDirector.time + deltaTime;
+                if (time >= _playableDirector.duration && !loop) {
+                    time = _playableDirector.duration;
+                    _isPlaying = false;
+                }
 
-            _playableDirector.time = time;
-            _playableDirector.Evaluate();
+                _playableDirector.time = time;
+                _playableDirector.Evaluate();
+            }
+            else {
+                if (_playableDirector.time >= _playableDirector.duration && !loop) {
+                    _playableDirector.Stop();
+                    _isPlaying = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 再生速度の設定
+        /// </summary>
+        /// <param name="speed">再生速度</param>
+        void ICutscene.SetSpeed(float speed) {
+            if (_playableDirector == null) {
+                return;
+            }
+            
+            _speed = speed;
+            if (_playableDirector.playableGraph.IsValid()) {
+                _playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(_speed);
+            }
         }
 
         /// <summary>

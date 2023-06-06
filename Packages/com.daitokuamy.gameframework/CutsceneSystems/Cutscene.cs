@@ -13,6 +13,7 @@ namespace GameFramework.CutsceneSystems {
     public class Cutscene : MonoBehaviour, ICutscene, INotificationReceiver {
         private PlayableDirector _playableDirector;
         private bool _isPlaying;
+        private float _speed;
         private DisposableScope _scope;
 
         private List<Object> _bindingTrackKeys = new();
@@ -35,6 +36,10 @@ namespace GameFramework.CutsceneSystems {
             }
             else {
                 _playableDirector.timeUpdateMode = DirectorUpdateMode.Manual;
+            }
+
+            if (_playableDirector.extrapolationMode == DirectorWrapMode.None) {
+                _playableDirector.extrapolationMode = DirectorWrapMode.Hold;
             }
 
             _playableDirector.playOnAwake = false;
@@ -87,7 +92,18 @@ namespace GameFramework.CutsceneSystems {
                 return;
             }
 
-            _playableDirector.time = 0.0f;
+            if (_playableDirector.timeUpdateMode == DirectorUpdateMode.Manual) {
+                _playableDirector.time = 0.0f;
+            }
+            else {
+                _playableDirector.Play();
+            }
+            
+            // 再生開始時にGraphが生成される可能性があるため、ここで速度を再設定
+            if (_playableDirector.playableGraph.IsValid()) {
+                _playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(_speed);
+            }
+
             _isPlaying = true;
             PlayInternal();
         }
@@ -101,6 +117,10 @@ namespace GameFramework.CutsceneSystems {
             }
 
             _isPlaying = false;
+            if (_playableDirector.timeUpdateMode != DirectorUpdateMode.Manual) {
+                _playableDirector.Stop();
+            }
+
             gameObject.SetActive(false);
             StopInternal();
         }
@@ -114,17 +134,42 @@ namespace GameFramework.CutsceneSystems {
                 return;
             }
 
-            var time = _playableDirector.time + deltaTime;
-            if (time >= _playableDirector.duration &&
-                (_playableDirector.extrapolationMode == DirectorWrapMode.Hold || _playableDirector.extrapolationMode == DirectorWrapMode.None)) {
-                time = _playableDirector.duration;
-                _isPlaying = false;
+            var loop = _playableDirector.extrapolationMode == DirectorWrapMode.Loop;
+            if (_playableDirector.timeUpdateMode == DirectorUpdateMode.Manual) {
+                var time = _playableDirector.time + deltaTime;
+                if (time >= _playableDirector.duration && !loop) {
+                    time = _playableDirector.duration;
+                    _isPlaying = false;
+                }
+
+                _playableDirector.time = time;
+                _playableDirector.Evaluate();
+            }
+            else {
+                if (_playableDirector.time >= _playableDirector.duration && !loop) {
+                    _playableDirector.Stop();
+                    _isPlaying = false;
+                }
             }
 
-            _playableDirector.time = time;
-            _playableDirector.Evaluate();
-
             UpdateInternal(deltaTime);
+        }
+
+        /// <summary>
+        /// 再生速度の設定
+        /// </summary>
+        /// <param name="speed">再生速度</param>
+        void ICutscene.SetSpeed(float speed) {
+            if (_playableDirector == null) {
+                return;
+            }
+            
+            _speed = speed;
+            if (_playableDirector.playableGraph.IsValid()) {
+                _playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(_speed);
+            }
+
+            SetSpeedInternal(speed);
         }
 
         /// <summary>
@@ -191,8 +236,8 @@ namespace GameFramework.CutsceneSystems {
         /// <summary>
         /// 再生速度の設定(Override用)
         /// </summary>
-        /// <param name="timeScale">再生速度</param>
-        protected virtual void SetSpeedInternal(float timeScale) {
+        /// <param name="speed">再生速度</param>
+        protected virtual void SetSpeedInternal(float speed) {
         }
 
         /// <summary>

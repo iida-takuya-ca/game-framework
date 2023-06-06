@@ -13,7 +13,7 @@ namespace GameFramework.CutsceneSystems {
     /// <summary>
     /// カットシーン管理クラス
     /// </summary>
-    public class CutsceneManager : DisposableTask {
+    public class CutsceneManager : DisposableLateUpdatableTask {
         /// <summary>
         /// 再生管理用ハンドル
         /// </summary>
@@ -111,6 +111,11 @@ namespace GameFramework.CutsceneSystems {
                 CutsceneInfo = cutsceneInfo;
                 _layeredTime = layeredTime;
                 _autoDispose = autoDispose;
+
+                if (layeredTime != null) {
+                    layeredTime.OnChangedTimeScale += OnChangedTimeScale;
+                    OnChangedTimeScale(layeredTime.TimeScale);
+                }
             }
 
             /// <summary>
@@ -122,6 +127,10 @@ namespace GameFramework.CutsceneSystems {
                 }
 
                 Stop(true);
+                if (_layeredTime != null) {
+                    _layeredTime.OnChangedTimeScale += OnChangedTimeScale;
+                }
+
                 Disposed = true;
             }
 
@@ -211,6 +220,15 @@ namespace GameFramework.CutsceneSystems {
                 }
 
                 return false;
+            }
+
+            /// <summary>
+            /// TimeScaleの変更監視
+            /// </summary>
+            private void OnChangedTimeScale(float timeScale) {
+                if (CutsceneInfo?.cutscene != null) {
+                    CutsceneInfo.cutscene.SetSpeed(timeScale);
+                }
             }
         }
 
@@ -488,9 +506,9 @@ namespace GameFramework.CutsceneSystems {
         }
 
         /// <summary>
-        /// 更新処理
+        /// 後更新処理
         /// </summary>
-        protected override void UpdateInternal() {
+        protected override void LateUpdateInternal() {
             // 再生中情報の更新
             for (var i = _playingInfos.Count - 1; i >= 0; i--) {
                 var info = _playingInfos[i];
@@ -538,7 +556,7 @@ namespace GameFramework.CutsceneSystems {
             if (cutsceneInfo == null) {
                 return null;
             }
-            
+
             // 再生中なら停止して再実行
             if (cutsceneInfo.cutscene.IsPlaying) {
                 var oldPlayingInfo = _playingInfos.FirstOrDefault(x => x.CutsceneInfo == cutsceneInfo);
@@ -588,7 +606,7 @@ namespace GameFramework.CutsceneSystems {
                 info = CreateCutsceneInfo(scene);
                 _sceneBaseCutsceneInfos[scene] = info;
             }
-            
+
             return info;
         }
 
@@ -610,7 +628,7 @@ namespace GameFramework.CutsceneSystems {
                     Debug.unityLogger.LogWarning(nameof(CutsceneManager), $"Not found cutscene info. {cutsceneInfo.scene.name}");
                     return;
                 }
-                
+
                 info.cutscene.OnReturn();
                 info.root.SetActive(false);
             }
@@ -638,7 +656,7 @@ namespace GameFramework.CutsceneSystems {
                         prefab = prefab,
                         cutscene = cutscene
                     };
-                }, _ => {},
+                }, _ => { },
                 info => {
                     info.cutscene.OnReturn();
                     info.root.SetActive(false);
