@@ -13,6 +13,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// AvatarPanel
         /// </summary>
         private class AvatarPanel : PanelBase {
+            public override string Title => "Avatar";
+            
             private PreviewActor _actor;
             private Dictionary<string, FoldoutList<GameObject>> _meshAvatarFoldoutLists = new();
             private Dictionary<string, GameObject[]> _meshAvatarPrefabLists = new();

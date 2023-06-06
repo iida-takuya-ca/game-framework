@@ -11,6 +11,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// EnvironmentPanel
         /// </summary>
         private class EnvironmentPanel : PanelBase {
+            public override string Title => "Environment";
+            
             private SearchableList<string> _environmentIdList;
 
             /// <summary>

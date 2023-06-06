@@ -59,6 +59,9 @@ namespace SampleGame {
             
             var cameraManager = Services.Get<CameraManager>();
             cameraManager.RegisterTask(TaskOrder.Camera);
+
+            var recordingController = Services.Get<RecordingController>();
+            recordingController.RegisterTask(TaskOrder.Logic);
             
             // カメラ操作用Controllerの設定
             cameraManager.SetCameraController("Default", new PreviewCameraController());

@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.IO;
 using GameFramework.CameraSystems;
 using GameFramework.Core;
 using GameFramework.CoroutineSystems;
 using GameFramework.TaskSystems;
 using UnityEditor.Recorder;
+using UnityEditor.Recorder.Input;
 using UnityEngine;
 
 namespace SampleGame.ModelViewer {
@@ -12,16 +14,53 @@ namespace SampleGame.ModelViewer {
     /// 録画するためのコントローラ
     /// </summary>
     public class RecordingController : TaskBehaviour {
-        private MovieRecorderSettings _settings;
+        [SerializeField, Tooltip("録画用のフレームレート")]
+        private int _frameRate = 60;
+        [SerializeField, Tooltip("録画解像度")]
+        private int _resolutionWidth = 1920;
+        [SerializeField, Tooltip("録画解像度")]
+        private int _resolutionHeight = 1080;
+        [SerializeField, Tooltip("出力先フォルダ")]
+        private string _outputPath = "ModelViewerRecordings";
+        [SerializeField, Tooltip("出力形式")]
+        private MovieRecorderSettings.VideoRecorderOutputFormat _outputFormat = MovieRecorderSettings.VideoRecorderOutputFormat.MP4;
+
+        private RecorderControllerSettings _settings;
+        private MovieRecorderSettings _movieRecorderSettings;
         private CoroutineRunner _coroutineRunner;
+
+        /// <summary>録画中か</summary>
+        public bool IsRecording { get; private set; }
 
         /// <summary>
         /// 録画処理
         /// </summary>
         public AsyncOperationHandle RecordAsync() {
+            if (IsRecording) {
+                return new AsyncOperationHandle();
+            }
+
+            // 録画開始
+            IsRecording = true;
+
             var op = new AsyncOperator();
-            var model = ModelViewerModel.Get().RecordingModel;
-            _coroutineRunner.StartCoroutine(RecordRoutine(model.RotationDuration, model.ModeFlags), () => { op.Completed(); }, () => { op.Canceled(); }, ex => { op.Canceled(ex); });
+            var viewerModel = ModelViewerModel.Get();
+            var recordingModel = viewerModel.RecordingModel;
+            var setupDataId = viewerModel.PreviewActorModel.SetupDataId;
+            _coroutineRunner.StartCoroutine(
+                RecordRoutine(setupDataId, recordingModel.RotationDuration, recordingModel.Options),
+                () => {
+                    op.Completed();
+                    IsRecording = false;
+                },
+                () => {
+                    op.Canceled();
+                    IsRecording = false;
+                },
+                ex => {
+                    op.Canceled(ex);
+                    IsRecording = false;
+                });
             return op;
         }
 
@@ -29,7 +68,11 @@ namespace SampleGame.ModelViewer {
         /// 生成時処理
         /// </summary>
         protected override void AwakeInternal() {
-            _settings = ScriptableObject.CreateInstance<MovieRecorderSettings>();
+            _settings = ScriptableObject.CreateInstance<RecorderControllerSettings>();
+            _settings.SetRecordModeToManual();
+            _movieRecorderSettings = ScriptableObject.CreateInstance<MovieRecorderSettings>();
+            _movieRecorderSettings.AudioInputSettings.PreserveAudio = false;
+            _settings.AddRecorderSettings(_movieRecorderSettings);
             _coroutineRunner = new CoroutineRunner();
         }
 
@@ -38,6 +81,9 @@ namespace SampleGame.ModelViewer {
         /// </summary>
         protected override void OnDestroyInternal() {
             _coroutineRunner.Dispose();
+            
+            Destroy(_movieRecorderSettings);
+            Destroy(_settings);
         }
 
         /// <summary>
@@ -48,9 +94,26 @@ namespace SampleGame.ModelViewer {
         }
 
         /// <summary>
+        /// 録画用の設定を初期化
+        /// </summary>
+        private void SetupRecordingSettings(string fileKey) {
+            _settings.FrameRate = _frameRate;
+            _movieRecorderSettings.ImageInputSettings = new GameViewInputSettings {
+                OutputWidth = _resolutionWidth,
+                OutputHeight = _resolutionHeight,
+                RecordTransparency = false,
+                FlipFinalOutput = false
+            };
+            _movieRecorderSettings.OutputFile = Path.Combine(_outputPath, fileKey);
+            _movieRecorderSettings.OutputFormat = _outputFormat;
+            _movieRecorderSettings.Enabled = true;
+            _settings.AddRecorderSettings(_movieRecorderSettings);
+        }
+
+        /// <summary>
         /// 録画ルーチン
         /// </summary>
-        private IEnumerator RecordRoutine(float rotationDuration, RecordingModeFlags flags) {
+        private IEnumerator RecordRoutine(string setupDataId, float rotationDuration, RecordingOptions flags) {
             var slot = Services.Get<ModelViewerSettings>().PreviewSlot;
             var cameraComponent = Services.Get<CameraManager>().GetCameraComponent<PreviewCameraComponent>("Default");
             var dirLight = Services.Get<EnvironmentManager>().CurrentLight;
@@ -70,7 +133,7 @@ namespace SampleGame.ModelViewer {
                     return;
                 }
 
-                cameraComponent.AngleY = 0.0f;
+                cameraComponent.AngleY = Mathf.Repeat(angle + 180.0f, 360.0f);
             }
 
             void SetLightAngle(float angle) {
@@ -80,16 +143,19 @@ namespace SampleGame.ModelViewer {
 
                 var lightTrans = dirLight.transform;
                 var lightEulerAngles = lightTrans.eulerAngles;
-                lightEulerAngles.y = 0.0f;
+                lightEulerAngles.y = angle;
                 lightTrans.eulerAngles = lightEulerAngles;
             }
+
+            // 録画用設定を初期化
+            SetupRecordingSettings(setupDataId);
+
+            var recorderController = new RecorderController(_settings);
 
             // 各種向きをリセット
             SetSlotAngle(0.0f);
             SetCameraAngle(0.0f);
             SetLightAngle(0.0f);
-            
-            // todo:録画開始
 
             IEnumerator RotateRoutine(Action<float> setAngleAction) {
                 var time = 0.0f;
@@ -105,19 +171,26 @@ namespace SampleGame.ModelViewer {
                     yield return null;
                 }
             }
-            
+
+            // 録画開始
+            recorderController.PrepareRecording();
+            recorderController.StartRecording();
+
             // 回転の実行
-            if ((flags & RecordingModeFlags.ActorRotation) != 0) {
+            if ((flags & RecordingOptions.ActorRotation) != 0) {
                 yield return RotateRoutine(SetSlotAngle);
             }
-            if ((flags & RecordingModeFlags.CameraRotation) != 0) {
+
+            if ((flags & RecordingOptions.CameraRotation) != 0) {
                 yield return RotateRoutine(SetCameraAngle);
             }
-            if ((flags & RecordingModeFlags.LightRotation) != 0) {
+
+            if ((flags & RecordingOptions.LightRotation) != 0) {
                 yield return RotateRoutine(SetLightAngle);
             }
-            
-            // todo:録画停止
+
+            // 録画停止
+            recorderController.StopRecording();
         }
     }
 }

@@ -6,16 +6,16 @@ namespace SampleGame.ModelViewer {
     /// 録画用モデル
     /// </summary>
     public class RecordingModel : AutoIdModel<RecordingModel> {
-        /// <summary>録画モードマスク</summary>
-        public RecordingModeFlags ModeFlags { get; private set; }
+        /// <summary>録画オプションマスク</summary>
+        public RecordingOptions Options { get; private set; } = RecordingOptions.ActorRotation;
         /// <summary>回転時間</summary>
         public float RotationDuration { get; private set; } = 2.0f;
         
         /// <summary>
-        /// 録画モードの変更
+        /// 録画オプションの変更
         /// </summary>
-        public void SetModeFlags(RecordingModeFlags recordingModeFlags) {
-            ModeFlags = recordingModeFlags;
+        public void SetOptions(RecordingOptions recordingOptions) {
+            Options = recordingOptions;
         }
 
         /// <summary>

@@ -10,10 +10,10 @@ namespace SampleGame.ModelViewer {
     }
 
     /// <summary>
-    /// 録画モードマスク
+    /// 録画オプションマスク
     /// </summary>
     [Flags]
-    public enum RecordingModeFlags {
+    public enum RecordingOptions {
         ActorRotation = 1 << 0,
         CameraRotation = 1 << 1,
         LightRotation = 1 << 2,

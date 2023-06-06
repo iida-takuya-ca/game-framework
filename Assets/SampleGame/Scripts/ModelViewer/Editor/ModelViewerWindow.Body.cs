@@ -14,6 +14,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// ComponentPanel
         /// </summary>
         private class BodyPanel : PanelBase {
+            public override string Title => "Body";
+            
             private const float FoldoutHeight = 300;
             
             private Body _body;

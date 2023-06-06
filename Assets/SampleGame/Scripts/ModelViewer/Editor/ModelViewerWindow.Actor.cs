@@ -14,6 +14,8 @@ namespace SampleGame.ModelViewer.Editor {
         /// ModelPanel
         /// </summary>
         private class ActorPanel : PanelBase {
+            public override string Title => "Actor";
+
             private SearchableList<string> _modelList;
             private SearchableList<AnimationClip> _motionList;
 
